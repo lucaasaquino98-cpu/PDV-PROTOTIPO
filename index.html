@@ -3,235 +3,533 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PDV Fácil · Entrar no caixa</title>
+<title>PDV Fácil · Frente de Caixa</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f766e'/%3E%3Ctext x='16' y='23.5' font-family='Arial,Helvetica,sans-serif' font-size='21' font-weight='700' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#e3eaee;--slot:#1c2736;--paper:#0d3b38;--ink:#d5f3ee;--mute:#86b5ae;--line:rgba(213,243,238,.28);--pr:#2dd4bf;--prt:#042f2a;--err:#fca5a5;--errb:rgba(220,38,38,.2);--okb:rgba(45,212,191,.16);
-color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--slot:#02050a;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0b1220;--slot:#02050a;color-scheme:dark}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{--bg:#f1f3f6;--sf:#fff;--tx:#14181f;--mu:#6b7280;--bd:#e3e6eb;--pr:#0f766e;--prt:#fff;--ok:#16a34a;--wa:#b45309;--ba:#dc2626;--okb:#dcfce7;--wab:#fef3c7;--bab:#fee2e2;--nv:#0b1220;--tc:#fff;--jc:#2563eb;--jb:#dbeafe;--jt:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c0f14;--sf:#171b22;--tx:#eef0f3;--mu:#98a1b0;--bd:#262c36;--pr:#2dd4bf;--prt:#042f2a;--ok:#4ade80;--wa:#fbbf24;--ba:#f87171;--okb:#12301d;--wab:#3a2c0b;--bab:#3b1515;--tc:#0b1220;--jc:#60a5fa;--jb:#16253f;--jt:#0b1220;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c0f14;--sf:#171b22;--tx:#eef0f3;--mu:#98a1b0;--bd:#262c36;--pr:#2dd4bf;--prt:#042f2a;--ok:#4ade80;--wa:#fbbf24;--ba:#f87171;--okb:#12301d;--wab:#3a2c0b;--bab:#3b1515;--tc:#0b1220;--jc:#60a5fa;--jb:#16253f;--jt:#0b1220;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--bg);display:grid;place-items:center;overflow-x:hidden;font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.stage{width:min(100% - 24px,400px);padding:24px 0}
-.slot{height:14px;border-radius:7px;background:var(--slot);position:relative;z-index:2;margin-bottom:-6px;box-shadow:inset 0 -2px 0 rgba(255,255,255,.08)}
-.wrap{margin:0 14px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.28))}
-.ticket{position:relative;background:var(--paper);color:var(--ink);padding:30px 24px 26px;font:13px/1.5 "IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;clip-path:inset(0 -12px -14px -12px)}
-.ticket::after{content:"";position:absolute;left:0;right:0;top:100%;height:8px;background:var(--paper);-webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/16px 100%;mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/16px 100%}
-.ticket.print{animation:print 1.1s steps(16,end) both}
-@keyframes print{from{clip-path:inset(0 -12px 100% -12px)}to{clip-path:inset(0 -12px -14px -12px)}}
-.ticket.shake{animation:shake .35s}
-@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
-@media (prefers-reduced-motion:reduce){.ticket.print,.ticket.shake{animation:none}}
-.brand{display:flex;flex-direction:column;align-items:center;gap:8px}
-.brand i{width:44px;height:44px;border-radius:12px;background:var(--pr);color:var(--prt);display:grid;place-items:center;font:700 26px Arial,Helvetica,sans-serif;font-style:normal}
-.brand b{font:700 20px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:-.01em}
-.cut{border:0;border-top:1.5px dashed var(--line);margin:20px 0 4px}
-h1{font:700 18px/1.25 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0 0 14px;text-align:center}
-.f{margin-top:16px;position:relative}
-label{display:block;font-size:12px;color:var(--mute)}
-input{width:100%;font:500 15px "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;color:var(--ink);background:transparent;border:0;border-bottom:1.5px solid var(--line);border-radius:0;padding:8px 0;outline:none}
-input:focus-visible{border-bottom-color:var(--pr);box-shadow:0 1.5px 0 var(--pr)}
-input:-webkit-autofill{-webkit-text-fill-color:var(--ink);box-shadow:0 0 0 40px var(--paper) inset}
-.pw input{padding-right:70px}
-.eye{position:absolute;right:0;bottom:6px;font:inherit;font-size:12px;color:var(--pr);background:none;border:0;cursor:pointer;padding:4px 2px;font-weight:600}
-.msg{margin-top:14px;font-size:12.5px;font-weight:500;border-radius:6px}
-.msg:empty{display:none}
-.msg.err{color:var(--err);background:var(--errb);padding:8px 10px}
-.msg.ok{color:var(--pr);background:var(--okb);padding:8px 10px}
-.btn{width:100%;font:600 14px "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;padding:13px;border-radius:6px;border:0;background:var(--pr);color:var(--prt);cursor:pointer;margin-top:22px}
-.btn:disabled{opacity:.6;cursor:wait}
-.btn:focus-visible,.eye:focus-visible,.lnk:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
-.links{display:flex;justify-content:space-between;gap:8px;margin-top:14px}
-.lnk{font:inherit;font-size:12px;background:none;border:0;color:var(--mute);cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
-.lnk:hover{color:var(--ink)}
-.row{display:flex;align-items:baseline;gap:6px;margin:4px 0 0}
-.row i{flex:1;border-bottom:1.5px dotted var(--line);transform:translateY(-3px)}
-.row b{font-weight:600;overflow-wrap:anywhere;text-align:right}
-[hidden]{display:none!important}
+body{background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{display:flex;height:100%}
+nav{width:236px;background:var(--nv);color:#94a3b8;padding:18px 12px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;overflow-x:hidden;overflow-y:auto;transition:width .25s ease,padding .25s ease,opacity .2s}
+body.nav-off nav{width:0;padding-left:0;padding-right:0;opacity:0}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;color:#fff;font-weight:700;font-size:16px;white-space:nowrap}
+.brand i{width:32px;height:32px;border-radius:9px;background:#0f766e;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:18px;color:#fff;font-family:Arial,Helvetica,sans-serif}
+nav .lb{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;color:#475569}
+nav button{all:unset;cursor:pointer;padding:11px 12px;border-radius:10px;font-weight:500;display:flex;gap:12px;align-items:center;white-space:nowrap;transition:background .15s,color .15s}
+nav button:hover{background:rgba(255,255,255,.07);color:#fff}
+nav button.on{background:#14b8a6;color:#04201c;font-weight:700}
+svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.sp{flex:1}
+.usr{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;background:rgba(255,255,255,.06);white-space:nowrap;color:#fff}
+.usr b{width:34px;height:34px;border-radius:50%;background:#0ea5e9;display:grid;place-items:center;color:#04201c}
+.usr small{display:block;color:#64748b}
+main{flex:1;overflow:auto;padding:18px;min-width:0}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+h1{font-size:20px;margin:0;flex:1;min-width:120px}
+h3{margin:0 0 10px;font-size:14px}
+select,input{font:inherit;color:var(--tx);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;min-width:0}
+.btn{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:8px;padding:8px 14px;font-weight:600}
+.btn.p{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+.btn.ic{padding:8px 10px;display:inline-grid;place-items:center}
+.btn.g{width:100%;padding:12px;margin-top:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.sg{display:inline-flex;background:var(--bd);border-radius:10px;padding:3px}
+.sg button{all:unset;cursor:pointer;padding:7px 16px;border-radius:8px;font-weight:600;color:var(--mu)}
+.sg button.on{background:var(--sf);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.mesa{cursor:pointer;min-height:104px;position:relative;background:var(--okb);border:2px solid var(--ok);transition:transform .12s}
+.mesa:hover{transform:translateY(-2px)}
+.mesa.o{background:var(--bab);border-color:var(--ba);animation:pulse 1.5s infinite}
+.mesa.i{background:var(--wab);border:2px dashed var(--wa);cursor:not-allowed}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,38,38,.55)}70%{box-shadow:0 0 0 14px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+@media (prefers-reduced-motion:reduce){.mesa.o{animation:none}}
+.mesa b{font-size:17px;display:block;margin-bottom:4px}
+.mesa .x{all:unset;cursor:pointer;position:absolute;top:8px;right:10px;font-size:18px;opacity:.55}
+.mesa .x:hover{opacity:1}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;background:var(--ok);color:var(--tc)}
+.tag.o{background:var(--ba)}.tag.i{background:var(--wa);color:var(--tc)}
+.mesa small{display:block;margin-top:8px;color:var(--mu)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi small{color:var(--mu);display:block}.kpi b{font-size:20px}
+.pos{display:grid;grid-template-columns:1fr 340px;gap:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--tx);border-radius:99px;padding:5px 12px}
+.chip.on{background:var(--pr);color:var(--prt);border-color:var(--pr)}
+.prod{cursor:pointer;font:inherit;color:var(--tx);background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:12px;text-align:left;min-height:70px}
+.prod:hover{border-color:var(--pr)}.prod b{display:block;font-size:13px}.prod span{color:var(--mu)}
+.it{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.it div{flex:1}.q{display:flex;align-items:center;gap:6px}
+.q button{width:26px;height:26px;border-radius:6px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);cursor:pointer}
+.row{display:flex;justify-content:space-between;padding:4px 0}
+.tot{font-size:22px;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--bd)}
+th{color:var(--mu);font-weight:600;font-size:12px}
+.wrap{overflow-x:auto}
+.in{color:var(--ok)}.out{color:var(--ba)}
+.bar{height:10px;border-radius:5px;background:var(--pr);margin-top:4px}
+.frm{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.frm input,.frm select{flex:1;min-width:110px}
+.emp{text-align:center;padding:28px 12px;color:var(--mu)}
+.hint{color:var(--mu);font-size:12px;margin:0 0 12px}
+.mod{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:5}
+.mod .card{width:100%;max-width:380px}
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.pay .chip{border-radius:10px;padding:12px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:9;display:none}
+@media (max-width:760px){
+.app{flex-direction:column-reverse}
+nav{width:auto;flex-direction:row;padding:6px;justify-content:space-around;gap:0;transition:none}
+body.nav-off nav{display:none}
+nav .brand,nav .sp,nav .usr,nav .lb{display:none}
+nav button{flex-direction:column;gap:2px;font-size:11px;padding:6px 10px}
+main{padding:12px}.pos{grid-template-columns:1fr}
+}
+.srch{width:100%;margin-bottom:10px;font-size:16px;padding:12px}
+.bd{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--wab);color:var(--wa);margin-top:4px}
+.bd.z{background:var(--bab);color:var(--ba)}.bd.n{background:none;color:var(--mu);padding:0;font-weight:400}
+.prod.z{opacity:.5}
+input:focus-visible,select:focus-visible,.btn:focus-visible,.chip:focus-visible,.prod:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+.kb{font:600 12px ui-monospace,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:2px 8px}
+.mod{backdrop-filter:blur(3px);animation:fi .15s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@keyframes up{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes bl{50%{opacity:.3}}
+.mod .card.pm{max-width:480px;padding:0;overflow:auto;max-height:100%;border-radius:20px;animation:up .2s ease}
+.pm-h{display:flex;gap:12px;align-items:center;padding:18px 18px 14px}
+.pm-h h3{margin:0;font-size:17px}.pm-h small{color:var(--mu)}
+.pm-h .bd{width:42px;height:42px;border-radius:12px;background:var(--okb);color:var(--pr);display:grid;place-items:center;flex-shrink:0}
+.pm-x{all:unset;cursor:pointer;margin-left:auto;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--mu)}
+.pm-x:hover{background:var(--bg);color:var(--tx)}
+.pm-sum{margin:0 18px;padding:16px 18px;border-radius:16px;background:linear-gradient(135deg,#0b1220,#134e4a);color:#fff}
+.pm-sum small{color:#94a3b8}
+.pm-big{font-size:34px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin:2px 0 8px}
+.pm-ln{display:flex;justify-content:space-between;font-size:13px;color:#cbd5e1;padding:2px 0}
+.pm-sec{padding:16px 18px 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+.pm-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px}
+.pm-o{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--bd);border-radius:14px;background:var(--sf);color:var(--tx);font-weight:600;transition:border-color .15s,background .15s,transform .1s}
+.pm-o:hover{border-color:var(--pr)}.pm-o:active{transform:scale(.98)}
+.pm-o.on{border-color:var(--pr);background:color-mix(in srgb,var(--pr) 10%,var(--sf))}
+.pm-o .ib{width:40px;height:40px;border-radius:11px;background:var(--bg);display:grid;place-items:center;flex-shrink:0}
+.pm-o.on .ib{background:var(--sf)}
+.pm-o .k{position:absolute;top:6px;right:9px;font:600 10px ui-monospace,Menlo,Consolas,monospace;color:var(--mu)}
+.pm-o .ck{position:absolute;bottom:7px;right:9px;width:16px;height:16px;border-radius:50%;background:var(--pr);color:var(--prt);display:none;place-items:center}
+.pm-o.on .ck{display:grid}.ck svg{stroke-width:3.2}
+.pm-box{margin:14px 18px 0;padding:16px;border-radius:14px;background:var(--bg);border:1px solid var(--bd)}
+.pm-pix{display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:center}
+.qr{position:relative;width:168px;height:168px;background:#fff;border-radius:14px;padding:10px;border:1px solid var(--bd);flex-shrink:0}
+.qrl{position:absolute;inset:0;margin:auto;width:40px;height:40px;background:#fff;border-radius:10px;display:grid;place-items:center}
+.pm-pixi{flex:1;min-width:190px}.pm-pixi p{margin:6px 0 10px;color:var(--mu)}
+.pm-pixh{display:flex;align-items:center;gap:8px;font-size:15px}
+.pm-st{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--wa);background:var(--wab);padding:3px 10px;border-radius:99px}
+.pm-st i{width:7px;height:7px;border-radius:50%;background:currentColor;animation:bl 1.2s infinite}
+.pm-code{display:flex;gap:8px;align-items:center;margin:10px 0 6px}
+.pm-code code{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:12px ui-monospace,Menlo,Consolas,monospace;background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;color:var(--mu)}
+.pm-code .btn{display:inline-flex;gap:6px;align-items:center;padding:7px 10px}
+.pm-mq{display:flex;gap:16px;align-items:center}
+.pm-cash input{width:100%;font-size:20px;font-weight:600;padding:10px 12px;margin-top:4px}
+.pm-q{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.pm-tr{display:flex;justify-content:space-between;align-items:center;font-size:16px}
+.pm-f{display:flex;gap:10px;padding:16px 18px 18px}
+.pm-f .btn{flex:1;padding:13px;border-radius:12px;display:inline-flex;gap:8px;justify-content:center;align-items:center}
+.pm-f .btn.p{flex:1.7}
+@media (prefers-reduced-motion:reduce){.mod,.mod .card.pm,.pm-st i{animation:none}}
+.mesa{user-select:none;-webkit-user-select:none}.mesa[data-m]{cursor:grab}
+.mesa.j{background:var(--jb);border-color:var(--jc);grid-column:span 2;min-height:150px}
+.mesa.j b{font-size:22px}.mesa.j small{font-size:13px}
+.tag.j{background:var(--jc);color:var(--jt)}
+.mesa .sep{position:absolute;right:12px;bottom:12px;padding:5px 10px;font-size:12px;display:inline-flex;gap:6px;align-items:center}
+.mesa.dragging{opacity:.35}
+.mesa.drop{outline:3px dashed var(--jc);outline-offset:3px;transform:scale(1.04)}
+.mesa.ghost{position:fixed;z-index:30;pointer-events:none;margin:0;opacity:.93;transform:scale(1.04) rotate(-1.5deg);box-shadow:0 16px 32px rgba(0,0,0,.35);animation:none;cursor:grabbing}
+.mod .card.jm{max-width:380px;text-align:center;padding:24px;border-radius:20px;animation:up .2s ease}
+.jm .jbx{width:56px;height:56px;border-radius:16px;background:var(--jb);color:var(--jc);display:grid;place-items:center;margin:0 auto 12px}
+.jm h3{font-size:18px;margin:0 0 12px}
+.jcc{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.jcc span{background:var(--jb);color:var(--jc);border:1.5px solid var(--jc);border-radius:10px;padding:8px 12px;font-weight:700}
+.jcc i{font-style:normal;color:var(--mu);font-weight:700}
+.jm p{color:var(--mu);margin:0}
 </style>
 </head>
 <body>
-<main class="stage">
-  <div class="slot" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="ticket" id="ticket">
-      <div class="brand"><i aria-hidden="true">P</i><b>PDV Fácil</b></div>
-      <hr class="cut">
-
-      <section id="vLogin" hidden>
-        <form id="form" novalidate>
-          <div class="f">
-            <label for="email">E-mail</label>
-            <input id="email" type="email" inputmode="email" autocomplete="username" autofocus>
-          </div>
-          <div class="f pw">
-            <label for="pass">Senha</label>
-            <input id="pass" type="password" autocomplete="current-password">
-            <button type="button" class="eye" id="eye" aria-pressed="false">Mostrar</button>
-          </div>
-          <div class="msg" id="msg" role="status" aria-live="polite"></div>
-          <button class="btn" id="go" type="submit">Abrir caixa</button>
-        </form>
-        <div class="links">
-          <button type="button" class="lnk" id="forgot">Esqueci a senha</button>
-          <button type="button" class="lnk" id="fill" hidden>Usar conta de teste</button>
-        </div>
-      </section>
-
-      <section id="vOk" hidden>
-        <h1>Caixa aberto</h1>
-        <div class="row">Operador<i></i><b id="oUser"></b></div>
-        <button class="btn" id="enter" type="button">Ir para o PDV</button>
-        <div class="links" style="justify-content:center"><button class="lnk" id="out" type="button">Sair</button></div>
-      </section>
-    </div>
-  </div>
-</main>
-
+<div class="app"><nav id="nav"></nav><main id="main"></main></div>
+<div id="toast"></div>
 <script>
-/* ============================================================
-   CONFIGURAÇÃO — é aqui que o Supabase entra no futuro.
-   1) Preencha SUPABASE_URL e SUPABASE_ANON_KEY
-   2) Troque MODE de 'demo' para 'supabase'
-   A interface não precisa mudar.
-   ============================================================ */
-const CONFIG = {
-  MODE: 'supabase',                   // 'demo' | 'supabase'
-  SUPABASE_URL: 'https://vgivsogjhduyxqyibbxj.supabase.co',
-  SUPABASE_ANON_KEY: 'sb_publishable_hZDgAKKicAV8vBjFn2UT4A_4mjr5Ge3', // chave pública (publishable)
-  SUPABASE_SDK: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js',
-  REDIRECT_URL: 'pdv-v3.html',        // para onde ir após entrar
-  DEMO_USER: { email: 'teste@pdvfacil.com', password: 'pdv@2026' }
-};
+const SEG={rest:{nome:'Restaurante'},bar:{nome:'Bar'},lanch:{nome:'Lanchonete'},varejo:{nome:'Varejo / Loja'}};
+const mk=()=>({items:[],aberta:false,inv:false,hora:'',nome:'',cpf:'',g:null});
+const S={seg:'rest',taxa:true,prods:[],pid:0,nm:12,mesas:{},cmds:{},cn:0,garcons:[],gid:0,mov:[],clientes:[],kid:0,cart:{items:[]},dsc:0,dt:'%',cpf:''};
+for(let i=1;i<=S.nm;i++)S.mesas[i]=mk();
 
-/* ---------- Autenticação (mesma interface nos dois modos) ---------- */
-const SKEY = 'pdvfacil.session';
-let memSession = null;
-const wait = ms => new Promise(r => setTimeout(r, ms));
-function store(fn){ for (const n of ['sessionStorage','localStorage']) { try { fn(window[n]); } catch(e){} } }
-
-const demoProvider = {
-  // Somente demonstração: conferir senha no navegador NÃO é seguro.
-  async signIn(email, password){
-    await wait(700);
-    const u = CONFIG.DEMO_USER;
-    if (email !== u.email || password !== u.password) return { error: 'E-mail ou senha incorretos.' };
-    const session = { user: { id: 'demo-user', email: u.email } };
-    memSession = session;
-    store(s => s.setItem(SKEY, JSON.stringify(session)));
-    return { session };
-  },
-  async getSession(){
-    let found = memSession;
-    store(s => { if (!found) { const v = s.getItem(SKEY); if (v) found = JSON.parse(v); } });
-    return found;
-  },
-  async signOut(){ memSession = null; store(s => s.removeItem(SKEY)); },
-  async resetPassword(){ await wait(500); return {}; }
-};
-
-let sbClient = null;
-const supabaseProvider = {
-  async client(){
-    if (sbClient) return sbClient;
-    if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_ANON_KEY) throw new Error('Configure SUPABASE_URL e SUPABASE_ANON_KEY.');
-    if (!window.supabase) await new Promise((ok, fail) => {
-      const s = document.createElement('script'); s.src = CONFIG.SUPABASE_SDK; s.onload = ok;
-      s.onerror = () => fail(new Error('Não foi possível carregar o Supabase.')); document.head.appendChild(s);
-    });
-    sbClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
-    return sbClient;
-  },
-  async signIn(email, password){
-    const c = await this.client();
-    const { data, error } = await c.auth.signInWithPassword({ email, password });
-    if (error) return { error: /invalid login/i.test(error.message) ? 'E-mail ou senha incorretos.' : error.message };
-    return { session: { user: data.user } };
-  },
-  async getSession(){
-    const c = await this.client();
-    const { data } = await c.auth.getSession();
-    return data.session ? { user: data.session.user } : null;
-  },
-  async signOut(){ const c = await this.client(); await c.auth.signOut(); },
-  async resetPassword(email){
-    const c = await this.client();
-    const { error } = await c.auth.resetPasswordForEmail(email, { redirectTo: location.href });
-    return error ? { error: error.message } : {};
-  }
-};
-
-const Auth = CONFIG.MODE === 'supabase' ? supabaseProvider : demoProvider;
-window.PDVAuth = Auth; // o PDV pode chamar PDVAuth.getSession() para proteger a página
-
-/* ---------- Interface ---------- */
-const $ = id => document.getElementById(id);
-const ticket = $('ticket'), msg = $('msg'), go = $('go');
-const validEmail = v => /^\S+@\S+\.\S+$/.test(v);
-
-function setMsg(text, kind){ msg.textContent = text || ''; msg.className = 'msg' + (kind ? ' ' + kind : ''); }
-function show(view){
-  $('vLogin').hidden = view !== 'login';
-  $('vOk').hidden = view !== 'ok';
-  ticket.classList.remove('print', 'shake'); void ticket.offsetWidth; ticket.classList.add('print');
-  if (view === 'login') $('email').focus({ preventScroll: true });
+/* ===== Supabase: login, leitura e gravação ===== */
+const SB={url:'https://vgivsogjhduyxqyibbxj.supabase.co',key:'sb_publishable_hZDgAKKicAV8vBjFn2UT4A_4mjr5Ge3',sdk:'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js',login:'index.html'};
+let sb=null,USER='';
+window.addEventListener('error',e=>{console.error(e.error||e.message);toast('Erro na tela: '+e.message)});
+window.addEventListener('unhandledrejection',e=>{console.error(e.reason);toast('Erro: '+((e.reason&&e.reason.message)||e.reason))});
+const once=fn=>async(...a)=>{if(once.b)return;once.b=1;try{return await fn(...a)}finally{once.b=0}};
+async function DBX(p){const {data,error}=await p;if(error)throw error;return data}
+const dbErr=e=>toast('Não foi possível salvar: '+((e&&e.message)||e));
+const cfg=patch=>DBX(sb.from('empresas').update(patch).eq('id',S.empId)).catch(dbErr);
+const loadSdk=()=>new Promise((ok,no)=>{if(window.supabase)return ok();const t=document.createElement('script');t.src=SB.sdk;t.onload=ok;t.onerror=()=>no(new Error('Não foi possível carregar o Supabase'));document.head.appendChild(t)});
+const dataHora=d=>{const x=new Date(d),h=x.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return x.toDateString()==new Date().toDateString()?h:x.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+h};
+const isHoje=x=>new Date(x.at).toDateString()==new Date().toDateString();
+const mP=r=>({id:r.id,nome:r.nome,cat:r.categoria,preco:+r.preco,cod:r.codigo,est:r.estoque});
+const mC=r=>({id:r.id,nome:r.nome,cpf:r.cpf,tel:r.telefone||'—',email:r.email,obs:r.obs});
+const mG=r=>({id:r.id,nome:r.nome,tel:r.telefone||'—'});
+const mM=r=>({id:r.id,t:dataHora(r.criado_em),at:r.criado_em,desc:r.descricao,tipo:r.tipo,val:+r.valor,forma:r.forma,cat:r.categoria,cpf:r.cpf,cid:r.cliente_id,gid:r.garcom_id});
+const addMov=async m=>mM(await DBX(sb.from('movimentos').insert({descricao:m.desc,tipo:m.tipo,valor:m.val,forma:m.forma,categoria:m.cat,cpf:m.cpf||'',cliente_id:m.cid||null,garcom_id:m.gid||null}).select().single()));
+async function carregar(){
+ const desde=new Date(Date.now()-90*864e5).toISOString();
+ const [emp,pr,cl,ga,mv]=await Promise.all([
+  DBX(sb.from('empresas').select('*').limit(1).maybeSingle()),
+  DBX(sb.from('produtos').select('*').order('nome')),
+  DBX(sb.from('clientes').select('*').order('nome')),
+  DBX(sb.from('garcons').select('*').order('nome')),
+  DBX(sb.from('movimentos').select('*').gte('criado_em',desde).order('criado_em',{ascending:false}).limit(1000))
+ ]);
+ if(!emp)throw new Error('Usuário sem empresa vinculada');
+ S.empId=emp.id;S.seg=SEG[emp.segmento]?emp.segmento:'rest';S.taxa=emp.taxa_servico;S.nm=emp.qtd_mesas;
+ S.mesas={};for(let i=1;i<=S.nm;i++)S.mesas[i]=mk();
+ S.prods=pr.map(mP);S.clientes=cl.map(mC);S.garcons=ga.map(mG);S.mov=mv.reverse().map(mM);
 }
-const showOk = s => { $('oUser').textContent = s.user.email; show('ok'); };
+async function sair(){try{await sb.auth.signOut()}catch(e){}location.replace(SB.login)}
+async function boot(){
+ $('#main').innerHTML='<div class="card emp">Carregando…</div>';
+ try{
+  await loadSdk();
+  sb=window.supabase.createClient(SB.url,SB.key);
+  const {data}=await sb.auth.getSession();
+  if(!data.session){location.replace(SB.login);return}
+  USER=data.session.user.email||'';
+  sb.auth.onAuthStateChange(ev=>{if(ev=='SIGNED_OUT')location.replace(SB.login)});
+  await carregar();
+ }catch(e){
+  $('#main').innerHTML='<div class="card emp">Não foi possível carregar os dados.<br><small>'+esc((e&&e.message)||e)+'</small><br><br><button class="btn p" onclick="location.reload()">Tentar de novo</button></div>';
+  return;
+ }
+ render();
+}
+let view='mesas',mode='m',cur=null,cat='Todos',pay=null,q='',help=false,cm=null,cv=null,cq='',ctab='prod';
+const $=s=>document.querySelector(s);
+const R=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const hm=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const P=id=>S.prods.find(p=>p.id==id)||{nome:'(removido)',preco:0};
+const tot=m=>m.items.reduce((a,i)=>a+i.q*P(i.id).preco,0);
+const G=()=>cur.k=='m'?S.mesas[cur.id]:S.cmds[cur.id];
+const lbl=()=>cur.k=='m'?(G().j?'Mesas '+G().j.join(' + '):'Mesa '+cur.id):'Comanda '+cur.id+(G().nome?' · '+G().nome:'');
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',2400)}
+function setSeg(v){S.seg=v;try{go('mesas')}catch(e){console.error(e);toast('Erro ao abrir '+((SEG[v]&&SEG[v].nome)||v)+': '+e.message)}cfg({segmento:v})}
+function go(v){view=v;cur=null;pay=null;cm=null;cv=null;render()}
+function tgl(){document.body.classList.toggle('nav-off')}
+const IC={
+mesas:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+caixa:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/>',
+cad:'<path d="M4 7l8-4 8 4-8 4-8-4zM4 12l8 4 8-4M4 17l8 4 8-4"/>',
+cli:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.8a3.5 3.5 0 010 6.4M18 14.4c2 .7 3.5 2.5 3.5 5.6"/>',
+fin:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+moon:'<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>'};
+const ic=k=>`<svg viewBox="0 0 24 24">${IC[k]}</svg>`;
+function nav(){
+ const a=view=='pos'?'mesas':view;
+ const it=[['mesas',S.seg=='varejo'?'Venda rápida':'Atendimento'],['caixa','Caixa'],['cad','Cadastros'],['cli','Clientes'],['fin','Financeiro']];
+ $('#nav').innerHTML=`<div class="brand"><i>P</i>PDV Fácil</div><div class="lb">Menu</div>`+it.map(([k,l])=>`<button class="${a==k?'on':''}" onclick="go('${k}')">${ic(k)}${l}</button>`).join('')+`<div class="sp"></div><div class="usr"><b>${esc((USER||'D')[0].toUpperCase())}</b><div>${esc((USER||'Diretoria').split('@')[0])}<small><a href="#" onclick="sair();return false" style="color:inherit;text-decoration:underline">Sair</a></small></div></div>`;
+}
+function head(t,extra=''){return `<div class="top"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><h1>${t}</h1>${extra}<button class="btn ic" onclick="tth()" aria-label="Alternar tema claro/escuro">${ic(isDark()?'sun':'moon')}</button><select onchange="setSeg(this.value)" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>`}
+function kp(a){return `<div class="kpis">${a.map(([l,v])=>`<div class="card kpi"><small>${l}</small><b>${v}</b></div>`).join('')}</div>`}
+function vSalao(){
+ const ms=Object.entries(S.mesas).filter(([,m])=>!m.ref),cs=Object.entries(S.cmds);
+ const oc=ms.filter(([,m])=>m.aberta).length,iv=ms.filter(([,m])=>m.inv).length;
+ const aberto=[...ms,...cs].reduce((a,[,m])=>a+tot(m),0);
+ const sg=`<div class="sg"><button class="${mode=='m'?'on':''}" onclick="mode='m';render()">Mesas</button><button class="${mode=='c'?'on':''}" onclick="mode='c';render()">Comandas (${cs.length})</button></div>`;
+ let b;
+ if(mode=='m'){
+  b=kp([['Livres',ms.length-oc-iv],['Ocupadas',oc],['Inválidas',iv],['Em aberto',R(aberto)]])+
+  `<div class="top" style="margin-bottom:6px"><p class="hint" style="flex:1;margin:0">Toque numa mesa livre para atender. Use ⊘ para marcar ou reativar uma mesa inválida. Arraste uma mesa sobre outra para juntar.</p><button class="btn" onclick="addMesa()">+ Mesa</button><button class="btn" onclick="delMesa()">− Mesa</button></div>
+  <div class="grid">${ms.map(([n,m])=>{const k=m.j?'j':m.aberta?'o':m.inv?'i':'';return `<div class="card mesa ${k}" data-m="${m.inv?'':n}" role="button" onclick="open_('m',${n})"><b>${m.j?'Mesas '+m.j.join(' + '):'Mesa '+n}</b><span class="tag ${k}">${m.j?'Juntas':m.aberta?'Ocupada':m.inv?'Inválida':'Livre'}</span><small>${m.aberta?R(tot(m))+' · desde '+m.hora+gtag(m):m.inv?'Fora de uso':'Disponível'}</small>${m.j?`<button class="btn sep" onclick="event.stopPropagation();sep(${n})">${sv('link',14)}Separar</button>`:''}${m.aberta?'':`<button class="x" onclick="event.stopPropagation();inv(${n})" aria-label="Alternar inválida">⊘</button>`}</div>`}).join('')}</div>`;
+ }else{
+  b=kp([['Comandas abertas',cs.length],['Em aberto',R(aberto)]])+
+  `<div class="card" style="margin-bottom:14px"><div class="frm" style="margin:0"><input id="cnm" placeholder="Nome do cliente (opcional)">${rst()&&S.garcons.length?`<select id="cg"><option value="">Garçom</option>${S.garcons.map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join('')}</select>`:''}<button class="btn p" onclick="novaCmd()">+ Nova comanda</button></div></div>
+  ${cs.length?`<div class="grid">${cs.map(([n,m])=>`<div class="card mesa o" role="button" onclick="open_('c',${n})"><b>Comanda ${n}</b><span class="tag o">Aberta</span><small>${m.nome?m.nome+' · ':''}${R(tot(m))} · ${m.hora}${gtag(m)}</small></div>`).join('')}</div>`:'<div class="card emp">Nenhuma comanda aberta. Crie a primeira acima.</div>'}`;
+ }
+ return head('Atendimento',sg)+b;
+}
+function addMesa(){S.nm++;S.mesas[S.nm]=mk();render();cfg({qtd_mesas:S.nm})}
+function delMesa(){const m=S.mesas[S.nm];if(!m)return;if(m.aberta||m.ref)return toast('A última mesa está ocupada');delete S.mesas[S.nm];S.nm--;render();cfg({qtd_mesas:S.nm})}
+function inv(n){const m=S.mesas[n];m.inv=!m.inv;render()}
+function novaCmd(){S.cn++;S.cmds[S.cn]={items:[],aberta:true,inv:false,hora:hm(),nome:$('#cnm').value.trim(),cpf:'',g:($('#cg')&&+$('#cg').value)||null};cur={k:'c',id:S.cn};view='pos';cat='Todos';S.cpf='';render()}
+function open_(k,id){if(k=='m'&&S.mesas[id].inv)return toast('Mesa inválida. Toque em ⊘ para reativar');cur={k,id};view='pos';cat='Todos';S.cpf=G().cpf||'';render()}
+function vPos(){
+ const m=G(),cats=['Todos',...new Set(S.prods.map(p=>p.cat))],ps=S.prods.filter(p=>cat=='Todos'||p.cat==cat);
+ const sub=tot(m),tx=S.taxa?sub*.1:0;
+ const gsel=rst()?`<div style="margin-top:12px"><label style="color:var(--mu);font-size:12px;font-weight:600">Garçom</label>${S.garcons.length?`<select style="width:100%;margin-top:4px" onchange="setG(this.value)"><option value="">Selecione o garçom</option>${S.garcons.map(g=>`<option value="${g.id}" ${m.g==g.id?'selected':''}>${esc(g.nome)}</option>`).join('')}</select>`:`<div class="emp" style="padding:10px"><small>Nenhum garçom cadastrado.</small><br><button class="btn" style="margin-top:6px" onclick="ctab='gar';go('cad')">Cadastrar garçons</button></div>`}</div>`:'';
+ const left=S.prods.length?`<div class="chips">${cats.map(c=>`<button class="chip ${c==cat?'on':''}" onclick="cat='${c}';render()">${c}</button>`).join('')}</div><div class="grid">${ps.map(p=>`<button class="prod" onclick="add(${p.id})"><b>${p.nome}</b><span>${R(p.preco)}</span></button>`).join('')}</div>`:`<div class="card emp">Nenhum produto cadastrado ainda.<br><br><button class="btn p" onclick="go('cad')">Ir para Cadastros</button></div>`;
+ const act=!m.aberta?`<button class="btn p g" onclick="ocupar()">Ocupar mesa</button>`:(!m.items.length?`<button class="btn g" onclick="liberar()">${cur.k=='m'?(m.j?'Liberar mesas':'Liberar mesa'):'Cancelar comanda'}</button>`:`<button class="btn g" onclick="liberar()">Cancelar compra e liberar ${cur.k=='m'?(m.j?'mesas':'mesa'):'comanda'}</button>`);
+ return `<div class="top"><button class="btn" onclick="go('mesas')">← Voltar</button><h1>${lbl()}</h1><span class="tag ${m.aberta?'o':''}">${m.aberta?'Ocupada desde '+m.hora:'Livre'}</span></div>
+ <div class="pos"><div>${left}</div>
+ <div class="card" style="align-self:start"><h3>Comanda</h3>${m.items.length?m.items.map(i=>`<div class="it"><div><b>${P(i.id).nome}</b><br><small style="color:var(--mu)">${R(P(i.id).preco)}</small></div><div class="q"><button onclick="chg(${i.id},-1)">−</button>${i.q}<button onclick="chg(${i.id},1)">+</button></div><b>${R(P(i.id).preco*i.q)}</b></div>`).join(''):'<p style="color:var(--mu)">Toque nos produtos para lançar.</p>'}
+ ${gsel}
+ <div style="margin-top:12px"><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF do cliente (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div></div>
+ <div class="row" style="margin-top:10px"><span>Subtotal</span><span>${R(sub)}</span></div>
+ <label class="row"><span><input type="checkbox" ${S.taxa?'checked':''} onchange="S.taxa=this.checked;render();cfg({taxa_servico:S.taxa})"> Serviço 10%</span><span>${R(tx)}</span></label>
+ <div class="row tot"><span>Total</span><span>${R(sub+tx)}</span></div>
+ ${cur.k=='m'&&m.j?`<button class="btn g" onclick="sep(${cur.id})">Separar mesas</button>`:''}${act}<button class="btn g" ${m.items.length?'':'disabled'} onclick="toast('Pedido enviado à cozinha')">Enviar para cozinha</button>
+ <button class="btn p g" ${m.items.length?'':'disabled'} onclick="pay='Pix';render()">Fechar conta</button></div></div>`
+}
+function ocupar(){const m=G();m.aberta=true;m.hora=hm();render()}
+function liberar(){const k=cur.k,j=k=='m'&&S.mesas[cur.id].j;if(k=='m')freeM(cur.id);else delete S.cmds[cur.id];toast(k=='m'?(j?'Mesas liberadas':'Mesa liberada'):'Comanda cancelada');go('mesas')}
+function add(id){const m=G();if(!m.aberta){m.aberta=true;m.hora=hm()}const i=m.items.find(x=>x.id==id);i?i.q++:m.items.push({id,q:1});render()}
+function chg(id,d){const m=G(),i=m.items.find(x=>x.id==id);i.q+=d;if(i.q<1)m.items=m.items.filter(x=>x!=i);if(!m.items.length&&cur.k=='m'&&!m.j){S.mesas[cur.id]=mk();toast('Mesa liberada')}render()}
+let jn=null,DR=null,dragSup=false;
+const mesaIds=id=>S.mesas[id].j||[id];
+function freeM(id){mesaIds(id).forEach(x=>S.mesas[x]=mk())}
+function sep(id){const m=S.mesas[id];if(!m.j)return;m.j.forEach(x=>{if(x!=id)S.mesas[x]=mk()});m.j=null;toast('Mesas separadas. Os itens ficaram na Mesa '+id);render()}
+function dropOk(a,b){if(b==null||a==b)return false;const A=S.mesas[a],B=S.mesas[b];return !!A&&!!B&&!A.inv&&!B.inv&&!mesaIds(a).includes(+b)}
+function vJoin(){const la=mesaIds(jn.a).join(' + '),lb=mesaIds(jn.b).join(' + ');
+ return `<div class="mod" onclick="jn=null;render()"><div class="card jm" onclick="event.stopPropagation()" role="dialog" aria-label="Juntar mesas"><span class="jbx">${sv('link',26)}</span><h3>Juntar mesas?</h3><div class="jcc"><span>Mesa ${la}</span><i>+</i><span>Mesa ${lb}</span></div><p>Os pedidos das duas mesas serão somados em uma única conta.</p><div class="pm-f" style="padding:16px 0 0"><button class="btn" onclick="jn=null;render()">Cancelar</button><button class="btn p" onclick="confirmJoin()">${sv('ok',18)}Juntar mesas</button></div></div></div>`}
+function confirmJoin(){const a=jn.a,b=jn.b;jn=null;const A=S.mesas[a],B=S.mesas[b],ga=mesaIds(a);
+ const all=[...new Set([...mesaIds(b),...ga])].sort((x,y)=>x-y);
+ A.items.forEach(i=>{const x=B.items.find(y=>y.id==i.id);x?x.q+=i.q:B.items.push({id:i.id,q:i.q})});
+ B.g=B.g||A.g;B.cpf=B.cpf||A.cpf;B.hora=B.aberta?B.hora:(A.aberta?A.hora:hm());B.aberta=true;B.j=all;
+ ga.forEach(x=>{S.mesas[x]=Object.assign(mk(),{ref:b,aberta:true})});
+ render();toast('Mesas '+all.join(' + ')+' unificadas')}
+document.addEventListener('pointerdown',e=>{
+ if(e.button>0||view!='mesas'||mode!='m'||jn)return;
+ const c=e.target.closest('.mesa[data-m]');if(!c||!c.dataset.m||e.target.closest('button'))return;
+ DR={id:+c.dataset.m,el:c,x:e.clientX,y:e.clientY,on:false,t:e.pointerType,armed:e.pointerType!='touch',to:null};
+ if(DR.t=='touch')DR.tm=setTimeout(()=>{if(DR){DR.armed=true;try{navigator.vibrate&&navigator.vibrate(15)}catch(_){}}},280)});
+document.addEventListener('pointermove',e=>{
+ if(!DR)return;const d=Math.hypot(e.clientX-DR.x,e.clientY-DR.y);
+ if(!DR.on){
+  if(DR.t=='touch'&&!DR.armed){if(d>10)dragEnd(false);return}
+  if(d<6)return;
+  DR.on=true;const r=DR.el.getBoundingClientRect(),g=DR.el.cloneNode(true);
+  g.classList.add('ghost');g.style.cssText=`width:${r.width}px;height:${r.height}px;left:${r.left}px;top:${r.top}px`;
+  document.body.appendChild(g);DR.g=g;DR.ox=e.clientX-r.left;DR.oy=e.clientY-r.top;DR.el.classList.add('dragging')}
+ DR.g.style.left=e.clientX-DR.ox+'px';DR.g.style.top=e.clientY-DR.oy+'px';
+ const el=document.elementFromPoint(e.clientX,e.clientY),t=el&&el.closest('.mesa[data-m]'),tid=t&&t.dataset.m?+t.dataset.m:null;
+ document.querySelectorAll('.mesa.drop').forEach(x=>x.classList.remove('drop'));
+ if(tid!=null&&dropOk(DR.id,tid)){t.classList.add('drop');DR.to=tid}else DR.to=null});
+function dragEnd(ok){if(!DR)return;clearTimeout(DR.tm);const d=DR;DR=null;
+ if(d.g)d.g.remove();d.el.classList.remove('dragging');document.querySelectorAll('.mesa.drop').forEach(x=>x.classList.remove('drop'));
+ if(d.on){dragSup=true;setTimeout(()=>dragSup=false,60);if(ok&&d.to!=null){jn={a:d.id,b:d.to};render()}}}
+document.addEventListener('pointerup',()=>dragEnd(true));
+document.addEventListener('pointercancel',()=>dragEnd(false));
+document.addEventListener('touchmove',e=>{if(DR&&(DR.on||DR.armed))e.preventDefault()},{passive:false});
+document.addEventListener('click',e=>{if(dragSup){e.stopPropagation();e.preventDefault();dragSup=false}},true);
+const IC2={
+link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+card:'<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',
+deb:'<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><rect x="6" y="9.5" width="4.5" height="3.5" rx="1"/><path d="M14 15h4"/>',
+cash:'<rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.8"/><path d="M6 12h.01M18 12h.01"/>',
+vale:'<path d="M3.5 7.5h17v3a1.8 1.8 0 0 0 0 3.5v3h-17v-3a1.8 1.8 0 0 0 0-3.5z"/><path d="M14.5 7.5v9" stroke-dasharray="1.8 2"/>',
+ok:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+x:'<path d="M6 6l12 12M18 6L6 18"/>',
+rec:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>'};
+const sv=(k,s=20)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" style="width:${s}px;height:${s}px">${IC2[k]}</svg>`;
+const PXD='M4.25 4.282c.55 0 1.066.214 1.454.602l2.108 2.108a.39.39 0 0 0 .552 0l2.1-2.1a2.044 2.044 0 0 1 1.453-.602h.253L9.503 1.623a2.127 2.127 0 0 0-3.007 0l-2.66 2.66h.414z';
+const pixLogo=(s=22)=>`<svg viewBox="0 0 16 16" width="${s}" height="${s}" style="width:${s}px;height:${s}px" aria-hidden="true"><g fill="#32BCAD" stroke="none">${[0,90,180,270].map(a=>`<path transform="rotate(${a} 8 8)" d="${PXD}"/>`).join('')}</g></svg>`;
+function qrSvg(seed,n=25){let h=0;for(const ch of String(seed))h=(h*31+ch.charCodeAt(0))>>>0;const rnd=()=>(h=(h*1664525+1013904223)>>>0)/4294967296;
+ const F=[[0,0],[n-7,0],[0,n-7]];let d='';
+ for(let y=0;y<n;y++)for(let x=0;x<n;x++){let on;const f=F.find(([a,b])=>x>=a&&x<a+7&&y>=b&&y<b+7);
+  if(f){const dx=x-f[0],dy=y-f[1];on=dx==0||dx==6||dy==0||dy==6||(dx>=2&&dx<=4&&dy>=2&&dy<=4)}
+  else if((x<8&&y<8)||(x>=n-8&&y<8)||(x<8&&y>=n-8))on=false;
+  else if(Math.abs(x-12)<4&&Math.abs(y-12)<4)on=false;
+  else on=rnd()>.5;
+  if(on)d+=`M${x} ${y}h1v1h-1z`}
+ return `<svg viewBox="0 0 ${n} ${n}" style="width:100%;height:100%" shape-rendering="crispEdges"><path d="${d}" fill="#0b1220" stroke="none"/></svg>`}
+function pixCode(v){return '00020126360014br.gov.bcb.pix0114+558199999000052040000530398654'+String(v.toFixed(2).length).padStart(2,'0')+v.toFixed(2)+'5802BR5909PDV FACIL6007RECIFE62070503***6304EXMP'}
+function cpPix(v){const c=pixCode(v);try{navigator.clipboard.writeText(c).then(()=>toast('Código Pix copiado'),()=>toast('Não foi possível copiar'))}catch(e){toast('Não foi possível copiar')}}
+function trc(v){const r=+($('#rc').value)||0;$('#tr').textContent=R(Math.max(0,r-v))}
+function rcSet(n,v){$('#rc').value=n.toFixed(2);trc(v)}
+const MQ='<svg viewBox="0 0 120 120" style="width:84px;height:84px;flex-shrink:0;stroke:none" aria-hidden="true"><rect x="30" y="6" width="60" height="108" rx="11" fill="#1e293b"/><rect x="38" y="15" width="44" height="28" rx="5" fill="#14b8a6"/><path d="M46 29h28" stroke="#04201c" stroke-width="3.5" stroke-linecap="round"/><g fill="#64748b">'+[56,70,84,98].map(y=>[44,60,76].map(x=>`<circle cx="${x}" cy="${y}" r="3.6"/>`).join('')).join('')+'</g></svg>';
+function payBox(f,v){
+ if(f=='Pix')return `<div class="pm-pix"><div class="qr">${qrSvg(v.toFixed(2))}<span class="qrl">${pixLogo(28)}</span></div><div class="pm-pixi"><div class="pm-pixh">${pixLogo(20)}<b>Pagamento via Pix</b></div><p>Abra o app do banco, escolha Pix e aponte a câmera para o QR Code.</p><span class="pm-st"><i></i>Aguardando pagamento</span><div class="pm-code"><code>${pixCode(v)}</code><button class="btn" onclick="cpPix(${+v.toFixed(2)})">${sv('copy',16)}Copiar</button></div><small style="color:var(--mu)">Ilustração do Pix. Nenhuma cobrança real é gerada no protótipo.</small></div></div>`;
+ if(f=='Dinheiro'){const o=[...new Set([+v.toFixed(2),Math.ceil(v/10)*10,50,100,200].filter(n=>n>=v-.001))].slice(0,4);
+  return `<div class="pm-cash"><label style="color:var(--mu);font-size:12px;font-weight:600">Valor recebido</label><input id="rc" type="number" step="0.01" inputmode="decimal" placeholder="0,00" oninput="trc(${+v.toFixed(2)})"><div class="pm-q">${o.map((n,i)=>`<button class="chip" onclick="rcSet(${n},${+v.toFixed(2)})">${i?R(n).replace(',00',''):'Exato'}</button>`).join('')}</div><div class="pm-tr"><span>Troco</span><b id="tr">${R(0)}</b></div></div>`}
+ const t={Débito:'Insira ou aproxime o cartão de débito.',Crédito:'Insira ou aproxime o cartão de crédito.',Cartão:'Insira, passe ou aproxime o cartão.',Vale:'Passe o vale-refeição ou alimentação.'}[f];
+ return `<div class="pm-mq">${MQ}<div><b>Aguardando a maquininha</b><p style="margin:4px 0 8px;color:var(--mu)">${t}</p><span class="pm-st"><i></i>Aguardando pagamento</span></div></div>`}
+function payModal({t,n,v,lines,ms,fn}){
+ const I={Pix:pixLogo(24),Cartão:sv('card',22),Débito:sv('deb',22),Crédito:sv('card',22),Dinheiro:sv('cash',22),Vale:sv('vale',22)};
+ const c=typeof cl=='function'?cl():null,cu=S.cpf?[['Cliente',c?esc(c.nome):'CPF '+fcpf(S.cpf)]]:[];
+ return `<div class="mod" onclick="pay=null;render()"><div class="card pm" onclick="event.stopPropagation()" role="dialog" aria-label="${esc(t)}">
+ <div class="pm-h"><span class="bd">${sv('rec',22)}</span><div><h3>${esc(t)}</h3><small>${n} ${n==1?'item':'itens'} · escolha a forma de pagamento</small></div><button class="pm-x" onclick="pay=null;render()" aria-label="Fechar">${sv('x',18)}</button></div>
+ <div class="pm-sum"><small>Total a pagar</small><div class="pm-big">${R(v)}</div>${lines.concat(cu).map(([a,b])=>`<div class="pm-ln"><span>${a}</span><span>${b}</span></div>`).join('')}</div>
+ <div class="pm-sec">Forma de pagamento</div>
+ <div class="pm-opts">${ms.map((f,i)=>`<button class="pm-o ${pay==f?'on':''}" onclick="pay='${f}';render()"><span class="ib">${I[f]}</span>${f}<span class="k">${i+1}</span><span class="ck">${sv('ok',11)}</span></button>`).join('')}</div>
+ <div class="pm-box">${payBox(pay,v)}</div>
+ <div class="pm-f"><button class="btn" onclick="pay=null;render()">Cancelar</button><button class="btn p" onclick="${fn}">${sv('ok',18)}${pay=='Pix'?'Confirmar recebimento':'Confirmar pagamento'}</button></div></div></div>`}
+function vPay(){const m=G(),s=tot(m),tx=S.taxa?s*.1:0;
+ return payModal({t:'Fechar '+lbl(),n:m.items.reduce((a,i)=>a+i.q,0),v:s+tx,lines:[['Subtotal',R(s)]].concat(S.taxa?[['Serviço 10%',R(tx)]]:[]),ms:['Pix','Cartão','Dinheiro','Vale'],fn:'fechar()'})}
+function vPayV(){const s=tot(S.cart),d=dsc(s);
+ return payModal({t:'Finalizar venda',n:S.cart.items.reduce((a,i)=>a+i.q,0),v:s-d,lines:[['Subtotal',R(s)]].concat(d?[['Desconto','− '+R(d)]]:[]),ms:['Pix','Débito','Crédito','Dinheiro'],fn:'fecharV()'})}
+const fechar=once(async function(){
+ const v=tot(G())*(S.taxa?1.1:1);
+ if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');
+ const c=cl(),gid=G().g||null;
+ try{S.mov.push(await addMov({desc:lbl()+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null,gid}))}catch(e){return dbErr(e)}
+ if(cur.k=='m')freeM(cur.id);else delete S.cmds[cur.id];
+ S.cpf='';pay=null;toast('Pagamento registrado');go('mesas');
+})
+const sum=f=>S.mov.filter(f).reduce((a,x)=>a+x.val,0);
+function frm(fields,fn,label){return `<div class="frm">${fields}<button class="btn p" onclick="${fn}">${label}</button></div>`}
+function tbl(a){return `<div class="wrap"><table><tr><th>Hora</th><th>Descrição</th><th>Forma</th><th>Valor</th></tr>${a.map(x=>`<tr><td>${x.t}</td><td>${esc(x.desc)}<br><small style="color:var(--mu)">${x.cat}</small></td><td>${x.forma}</td><td class="${x.tipo}">${x.tipo=='in'?'+':'−'} ${R(x.val)}</td></tr>`).join('')}</table></div>`}
+const sumH=f=>S.mov.filter(x=>isHoje(x)&&f(x)).reduce((a,x)=>a+x.val,0);
+function vCaixa(){
+ const din=sumH(x=>x.forma=='Dinheiro'&&x.tipo=='in')-sumH(x=>x.forma=='Dinheiro'&&x.tipo=='out');
+ const n=S.mov.filter(x=>isHoje(x)&&x.cat=='Vendas').length,ven=sumH(x=>x.cat=='Vendas');
+ return head('Caixa')+kp([['Status','Aberto'],['Vendas do turno',R(ven)],['Dinheiro em caixa',R(din)],['Ticket médio',R(ven/Math.max(1,n))]])+
+ `<div class="card"><h3>Movimentações</h3>${tbl(S.mov.filter(isHoje).reverse())}${frm(`<input id="cd" placeholder="Descrição"><input id="cv" type="number" step="0.01" placeholder="Valor"><select id="ct"><option value="out">Sangria</option><option value="in">Suprimento</option></select>`,'caixaAdd()','Lançar')}</div>`
+}
+const caixaAdd=once(async function(){const v=parseFloat($('#cv').value),t=$('#ct').value;if(!v||v<=0)return toast('Informe o valor');
+ try{S.mov.push(await addMov({desc:$('#cd').value||(t=='out'?'Sangria':'Suprimento'),tipo:t,val:v,forma:'Dinheiro',cat:t=='out'?'Sangria':'Suprimento'}));render()}catch(e){dbErr(e)}});
+function vCad(){
+ const body=`<div class="wrap"><table><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Código</th><th>Estoque</th><th></th></tr>${S.prods.map(p=>`<tr><td>${esc(p.nome)}</td><td>${esc(p.cat)}</td><td>${R(p.preco)}</td><td>${esc(p.cod||'—')}</td><td>${p.est==null?'—':p.est<=5?`<span class="bd ${p.est?'':'z'}">${p.est}</span>`:p.est}</td><td><button class="btn" onclick="delP(${p.id})">Excluir</button></td></tr>`).join('')}</table></div>${S.prods.length?'':`<div class="emp">Nenhum produto ainda. Cadastre o primeiro abaixo.</div>`}`+
+ frm(`<input id="pn" placeholder="Nome do produto"><input id="pc" placeholder="Categoria"><input id="pp" type="number" step="0.01" placeholder="Preço"><input id="pk" placeholder="Código de barras"><input id="pe" type="number" min="0" placeholder="Estoque">`,'addProd()','Adicionar');
+ const gbody=(S.garcons.length?`<div class="wrap"><table><tr><th>Garçom</th><th>Telefone</th><th>Em atendimento</th><th>Vendas</th><th></th></tr>${S.garcons.map(g=>{const s=gStat(g.id);return `<tr><td><b>${esc(g.nome)}</b></td><td>${fone(g.tel)}</td><td>${s.ab||'—'}</td><td>${s.n?s.n+' · '+R(s.t):'<small style="color:var(--mu)">nenhuma</small>'}</td><td style="text-align:right"><button class="btn" onclick="delGar(${g.id})">Excluir</button></td></tr>`}).join('')}</table></div>`:`<div class="emp">Nenhum garçom cadastrado. Cadastre abaixo: eles aparecerão para escolha nas mesas e comandas.</div>`)+frm(`<input id="gn" placeholder="Nome do garçom" autocomplete="off"><input id="gt" inputmode="tel" placeholder="Telefone (opcional)" autocomplete="off">`,'addGar()','Adicionar');
+ const tb=rst()?ctab:'prod';
+ return head('Cadastros')+`<div class="chips"><button class="chip ${tb=='prod'?'on':''}" onclick="ctab='prod';render()">Produtos (${S.prods.length})</button>${rst()?`<button class="chip ${tb=='gar'?'on':''}" onclick="ctab='gar';render()">Garçons (${S.garcons.length})</button>`:''}</div><div class="card">${tb=='gar'?gbody:body}</div>`
+}
+const rst=()=>S.seg!='varejo';
+const gn=m=>{const g=S.garcons.find(x=>x.id==m.g);return g?g.nome:''};
+const gtag=m=>rst()&&m.g&&gn(m)?' · '+esc(gn(m)):'';
+const gStat=id=>{const v=S.mov.filter(x=>x.gid==id);return {n:v.length,t:v.reduce((a,x)=>a+x.val,0),ab:[...Object.values(S.mesas),...Object.values(S.cmds)].filter(o=>o.g==id).length}};
+const addGar=once(async function(){const n=$('#gn').value.trim();if(!n)return toast('Informe o nome do garçom');
+ try{const r=await DBX(sb.from('garcons').insert({nome:n,telefone:$('#gt').value.trim()}).select().single());S.garcons.push(mG(r));toast('Garçom cadastrado');render()}catch(e){dbErr(e)}});
+const delGar=once(async function(id){if(gStat(id).ab)return toast('Garçom com atendimento em aberto');
+ try{await DBX(sb.from('garcons').delete().eq('id',id));S.garcons=S.garcons.filter(g=>g.id!=id);render()}catch(e){dbErr(e)}});
+function setG(v){G().g=+v||null}
+const addProd=once(async function(){const n=$('#pn').value.trim(),p=parseFloat($('#pp').value);if(!n||!p)return toast('Preencha nome e preço');
+ try{const r=await DBX(sb.from('produtos').insert({nome:n,categoria:$('#pc').value.trim()||'Geral',preco:p,codigo:$('#pk').value.trim(),estoque:$('#pe').value===''?null:parseInt($('#pe').value)}).select().single());S.prods.push(mP(r));toast('Produto cadastrado');render()}catch(e){dbErr(e)}});
+const delP=once(async function(id){const used=[...Object.values(S.mesas),...Object.values(S.cmds),S.cart].some(o=>o.items.some(i=>i.id==id));if(used)return toast('Produto em uso em um atendimento aberto');
+ try{await DBX(sb.from('produtos').delete().eq('id',id));S.prods=S.prods.filter(p=>p.id!=id);render()}catch(e){dbErr(e)}});
 
-$('eye').addEventListener('click', e => {
-  const p = $('pass'), on = p.type === 'password';
-  p.type = on ? 'text' : 'password';
-  e.currentTarget.textContent = on ? 'Ocultar' : 'Mostrar';
-  e.currentTarget.setAttribute('aria-pressed', String(on));
+const compras=c=>S.mov.filter(x=>x.cat=='Vendas'&&(x.cid==c.id||(!x.cid&&x.cpf&&x.cpf==c.cpf)));
+const fone=t=>t&&t!='—'?esc(t):'—';
+function cliRows(){
+ const t=cq.trim().toLowerCase(),td=dg(cq),l=S.clientes.filter(c=>!t||c.nome.toLowerCase().includes(t)||(c.tel||'').toLowerCase().includes(t)||(td&&(c.cpf||'').includes(td))).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+ if(!l.length)return `<div class="emp">${S.clientes.length?'Nenhum cliente encontrado.':'Nenhum cliente cadastrado ainda.'}</div>`;
+ return `<div class="wrap"><table><tr><th>Nome</th><th>Telefone</th><th>CPF</th><th>Compras</th><th></th></tr>${l.map(c=>{const v=compras(c),tt=v.reduce((a,x)=>a+x.val,0);return `<tr><td><b>${esc(c.nome)}</b></td><td>${fone(c.tel)}</td><td>${c.cpf?fcpf(c.cpf):'—'}</td><td>${v.length?`${v.length} · ${R(tt)}`:'<small style="color:var(--mu)">nenhuma</small>'}</td><td style="white-space:nowrap;text-align:right"><button class="btn" onclick="cv=${c.id};render()">Ver</button> <button class="btn" onclick="cm={id:${c.id}};render()">Editar</button> <button class="btn" onclick="delCli(${c.id})">Excluir</button></td></tr>`}).join('')}</table></div>`
+}
+function vCli(){
+ const n=S.clientes.length,comp=S.clientes.filter(c=>compras(c).length).length;
+ return head('Clientes','<button class="btn p" onclick="cm={id:null};render()">+ Novo cliente</button>')+kp([['Clientes cadastrados',n],['Já compraram',comp],['Sem compras',n-comp]])+
+ `<div class="card"><input id="cqi" class="srch" placeholder="Buscar por nome, CPF ou telefone" value="${esc(cq)}" oninput="cq=this.value;$('#cl').innerHTML=cliRows()"><div id="cl">${cliRows()}</div></div>`
+}
+function vCliForm(){
+ const c=cm.id?S.clientes.find(k=>k.id==cm.id):{nome:'',tel:'',cpf:'',email:'',obs:''};
+ return `<div class="mod" onclick="cm=null;render()"><div class="card" onclick="event.stopPropagation()"><h3>${cm.id?'Editar cliente':'Novo cliente'}</h3>
+ <div class="frm" style="flex-direction:column;margin-top:0"><input id="kn" placeholder="Nome completo" value="${esc(c.nome)}" autocomplete="off"><input id="kc" inputmode="numeric" placeholder="CPF" value="${fcpf(c.cpf||'')}" oninput="this.value=fcpf(dg(this.value))" autocomplete="off"><input id="kt" inputmode="tel" placeholder="Telefone" value="${c.tel&&c.tel!='—'?esc(c.tel):''}"><input id="ke" type="email" placeholder="E-mail (opcional)" value="${esc(c.email||'')}"><input id="ko" placeholder="Observações (opcional)" value="${esc(c.obs||'')}"></div>
+ <button class="btn p g" onclick="saveCli()">${cm.id?'Salvar alterações':'Cadastrar cliente'}</button><button class="btn g" onclick="cm=null;render()">Cancelar</button></div></div>`
+}
+function vCliVer(){
+ const c=S.clientes.find(k=>k.id==cv);if(!c)return '';
+ const v=compras(c),tt=v.reduce((a,x)=>a+x.val,0),row=(l,x)=>`<div class="row"><span style="color:var(--mu)">${l}</span><span style="text-align:right">${x}</span></div>`;
+ return `<div class="mod" onclick="cv=null;render()"><div class="card" onclick="event.stopPropagation()" style="max-height:90vh;overflow:auto"><h3>${esc(c.nome)}</h3>
+ ${row('CPF',c.cpf?fcpf(c.cpf):'—')}${row('Telefone',fone(c.tel))}${row('E-mail',c.email?esc(c.email):'—')}${row('Observações',c.obs?esc(c.obs):'—')}
+ <h3 style="margin-top:14px">Compras · ${v.length} · ${R(tt)}</h3>
+ ${v.length?`<div class="wrap"><table><tr><th>Hora</th><th>Forma</th><th>Valor</th></tr>${v.slice().reverse().map(x=>`<tr><td>${x.t}</td><td>${x.forma}</td><td>${R(x.val)}</td></tr>`).join('')}</table></div>`:'<p class="hint">Este cliente ainda não tem compras.</p>'}
+ <button class="btn p g" onclick="cm={id:${c.id}};cv=null;render()">Editar</button><button class="btn g" onclick="cv=null;render()">Fechar</button></div></div>`
+}
+const saveCli=once(async function(){
+ const n=$('#kn').value.trim(),c=dg($('#kc').value);
+ if(!n)return toast('Informe o nome');
+ if(!c)return toast('Informe o CPF');
+ if(!okCpf(c))return toast('CPF inválido');
+ if(S.clientes.some(k=>k.cpf==c&&k.id!=cm.id))return toast('CPF já cadastrado');
+ const d={nome:n,cpf:c,telefone:$('#kt').value.trim(),email:$('#ke').value.trim(),obs:$('#ko').value.trim()};
+ try{
+  if(cm.id){const r=await DBX(sb.from('clientes').update(d).eq('id',cm.id).select().single());Object.assign(S.clientes.find(k=>k.id==cm.id),mC(r))}
+  else{const r=await DBX(sb.from('clientes').insert(d).select().single());S.clientes.push(mC(r))}
+  toast(cm.id?'Cliente atualizado':'Cliente cadastrado');cm=null;render()
+ }catch(e){e&&e.code=='23505'?toast('CPF já cadastrado'):dbErr(e)}
 });
-
-$('fill').addEventListener('click', () => {
-  $('email').value = CONFIG.DEMO_USER.email; $('pass').value = CONFIG.DEMO_USER.password;
-  setMsg(''); go.focus();
+const delCli=once(async function(id){
+ const c=S.clientes.find(k=>k.id==id);if(!c||!confirm('Excluir "'+c.nome+'"? O histórico de compras continua no caixa.'))return;
+ try{await DBX(sb.from('clientes').delete().eq('id',id));S.clientes=S.clientes.filter(k=>k.id!=id);toast('Cliente excluído');render()}catch(e){dbErr(e)}
 });
+function vFin(){
+ const rec=sum(x=>x.cat=='Vendas'),des=sum(x=>x.tipo=='out'&&x.cat!='Sangria');
+ const fm=['Pix','Cartão','Dinheiro','Vale'].map(f=>[f,sum(x=>x.cat=='Vendas'&&x.forma==f)]),mx=Math.max(1,...fm.map(x=>x[1]));
+ return head('Financeiro')+kp([['Receitas · 90 dias',R(rec)],['Despesas · 90 dias',R(des)],['Resultado · 90 dias',R(rec-des)]])+
+ `<div class="pos" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card"><h3>Vendas por forma de pagamento</h3>${fm.map(([f,v])=>`<div style="margin-bottom:10px"><div class="row"><span>${f}</span><b>${R(v)}</b></div><div class="bar" style="width:${v/mx*100}%"></div></div>`).join('')}</div>
+ <div class="card"><h3>Lançar despesa</h3><div class="frm"><input id="fd" placeholder="Descrição"><input id="fv" type="number" step="0.01" placeholder="Valor"><select id="fc2"><option>Insumos</option><option>Pessoal</option><option>Aluguel</option><option>Contas</option><option>Outros</option></select><button class="btn p" onclick="addDes()">Lançar</button></div></div></div>
+ <div class="card" style="margin-top:14px"><h3>Lançamentos</h3>${tbl(S.mov.slice().reverse())}</div>`
+}
+const addDes=once(async function(){const v=parseFloat($('#fv').value);if(!v||v<=0)return toast('Informe o valor');
+ try{S.mov.push(await addMov({desc:$('#fd').value||'Despesa',tipo:'out',val:v,forma:'Banco',cat:$('#fc2').value}));render()}catch(e){dbErr(e)}});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+try{const t=localStorage.getItem('th');if(t)document.documentElement.dataset.theme=t}catch(e){}
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t=='dark':matchMedia('(prefers-color-scheme:dark)').matches};
+function tth(){const t=isDark()?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('th',t)}catch(e){}render()}
+const dsc=s=>Math.min(s,S.dt=='%'?s*S.dsc/100:S.dsc);
+const pgrid=()=>{const t=q.toLowerCase(),ps=S.prods.filter(p=>(cat=='Todos'||p.cat==cat)&&(!t||p.nome.toLowerCase().includes(t)||(p.cod||'').includes(t)));
+ return ps.length?ps.map(p=>{const z=p.est===0;return `<button class="prod ${z?'z':''}" onclick="vAdd(${p.id})"><b>${esc(p.nome)}</b><span>${R(p.preco)}</span>${p.est==null?'':`<br><span class="bd ${z?'z':p.est<=5?'':'n'}">${z?'Sem estoque':p.est+' un.'}</span>`}</button>`}).join(''):'<div class="emp">Nenhum produto encontrado.</div>'};
+function vVenda(){
+ const c=S.cart,sub=tot(c),d=dsc(sub),qtd=c.items.reduce((a,i)=>a+i.q,0),cats=['Todos',...new Set(S.prods.map(p=>p.cat))];
+ const vs=S.mov.filter(x=>x.cat=='Vendas'),fat=vs.reduce((a,x)=>a+x.val,0),low=S.prods.filter(p=>p.est!=null&&p.est<=5).length;
+ const left=S.prods.length?`<input id="bq" class="srch" placeholder="Buscar produto ou bipar código de barras (F2)" value="${esc(q)}" oninput="q=this.value;$('#pg').innerHTML=pgrid()" onkeydown="if(event.key=='Enter')bar()"><div class="chips">${cats.map(x=>`<button class="chip ${x==cat?'on':''}" onclick="cat='${x}';render()">${x}</button>`).join('')}</div><div class="grid" id="pg">${pgrid()}</div>`:`<div class="card emp">Nenhum produto cadastrado ainda.<br><br><button class="btn p" onclick="loadEx()">Carregar exemplos de ${SEG[S.seg].nome}</button> <button class="btn" onclick="go('cad')">Ir para Cadastros</button></div>`;
+ return head('Venda rápida')+kp([['Vendas hoje',vs.length],['Faturamento',R(fat)],['Ticket médio',R(fat/Math.max(1,vs.length))],['Estoque baixo',low]])+
+ `<p class="hint">F2 buscar · F3 CPF · F4 finalizar · F6 desconto · F9 limpar · F1 todos os atalhos</p><div class="pos"><div>${left}</div><div class="card" style="align-self:start"><h3>Carrinho · ${qtd} ${qtd==1?'item':'itens'}</h3>${c.items.length?c.items.map(i=>{const p=P(i.id);return `<div class="it"><div><b>${esc(p.nome)}</b><br><small style="color:var(--mu)">${R(p.preco)}</small></div><div class="q"><button onclick="vChg(${i.id},-1)" aria-label="Diminuir">−</button>${i.q}<button onclick="vChg(${i.id},1)" aria-label="Aumentar">+</button></div><b>${R(p.preco*i.q)}</b></div>`}).join(''):'<p style="color:var(--mu)">Bipe o código ou toque nos produtos.</p>'}
+ <div style="margin-top:12px"><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF do cliente (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div></div>
+ <div class="frm"><input id="dv" type="number" min="0" step="0.01" placeholder="Desconto (F6)" value="${S.dsc||''}" onchange="S.dsc=Math.max(0,+this.value||0);render()"><select onchange="S.dt=this.value;render()"><option value="%" ${S.dt=='%'?'selected':''}>%</option><option value="R" ${S.dt=='R'?'selected':''}>R$</option></select></div>
+ <div class="row" style="margin-top:10px"><span>Subtotal</span><span>${R(sub)}</span></div><div class="row"><span>Desconto</span><span>− ${R(d)}</span></div><div class="row tot"><span>Total</span><span>${R(sub-d)}</span></div>
+ <button class="btn p g" ${c.items.length?'':'disabled'} onclick="pay='Pix';render()">Finalizar venda (F4)</button><button class="btn g" ${c.items.length?'':'disabled'} onclick="limpa()">Limpar carrinho (F9)</button></div></div>`
+}
+function bar(){const t=q.trim(),r=S.prods.filter(x=>x.cod&&x.cod==t),l=r.length?r:S.prods.filter(x=>x.nome.toLowerCase().includes(t.toLowerCase()));if(l.length!=1)return toast('Produto não encontrado');q='';vAdd(l[0].id)}
+function vAdd(id){const p=P(id),i=S.cart.items.find(x=>x.id==id),n=(i?i.q:0)+1;if(p.est!=null&&n>p.est)return toast(p.est?'Estoque insuficiente':'Produto sem estoque');i?i.q++:S.cart.items.push({id,q:1});render()}
+function vChg(id,d){const i=S.cart.items.find(x=>x.id==id),p=P(id);if(d>0&&p.est!=null&&i.q+1>p.est)return toast('Estoque insuficiente');i.q+=d;if(i.q<1)S.cart.items=S.cart.items.filter(x=>x!=i);render()}
 
-$('form').addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = $('email').value.trim().toLowerCase(), pass = $('pass').value;
-  const fail = t => { setMsg(t, 'err'); ticket.classList.remove('shake'); void ticket.offsetWidth; ticket.classList.add('shake'); };
-  if (!validEmail(email)) { fail('Digite um e-mail válido.'); $('email').focus(); return; }
-  if (!pass) { fail('Digite sua senha.'); $('pass').focus(); return; }
-  go.disabled = true; go.textContent = 'Abrindo…'; setMsg('');
-  try {
-    const r = await Auth.signIn(email, pass);
-    if (r.error) { fail(r.error); $('pass').select(); }
-    else { $('pass').value = ''; showOk(r.session); }
-  } catch (err) { fail(err.message || 'Não foi possível entrar. Tente de novo.'); }
-  go.disabled = false; go.textContent = 'Abrir caixa';
+const fecharV=once(async function(){const s=tot(S.cart),v=s-dsc(s);if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');if(pay=='Dinheiro'&&(+(($('#rc')||{}).value)||0)<v-.001)return toast('Valor recebido menor que o total');
+ const c=cl();
+ try{S.mov.push(await addMov({desc:'Venda'+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null}))}catch(e){return dbErr(e)}
+ const bx=[];S.cart.items.forEach(i=>{const p=P(i.id);if(p.est!=null){p.est-=i.q;bx.push(DBX(sb.from('produtos').update({estoque:p.est}).eq('id',p.id)))}});
+ try{await Promise.all(bx)}catch(e){dbErr(e)}
+ S.cart={items:[]};S.dsc=0;S.cpf='';pay=null;toast('Venda registrada');render()})
+const dg=s=>String(s).replace(/\D/g,'').slice(0,11);
+const fcpf=d=>d.replace(/(\d{3})(\d{0,3})(\d{0,3})(\d{0,2})/,(m,a,b,c,e)=>a+(b?'.'+b:'')+(c?'.'+c:'')+(e?'-'+e:''));
+function okCpf(c){if(c.length!=11||/^(\d)\1+$/.test(c))return false;for(let t=9;t<11;t++){let s=0;for(let i=0;i<t;i++)s+=c[i]*(t+1-i);if((s*10%11)%10!=c[t])return false}return true}
+const cl=()=>S.cpf.length==11?S.clientes.find(k=>k.cpf==S.cpf):null;
+function cpfIn(e){const d=dg(e.value);e.value=fcpf(d);S.cpf=d;if(view=='pos'&&cur)G().cpf=d;cpfSt()}
+function cpfSt(){const e=$('#cs');if(!e)return;const d=S.cpf,c=cl();
+ e.innerHTML=!d?'<small style="color:var(--mu)">Opcional. Digite o CPF para puxar o cliente do cadastro.</small>':d.length<11?'':!okCpf(d)?'<small style="color:var(--ba)">CPF inválido</small>':c?`<div style="background:var(--okb);border-radius:8px;padding:8px 10px"><small style="color:var(--ok)">✓ Cliente cadastrado</small><br><b>${esc(c.nome)}</b>${c.tel&&c.tel!='—'?`<br><small style="color:var(--mu)">${esc(c.tel)}</small>`:''}</div>`:`<small style="color:var(--wa)">CPF não cadastrado. Cadastre agora:</small><div class="frm" style="margin:6px 0 0"><input id="cn2" placeholder="Nome" autocomplete="off"><input id="ct2" inputmode="tel" placeholder="Telefone (opcional)" autocomplete="off"><button class="btn" onclick="cpfCad()">Cadastrar</button></div>`}
+function cpfCad(){const n=$('#cn2').value.trim();if(!n)return toast('Informe o nome');S.clientes.push({id:++S.kid,nome:n,tel:$('#ct2').value.trim()||'—',cpf:S.cpf,email:'',obs:''});toast('Cliente cadastrado');cpfSt()}
+function limpa(){S.cart={items:[]};S.dsc=0;S.cpf='';render()}
+function vHelp(){const L=[['F1','Mostrar ou fechar atalhos'],['F2','Buscar produto ou bipar código'],['F3','CPF do cliente'],['F4','Finalizar venda'],['F6','Desconto'],['F9','Limpar carrinho'],['1 a 4','Forma de pagamento'],['Enter','Confirmar pagamento'],['Esc','Fechar janela ou voltar'],['Alt + 1 a 5','Venda, Caixa, Cadastros, Clientes, Financeiro']];
+ return `<div class="mod" onclick="help=false;render()"><div class="card" onclick="event.stopPropagation()"><h3>Atalhos do teclado</h3>${L.map(([a,b])=>`<div class="row"><span>${b}</span><span class="kb">${a}</span></div>`).join('')}<button class="btn g" onclick="help=false;render()">Fechar</button></div></div>`}
+document.addEventListener('keydown',e=>{
+ const k=e.key,t=e.target,typing=/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName),rv=view=='mesas'&&S.seg=='varejo',f=id=>{e.preventDefault();const x=$(id);x&&x.focus()};
+ if(k=='F1'){e.preventDefault();help=!help;return render()}
+ if(k=='Escape'){if(jn)jn=null;else if(help)help=false;else if(pay)pay=null;else if(cm)cm=null;else if(cv)cv=null;else if(view=='pos')return go('mesas');else return;return render()}
+ if(e.altKey&&['Digit1','Digit2','Digit3','Digit4','Digit5'].includes(e.code)){e.preventDefault();return go(['mesas','caixa','cad','cli','fin'][+e.code.slice(5)-1])}
+ if(jn){if(k=='Enter'){e.preventDefault();confirmJoin()}return}
+ if(help)return;
+ if(pay){
+  if(k=='Enter'&&t.tagName!='BUTTON'){e.preventDefault();return rv?fecharV():fechar()}
+  const fm=rv?['Pix','Débito','Crédito','Dinheiro']:['Pix','Cartão','Dinheiro','Vale'];
+  if(!typing&&'1234'.includes(k)&&k.length==1){pay=fm[+k-1];render()}
+  return}
+ if(rv){
+  if(k=='F2')f('#bq');else if(k=='F3')f('#cpf');else if(k=='F6')f('#dv');
+  else if(k=='F4'&&S.cart.items.length){e.preventDefault();pay='Pix';render()}
+  else if(k=='F9'){e.preventDefault();limpa()}
+ }else if(view=='pos'&&k=='F3')f('#cpf');
+ else if(view=='pos'&&k=='F4'&&G().items.length){e.preventDefault();pay='Pix';render()}
 });
-
-$('forgot').addEventListener('click', async () => {
-  const email = $('email').value.trim().toLowerCase();
-  if (!validEmail(email)) { setMsg('Digite seu e-mail acima primeiro.', 'err'); $('email').focus(); return; }
-  try {
-    const r = await Auth.resetPassword(email);
-    setMsg(r.error || 'Enviamos o link de nova senha, se o e-mail estiver cadastrado.', r.error ? 'err' : 'ok');
-  } catch (err) { setMsg(err.message, 'err'); }
-});
-
-$('enter').addEventListener('click', () => { if (CONFIG.REDIRECT_URL) location.href = CONFIG.REDIRECT_URL; });
-$('out').addEventListener('click', async () => {
-  try { await Auth.signOut(); } catch (e) {}
-  show('login'); setMsg('Você saiu do caixa.', 'ok');
-});
-
-/* ---------- Início ---------- */
-if (CONFIG.MODE === 'demo') $('fill').hidden = false;
-(async () => {
-  let s = null;
-  try { s = await Auth.getSession(); } catch (e) {}
-  if (s) showOk(s); else show('login');
-})();
+function render(){
+ nav();
+ const rv=view=='mesas'&&S.seg=='varejo';
+ $('#main').innerHTML=(rv?vVenda()+(pay?vPayV():''):({mesas:vSalao,pos:vPos,caixa:vCaixa,cad:vCad,cli:vCli,fin:vFin})[view]()+(pay&&cur?vPay():''))+(cm?vCliForm():'')+(cv?vCliVer():'')+(help?vHelp():'')+(jn?vJoin():'');
+ if(rv||view=='pos')cpfSt();
+ if(cm)setTimeout(()=>{const e=$('#kn');e&&e.focus()});
+ if(rv&&pay=='Dinheiro')setTimeout(()=>{const e=$('#rc');e&&e.focus()});
+ if(rv&&!pay&&!help&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
+}
+boot();
 </script>
 </body>
 </html>
