@@ -13,7 +13,7 @@
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--tx);font:14px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .app{display:flex;height:100%}
-nav{width:236px;background:var(--nv);color:#94a3b8;padding:18px 12px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;overflow:hidden;transition:width .25s ease,padding .25s ease,opacity .2s}
+nav{width:236px;background:var(--nv);color:#94a3b8;padding:18px 12px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;overflow-x:hidden;overflow-y:auto;transition:width .25s ease,padding .25s ease,opacity .2s}
 body.nav-off nav{width:0;padding-left:0;padding-right:0;opacity:0}
 .brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px;color:#fff;font-weight:700;font-size:16px;white-space:nowrap}
 .brand i{width:32px;height:32px;border-radius:9px;background:#0f766e;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:18px;color:#fff;font-family:Arial,Helvetica,sans-serif}
@@ -158,15 +158,59 @@ input:focus-visible,select:focus-visible,.btn:focus-visible,.chip:focus-visible,
 <div class="app"><nav id="nav"></nav><main id="main"></main></div>
 <div id="toast"></div>
 <script>
-const SEG={
-rest:{nome:'Restaurante',prods:[['Prato executivo','Pratos',32],['Filé à parmegiana','Pratos',48],['Salada Caesar','Entradas',26],['Refrigerante','Bebidas',7],['Suco natural','Bebidas',10],['Pudim','Sobremesas',14]]},
-bar:{nome:'Bar',prods:[['Chopp 300ml','Chopp',9],['Caipirinha','Drinks',18],['Gin tônica','Drinks',24],['Cerveja long neck','Cervejas',12],['Porção de fritas','Porções',32]]},
-lanch:{nome:'Lanchonete',prods:[['X-Burger','Lanches',22],['X-Bacon','Lanches',27],['Hot dog','Lanches',15],['Pastel','Salgados',9],['Milk shake','Bebidas',16]]},
-varejo:{nome:'Varejo / Loja',prods:[['Camiseta básica','Roupas',49.9,'7891000100011',24],['Calça jeans','Roupas',119.9,'7891000100028',3],['Meia (par)','Roupas',12.9,'7891000100035',40],['Boné','Acessórios',39.9,'7891000100042',12],['Fone de ouvido','Eletrônicos',69.9,'7891000100059',8],['Carregador USB-C','Eletrônicos',34.9,'7891000100066',0]]}
-};
+const SEG={rest:{nome:'Restaurante'},bar:{nome:'Bar'},lanch:{nome:'Lanchonete'},varejo:{nome:'Varejo / Loja'}};
 const mk=()=>({items:[],aberta:false,inv:false,hora:'',nome:'',cpf:'',g:null});
-const S={seg:'rest',taxa:true,prods:[],pid:0,nm:12,mesas:{},cmds:{},cn:0,garcons:[],gid:0,mov:[{t:'08:00',desc:'Abertura de caixa',tipo:'in',val:200,forma:'Dinheiro',cat:'Suprimento'}],clientes:[{id:1,nome:'Maria Souza',tel:'(81) 99999-0000',cpf:'52998224725',email:'',obs:''}],kid:1,cart:{items:[]},dsc:0,dt:'%',cpf:''};
+const S={seg:'rest',taxa:true,prods:[],pid:0,nm:12,mesas:{},cmds:{},cn:0,garcons:[],gid:0,mov:[],clientes:[],kid:0,cart:{items:[]},dsc:0,dt:'%',cpf:''};
 for(let i=1;i<=S.nm;i++)S.mesas[i]=mk();
+
+/* ===== Supabase: login, leitura e gravação ===== */
+const SB={url:'https://vgivsogjhduyxqyibbxj.supabase.co',key:'sb_publishable_hZDgAKKicAV8vBjFn2UT4A_4mjr5Ge3',sdk:'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js',login:'index.html'};
+let sb=null,USER='';
+window.addEventListener('error',e=>{console.error(e.error||e.message);toast('Erro na tela: '+e.message)});
+window.addEventListener('unhandledrejection',e=>{console.error(e.reason);toast('Erro: '+((e.reason&&e.reason.message)||e.reason))});
+const once=fn=>async(...a)=>{if(once.b)return;once.b=1;try{return await fn(...a)}finally{once.b=0}};
+async function DBX(p){const {data,error}=await p;if(error)throw error;return data}
+const dbErr=e=>toast('Não foi possível salvar: '+((e&&e.message)||e));
+const cfg=patch=>DBX(sb.from('empresas').update(patch).eq('id',S.empId)).catch(dbErr);
+const loadSdk=()=>new Promise((ok,no)=>{if(window.supabase)return ok();const t=document.createElement('script');t.src=SB.sdk;t.onload=ok;t.onerror=()=>no(new Error('Não foi possível carregar o Supabase'));document.head.appendChild(t)});
+const dataHora=d=>{const x=new Date(d),h=x.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return x.toDateString()==new Date().toDateString()?h:x.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+h};
+const isHoje=x=>new Date(x.at).toDateString()==new Date().toDateString();
+const mP=r=>({id:r.id,nome:r.nome,cat:r.categoria,preco:+r.preco,cod:r.codigo,est:r.estoque});
+const mC=r=>({id:r.id,nome:r.nome,cpf:r.cpf,tel:r.telefone||'—',email:r.email,obs:r.obs});
+const mG=r=>({id:r.id,nome:r.nome,tel:r.telefone||'—'});
+const mM=r=>({id:r.id,t:dataHora(r.criado_em),at:r.criado_em,desc:r.descricao,tipo:r.tipo,val:+r.valor,forma:r.forma,cat:r.categoria,cpf:r.cpf,cid:r.cliente_id,gid:r.garcom_id});
+const addMov=async m=>mM(await DBX(sb.from('movimentos').insert({descricao:m.desc,tipo:m.tipo,valor:m.val,forma:m.forma,categoria:m.cat,cpf:m.cpf||'',cliente_id:m.cid||null,garcom_id:m.gid||null}).select().single()));
+async function carregar(){
+ const desde=new Date(Date.now()-90*864e5).toISOString();
+ const [emp,pr,cl,ga,mv]=await Promise.all([
+  DBX(sb.from('empresas').select('*').limit(1).maybeSingle()),
+  DBX(sb.from('produtos').select('*').order('nome')),
+  DBX(sb.from('clientes').select('*').order('nome')),
+  DBX(sb.from('garcons').select('*').order('nome')),
+  DBX(sb.from('movimentos').select('*').gte('criado_em',desde).order('criado_em',{ascending:false}).limit(1000))
+ ]);
+ if(!emp)throw new Error('Usuário sem empresa vinculada');
+ S.empId=emp.id;S.seg=SEG[emp.segmento]?emp.segmento:'rest';S.taxa=emp.taxa_servico;S.nm=emp.qtd_mesas;
+ S.mesas={};for(let i=1;i<=S.nm;i++)S.mesas[i]=mk();
+ S.prods=pr.map(mP);S.clientes=cl.map(mC);S.garcons=ga.map(mG);S.mov=mv.reverse().map(mM);
+}
+async function sair(){try{await sb.auth.signOut()}catch(e){}location.replace(SB.login)}
+async function boot(){
+ $('#main').innerHTML='<div class="card emp">Carregando…</div>';
+ try{
+  await loadSdk();
+  sb=window.supabase.createClient(SB.url,SB.key);
+  const {data}=await sb.auth.getSession();
+  if(!data.session){location.replace(SB.login);return}
+  USER=data.session.user.email||'';
+  sb.auth.onAuthStateChange(ev=>{if(ev=='SIGNED_OUT')location.replace(SB.login)});
+  await carregar();
+ }catch(e){
+  $('#main').innerHTML='<div class="card emp">Não foi possível carregar os dados.<br><small>'+esc((e&&e.message)||e)+'</small><br><br><button class="btn p" onclick="location.reload()">Tentar de novo</button></div>';
+  return;
+ }
+ render();
+}
 let view='mesas',mode='m',cur=null,cat='Todos',pay=null,q='',help=false,cm=null,cv=null,cq='',ctab='prod';
 const $=s=>document.querySelector(s);
 const R=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -176,6 +220,7 @@ const tot=m=>m.items.reduce((a,i)=>a+i.q*P(i.id).preco,0);
 const G=()=>cur.k=='m'?S.mesas[cur.id]:S.cmds[cur.id];
 const lbl=()=>cur.k=='m'?(G().j?'Mesas '+G().j.join(' + '):'Mesa '+cur.id):'Comanda '+cur.id+(G().nome?' · '+G().nome:'');
 function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',2400)}
+function setSeg(v){S.seg=v;try{go('mesas')}catch(e){console.error(e);toast('Erro ao abrir '+((SEG[v]&&SEG[v].nome)||v)+': '+e.message)}cfg({segmento:v})}
 function go(v){view=v;cur=null;pay=null;cm=null;cv=null;render()}
 function tgl(){document.body.classList.toggle('nav-off')}
 const IC={
@@ -191,9 +236,9 @@ const ic=k=>`<svg viewBox="0 0 24 24">${IC[k]}</svg>`;
 function nav(){
  const a=view=='pos'?'mesas':view;
  const it=[['mesas',S.seg=='varejo'?'Venda rápida':'Atendimento'],['caixa','Caixa'],['cad','Cadastros'],['cli','Clientes'],['fin','Financeiro']];
- $('#nav').innerHTML=`<div class="brand"><i>P</i>PDV Fácil</div><div class="lb">Menu</div>`+it.map(([k,l])=>`<button class="${a==k?'on':''}" onclick="go('${k}')">${ic(k)}${l}</button>`).join('')+`<div class="sp"></div><div class="usr"><b>D</b><div>Diretoria<small>Caixa aberto</small></div></div>`;
+ $('#nav').innerHTML=`<div class="brand"><i>P</i>PDV Fácil</div><div class="lb">Menu</div>`+it.map(([k,l])=>`<button class="${a==k?'on':''}" onclick="go('${k}')">${ic(k)}${l}</button>`).join('')+`<div class="sp"></div><div class="usr"><b>${esc((USER||'D')[0].toUpperCase())}</b><div>${esc((USER||'Diretoria').split('@')[0])}<small><a href="#" onclick="sair();return false" style="color:inherit;text-decoration:underline">Sair</a></small></div></div>`;
 }
-function head(t,extra=''){return `<div class="top"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><h1>${t}</h1>${extra}<button class="btn ic" onclick="tth()" aria-label="Alternar tema claro/escuro">${ic(isDark()?'sun':'moon')}</button><select onchange="S.seg=this.value;go('mesas')" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>`}
+function head(t,extra=''){return `<div class="top"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><h1>${t}</h1>${extra}<button class="btn ic" onclick="tth()" aria-label="Alternar tema claro/escuro">${ic(isDark()?'sun':'moon')}</button><select onchange="setSeg(this.value)" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>`}
 function kp(a){return `<div class="kpis">${a.map(([l,v])=>`<div class="card kpi"><small>${l}</small><b>${v}</b></div>`).join('')}</div>`}
 function vSalao(){
  const ms=Object.entries(S.mesas).filter(([,m])=>!m.ref),cs=Object.entries(S.cmds);
@@ -212,8 +257,8 @@ function vSalao(){
  }
  return head('Atendimento',sg)+b;
 }
-function addMesa(){S.nm++;S.mesas[S.nm]=mk();render()}
-function delMesa(){const m=S.mesas[S.nm];if(!m)return;if(m.aberta||m.ref)return toast('A última mesa está ocupada');delete S.mesas[S.nm];S.nm--;render()}
+function addMesa(){S.nm++;S.mesas[S.nm]=mk();render();cfg({qtd_mesas:S.nm})}
+function delMesa(){const m=S.mesas[S.nm];if(!m)return;if(m.aberta||m.ref)return toast('A última mesa está ocupada');delete S.mesas[S.nm];S.nm--;render();cfg({qtd_mesas:S.nm})}
 function inv(n){const m=S.mesas[n];m.inv=!m.inv;render()}
 function novaCmd(){S.cn++;S.cmds[S.cn]={items:[],aberta:true,inv:false,hora:hm(),nome:$('#cnm').value.trim(),cpf:'',g:($('#cg')&&+$('#cg').value)||null};cur={k:'c',id:S.cn};view='pos';cat='Todos';S.cpf='';render()}
 function open_(k,id){if(k=='m'&&S.mesas[id].inv)return toast('Mesa inválida. Toque em ⊘ para reativar');cur={k,id};view='pos';cat='Todos';S.cpf=G().cpf||'';render()}
@@ -229,7 +274,7 @@ function vPos(){
  ${gsel}
  <div style="margin-top:12px"><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF do cliente (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div></div>
  <div class="row" style="margin-top:10px"><span>Subtotal</span><span>${R(sub)}</span></div>
- <label class="row"><span><input type="checkbox" ${S.taxa?'checked':''} onchange="S.taxa=this.checked;render()"> Serviço 10%</span><span>${R(tx)}</span></label>
+ <label class="row"><span><input type="checkbox" ${S.taxa?'checked':''} onchange="S.taxa=this.checked;render();cfg({taxa_servico:S.taxa})"> Serviço 10%</span><span>${R(tx)}</span></label>
  <div class="row tot"><span>Total</span><span>${R(sub+tx)}</span></div>
  ${cur.k=='m'&&m.j?`<button class="btn g" onclick="sep(${cur.id})">Separar mesas</button>`:''}${act}<button class="btn g" ${m.items.length?'':'disabled'} onclick="toast('Pedido enviado à cozinha')">Enviar para cozinha</button>
  <button class="btn p g" ${m.items.length?'':'disabled'} onclick="pay='Pix';render()">Fechar conta</button></div></div>`
@@ -322,26 +367,28 @@ function vPay(){const m=G(),s=tot(m),tx=S.taxa?s*.1:0;
  return payModal({t:'Fechar '+lbl(),n:m.items.reduce((a,i)=>a+i.q,0),v:s+tx,lines:[['Subtotal',R(s)]].concat(S.taxa?[['Serviço 10%',R(tx)]]:[]),ms:['Pix','Cartão','Dinheiro','Vale'],fn:'fechar()'})}
 function vPayV(){const s=tot(S.cart),d=dsc(s);
  return payModal({t:'Finalizar venda',n:S.cart.items.reduce((a,i)=>a+i.q,0),v:s-d,lines:[['Subtotal',R(s)]].concat(d?[['Desconto','− '+R(d)]]:[]),ms:['Pix','Débito','Crédito','Dinheiro'],fn:'fecharV()'})}
-function fechar(){
+const fechar=once(async function(){
  const v=tot(G())*(S.taxa?1.1:1);
  if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');
  const c=cl(),gid=G().g||null;
- S.mov.push({t:hm(),desc:lbl()+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null,gid});
+ try{S.mov.push(await addMov({desc:lbl()+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null,gid}))}catch(e){return dbErr(e)}
  if(cur.k=='m')freeM(cur.id);else delete S.cmds[cur.id];
  S.cpf='';pay=null;toast('Pagamento registrado');go('mesas');
-}
+})
 const sum=f=>S.mov.filter(f).reduce((a,x)=>a+x.val,0);
 function frm(fields,fn,label){return `<div class="frm">${fields}<button class="btn p" onclick="${fn}">${label}</button></div>`}
 function tbl(a){return `<div class="wrap"><table><tr><th>Hora</th><th>Descrição</th><th>Forma</th><th>Valor</th></tr>${a.map(x=>`<tr><td>${x.t}</td><td>${esc(x.desc)}<br><small style="color:var(--mu)">${x.cat}</small></td><td>${x.forma}</td><td class="${x.tipo}">${x.tipo=='in'?'+':'−'} ${R(x.val)}</td></tr>`).join('')}</table></div>`}
+const sumH=f=>S.mov.filter(x=>isHoje(x)&&f(x)).reduce((a,x)=>a+x.val,0);
 function vCaixa(){
- const din=sum(x=>x.forma=='Dinheiro'&&x.tipo=='in')-sum(x=>x.forma=='Dinheiro'&&x.tipo=='out');
- const n=S.mov.filter(x=>x.cat=='Vendas').length,ven=sum(x=>x.cat=='Vendas');
+ const din=sumH(x=>x.forma=='Dinheiro'&&x.tipo=='in')-sumH(x=>x.forma=='Dinheiro'&&x.tipo=='out');
+ const n=S.mov.filter(x=>isHoje(x)&&x.cat=='Vendas').length,ven=sumH(x=>x.cat=='Vendas');
  return head('Caixa')+kp([['Status','Aberto'],['Vendas do turno',R(ven)],['Dinheiro em caixa',R(din)],['Ticket médio',R(ven/Math.max(1,n))]])+
- `<div class="card"><h3>Movimentações</h3>${tbl(S.mov.slice().reverse())}${frm(`<input id="cd" placeholder="Descrição"><input id="cv" type="number" step="0.01" placeholder="Valor"><select id="ct"><option value="out">Sangria</option><option value="in">Suprimento</option></select>`,'caixaAdd()','Lançar')}</div>`
+ `<div class="card"><h3>Movimentações</h3>${tbl(S.mov.filter(isHoje).reverse())}${frm(`<input id="cd" placeholder="Descrição"><input id="cv" type="number" step="0.01" placeholder="Valor"><select id="ct"><option value="out">Sangria</option><option value="in">Suprimento</option></select>`,'caixaAdd()','Lançar')}</div>`
 }
-function caixaAdd(){const v=parseFloat($('#cv').value),t=$('#ct').value;if(!v)return toast('Informe o valor');S.mov.push({t:hm(),desc:$('#cd').value||(t=='out'?'Sangria':'Suprimento'),tipo:t,val:v,forma:'Dinheiro',cat:t=='out'?'Sangria':'Suprimento'});render()}
+const caixaAdd=once(async function(){const v=parseFloat($('#cv').value),t=$('#ct').value;if(!v||v<=0)return toast('Informe o valor');
+ try{S.mov.push(await addMov({desc:$('#cd').value||(t=='out'?'Sangria':'Suprimento'),tipo:t,val:v,forma:'Dinheiro',cat:t=='out'?'Sangria':'Suprimento'}));render()}catch(e){dbErr(e)}});
 function vCad(){
- const body=`<div class="wrap"><table><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Código</th><th>Estoque</th><th></th></tr>${S.prods.map(p=>`<tr><td>${esc(p.nome)}</td><td>${esc(p.cat)}</td><td>${R(p.preco)}</td><td>${esc(p.cod||'—')}</td><td>${p.est==null?'—':p.est<=5?`<span class="bd ${p.est?'':'z'}">${p.est}</span>`:p.est}</td><td><button class="btn" onclick="delP(${p.id})">Excluir</button></td></tr>`).join('')}</table></div>${S.prods.length?'':`<div class="emp">Nenhum produto ainda. Cadastre abaixo ou <button class="btn" onclick="loadEx()">carregar exemplos de ${SEG[S.seg].nome}</button></div>`}`+
+ const body=`<div class="wrap"><table><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Código</th><th>Estoque</th><th></th></tr>${S.prods.map(p=>`<tr><td>${esc(p.nome)}</td><td>${esc(p.cat)}</td><td>${R(p.preco)}</td><td>${esc(p.cod||'—')}</td><td>${p.est==null?'—':p.est<=5?`<span class="bd ${p.est?'':'z'}">${p.est}</span>`:p.est}</td><td><button class="btn" onclick="delP(${p.id})">Excluir</button></td></tr>`).join('')}</table></div>${S.prods.length?'':`<div class="emp">Nenhum produto ainda. Cadastre o primeiro abaixo.</div>`}`+
  frm(`<input id="pn" placeholder="Nome do produto"><input id="pc" placeholder="Categoria"><input id="pp" type="number" step="0.01" placeholder="Preço"><input id="pk" placeholder="Código de barras"><input id="pe" type="number" min="0" placeholder="Estoque">`,'addProd()','Adicionar');
  const gbody=(S.garcons.length?`<div class="wrap"><table><tr><th>Garçom</th><th>Telefone</th><th>Em atendimento</th><th>Vendas</th><th></th></tr>${S.garcons.map(g=>{const s=gStat(g.id);return `<tr><td><b>${esc(g.nome)}</b></td><td>${fone(g.tel)}</td><td>${s.ab||'—'}</td><td>${s.n?s.n+' · '+R(s.t):'<small style="color:var(--mu)">nenhuma</small>'}</td><td style="text-align:right"><button class="btn" onclick="delGar(${g.id})">Excluir</button></td></tr>`}).join('')}</table></div>`:`<div class="emp">Nenhum garçom cadastrado. Cadastre abaixo: eles aparecerão para escolha nas mesas e comandas.</div>`)+frm(`<input id="gn" placeholder="Nome do garçom" autocomplete="off"><input id="gt" inputmode="tel" placeholder="Telefone (opcional)" autocomplete="off">`,'addGar()','Adicionar');
  const tb=rst()?ctab:'prod';
@@ -351,12 +398,15 @@ const rst=()=>S.seg!='varejo';
 const gn=m=>{const g=S.garcons.find(x=>x.id==m.g);return g?g.nome:''};
 const gtag=m=>rst()&&m.g&&gn(m)?' · '+esc(gn(m)):'';
 const gStat=id=>{const v=S.mov.filter(x=>x.gid==id);return {n:v.length,t:v.reduce((a,x)=>a+x.val,0),ab:[...Object.values(S.mesas),...Object.values(S.cmds)].filter(o=>o.g==id).length}};
-function addGar(){const n=$('#gn').value.trim();if(!n)return toast('Informe o nome do garçom');S.garcons.push({id:++S.gid,nome:n,tel:$('#gt').value.trim()||'—'});toast('Garçom cadastrado');render()}
-function delGar(id){if(gStat(id).ab)return toast('Garçom com atendimento em aberto');S.garcons=S.garcons.filter(g=>g.id!=id);render()}
+const addGar=once(async function(){const n=$('#gn').value.trim();if(!n)return toast('Informe o nome do garçom');
+ try{const r=await DBX(sb.from('garcons').insert({nome:n,telefone:$('#gt').value.trim()}).select().single());S.garcons.push(mG(r));toast('Garçom cadastrado');render()}catch(e){dbErr(e)}});
+const delGar=once(async function(id){if(gStat(id).ab)return toast('Garçom com atendimento em aberto');
+ try{await DBX(sb.from('garcons').delete().eq('id',id));S.garcons=S.garcons.filter(g=>g.id!=id);render()}catch(e){dbErr(e)}});
 function setG(v){G().g=+v||null}
-function addProd(){const n=$('#pn').value.trim(),p=parseFloat($('#pp').value);if(!n||!p)return toast('Preencha nome e preço');S.prods.push({id:++S.pid,nome:n,cat:$('#pc').value.trim()||'Geral',preco:p,cod:$('#pk').value.trim(),est:$('#pe').value===''?null:parseInt($('#pe').value)});render()}
-function delP(id){const used=[...Object.values(S.mesas),...Object.values(S.cmds),S.cart].some(o=>o.items.some(i=>i.id==id));if(used)return toast('Produto em uso em um atendimento aberto');S.prods=S.prods.filter(p=>p.id!=id);render()}
-function loadEx(){SEG[S.seg].prods.forEach(p=>S.prods.push({id:++S.pid,nome:p[0],cat:p[1],preco:p[2],cod:p[3]||'',est:p[4]??null}));render()}
+const addProd=once(async function(){const n=$('#pn').value.trim(),p=parseFloat($('#pp').value);if(!n||!p)return toast('Preencha nome e preço');
+ try{const r=await DBX(sb.from('produtos').insert({nome:n,categoria:$('#pc').value.trim()||'Geral',preco:p,codigo:$('#pk').value.trim(),estoque:$('#pe').value===''?null:parseInt($('#pe').value)}).select().single());S.prods.push(mP(r));toast('Produto cadastrado');render()}catch(e){dbErr(e)}});
+const delP=once(async function(id){const used=[...Object.values(S.mesas),...Object.values(S.cmds),S.cart].some(o=>o.items.some(i=>i.id==id));if(used)return toast('Produto em uso em um atendimento aberto');
+ try{await DBX(sb.from('produtos').delete().eq('id',id));S.prods=S.prods.filter(p=>p.id!=id);render()}catch(e){dbErr(e)}});
 
 const compras=c=>S.mov.filter(x=>x.cat=='Vendas'&&(x.cid==c.id||(!x.cid&&x.cpf&&x.cpf==c.cpf)));
 const fone=t=>t&&t!='—'?esc(t):'—';
@@ -385,29 +435,33 @@ function vCliVer(){
  ${v.length?`<div class="wrap"><table><tr><th>Hora</th><th>Forma</th><th>Valor</th></tr>${v.slice().reverse().map(x=>`<tr><td>${x.t}</td><td>${x.forma}</td><td>${R(x.val)}</td></tr>`).join('')}</table></div>`:'<p class="hint">Este cliente ainda não tem compras.</p>'}
  <button class="btn p g" onclick="cm={id:${c.id}};cv=null;render()">Editar</button><button class="btn g" onclick="cv=null;render()">Fechar</button></div></div>`
 }
-function saveCli(){
+const saveCli=once(async function(){
  const n=$('#kn').value.trim(),c=dg($('#kc').value);
  if(!n)return toast('Informe o nome');
  if(!c)return toast('Informe o CPF');
  if(!okCpf(c))return toast('CPF inválido');
  if(S.clientes.some(k=>k.cpf==c&&k.id!=cm.id))return toast('CPF já cadastrado');
- const d={nome:n,cpf:c,tel:$('#kt').value.trim()||'—',email:$('#ke').value.trim(),obs:$('#ko').value.trim()};
- if(cm.id)Object.assign(S.clientes.find(k=>k.id==cm.id),d);else S.clientes.push({id:++S.kid,...d});
- toast(cm.id?'Cliente atualizado':'Cliente cadastrado');cm=null;render()
-}
-function delCli(id){
+ const d={nome:n,cpf:c,telefone:$('#kt').value.trim(),email:$('#ke').value.trim(),obs:$('#ko').value.trim()};
+ try{
+  if(cm.id){const r=await DBX(sb.from('clientes').update(d).eq('id',cm.id).select().single());Object.assign(S.clientes.find(k=>k.id==cm.id),mC(r))}
+  else{const r=await DBX(sb.from('clientes').insert(d).select().single());S.clientes.push(mC(r))}
+  toast(cm.id?'Cliente atualizado':'Cliente cadastrado');cm=null;render()
+ }catch(e){e&&e.code=='23505'?toast('CPF já cadastrado'):dbErr(e)}
+});
+const delCli=once(async function(id){
  const c=S.clientes.find(k=>k.id==id);if(!c||!confirm('Excluir "'+c.nome+'"? O histórico de compras continua no caixa.'))return;
- S.clientes=S.clientes.filter(k=>k.id!=id);toast('Cliente excluído');render()
-}
+ try{await DBX(sb.from('clientes').delete().eq('id',id));S.clientes=S.clientes.filter(k=>k.id!=id);toast('Cliente excluído');render()}catch(e){dbErr(e)}
+});
 function vFin(){
  const rec=sum(x=>x.cat=='Vendas'),des=sum(x=>x.tipo=='out'&&x.cat!='Sangria');
  const fm=['Pix','Cartão','Dinheiro','Vale'].map(f=>[f,sum(x=>x.cat=='Vendas'&&x.forma==f)]),mx=Math.max(1,...fm.map(x=>x[1]));
- return head('Financeiro')+kp([['Receitas',R(rec)],['Despesas',R(des)],['Resultado',R(rec-des)]])+
+ return head('Financeiro')+kp([['Receitas · 90 dias',R(rec)],['Despesas · 90 dias',R(des)],['Resultado · 90 dias',R(rec-des)]])+
  `<div class="pos" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"><div class="card"><h3>Vendas por forma de pagamento</h3>${fm.map(([f,v])=>`<div style="margin-bottom:10px"><div class="row"><span>${f}</span><b>${R(v)}</b></div><div class="bar" style="width:${v/mx*100}%"></div></div>`).join('')}</div>
  <div class="card"><h3>Lançar despesa</h3><div class="frm"><input id="fd" placeholder="Descrição"><input id="fv" type="number" step="0.01" placeholder="Valor"><select id="fc2"><option>Insumos</option><option>Pessoal</option><option>Aluguel</option><option>Contas</option><option>Outros</option></select><button class="btn p" onclick="addDes()">Lançar</button></div></div></div>
  <div class="card" style="margin-top:14px"><h3>Lançamentos</h3>${tbl(S.mov.slice().reverse())}</div>`
 }
-function addDes(){const v=parseFloat($('#fv').value);if(!v)return toast('Informe o valor');S.mov.push({t:hm(),desc:$('#fd').value||'Despesa',tipo:'out',val:v,forma:'Banco',cat:$('#fc2').value});render()}
+const addDes=once(async function(){const v=parseFloat($('#fv').value);if(!v||v<=0)return toast('Informe o valor');
+ try{S.mov.push(await addMov({desc:$('#fd').value||'Despesa',tipo:'out',val:v,forma:'Banco',cat:$('#fc2').value}));render()}catch(e){dbErr(e)}});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 try{const t=localStorage.getItem('th');if(t)document.documentElement.dataset.theme=t}catch(e){}
 const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t=='dark':matchMedia('(prefers-color-scheme:dark)').matches};
@@ -418,7 +472,7 @@ const pgrid=()=>{const t=q.toLowerCase(),ps=S.prods.filter(p=>(cat=='Todos'||p.c
 function vVenda(){
  const c=S.cart,sub=tot(c),d=dsc(sub),qtd=c.items.reduce((a,i)=>a+i.q,0),cats=['Todos',...new Set(S.prods.map(p=>p.cat))];
  const vs=S.mov.filter(x=>x.cat=='Vendas'),fat=vs.reduce((a,x)=>a+x.val,0),low=S.prods.filter(p=>p.est!=null&&p.est<=5).length;
- const left=S.prods.length?`<input id="bq" class="srch" placeholder="Buscar produto ou bipar código de barras (F2)" value="${esc(q)}" oninput="q=this.value;$('#pg').innerHTML=pgrid()" onkeydown="if(event.key=='Enter')bar()"><div class="chips">${cats.map(x=>`<button class="chip ${x==cat?'on':''}" onclick="cat='${x}';render()">${x}</button>`).join('')}</div><div class="grid" id="pg">${pgrid()}</div>`:`<div class="card emp">Nenhum produto cadastrado ainda.<br><br><button class="btn p" onclick="loadEx()">Carregar exemplos de ${SEG[S.seg].nome}</button> <button class="btn" onclick="go('cad')">Ir para Cadastros</button></div>`;
+ const left=S.prods.length?`<input id="bq" class="srch" placeholder="Buscar produto ou bipar código de barras (F2)" value="${esc(q)}" oninput="q=this.value;$('#pg').innerHTML=pgrid()" onkeydown="if(event.key=='Enter')bar()"><div class="chips">${cats.map(x=>`<button class="chip ${x==cat?'on':''}" onclick="cat='${x}';render()">${x}</button>`).join('')}</div><div class="grid" id="pg">${pgrid()}</div>`:`<div class="card emp">Nenhum produto cadastrado ainda.<br><br><button class="btn p" onclick="go('cad')">Ir para Cadastros</button></div>`;
  return head('Venda rápida')+kp([['Vendas hoje',vs.length],['Faturamento',R(fat)],['Ticket médio',R(fat/Math.max(1,vs.length))],['Estoque baixo',low]])+
  `<p class="hint">F2 buscar · F3 CPF · F4 finalizar · F6 desconto · F9 limpar · F1 todos os atalhos</p><div class="pos"><div>${left}</div><div class="card" style="align-self:start"><h3>Carrinho · ${qtd} ${qtd==1?'item':'itens'}</h3>${c.items.length?c.items.map(i=>{const p=P(i.id);return `<div class="it"><div><b>${esc(p.nome)}</b><br><small style="color:var(--mu)">${R(p.preco)}</small></div><div class="q"><button onclick="vChg(${i.id},-1)" aria-label="Diminuir">−</button>${i.q}<button onclick="vChg(${i.id},1)" aria-label="Aumentar">+</button></div><b>${R(p.preco*i.q)}</b></div>`}).join(''):'<p style="color:var(--mu)">Bipe o código ou toque nos produtos.</p>'}
  <div style="margin-top:12px"><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF do cliente (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div></div>
@@ -430,10 +484,12 @@ function bar(){const t=q.trim(),r=S.prods.filter(x=>x.cod&&x.cod==t),l=r.length?
 function vAdd(id){const p=P(id),i=S.cart.items.find(x=>x.id==id),n=(i?i.q:0)+1;if(p.est!=null&&n>p.est)return toast(p.est?'Estoque insuficiente':'Produto sem estoque');i?i.q++:S.cart.items.push({id,q:1});render()}
 function vChg(id,d){const i=S.cart.items.find(x=>x.id==id),p=P(id);if(d>0&&p.est!=null&&i.q+1>p.est)return toast('Estoque insuficiente');i.q+=d;if(i.q<1)S.cart.items=S.cart.items.filter(x=>x!=i);render()}
 
-function fecharV(){const s=tot(S.cart),v=s-dsc(s);if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');if(pay=='Dinheiro'&&(+(($('#rc')||{}).value)||0)<v-.001)return toast('Valor recebido menor que o total');
- S.cart.items.forEach(i=>{const p=P(i.id);if(p.est!=null)p.est-=i.q});
- const c=cl();S.mov.push({t:hm(),desc:'Venda'+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null});
- S.cart={items:[]};S.dsc=0;S.cpf='';pay=null;toast('Venda registrada');render()}
+const fecharV=once(async function(){const s=tot(S.cart),v=s-dsc(s);if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');if(pay=='Dinheiro'&&(+(($('#rc')||{}).value)||0)<v-.001)return toast('Valor recebido menor que o total');
+ const c=cl();
+ try{S.mov.push(await addMov({desc:'Venda'+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null}))}catch(e){return dbErr(e)}
+ const bx=[];S.cart.items.forEach(i=>{const p=P(i.id);if(p.est!=null){p.est-=i.q;bx.push(DBX(sb.from('produtos').update({estoque:p.est}).eq('id',p.id)))}});
+ try{await Promise.all(bx)}catch(e){dbErr(e)}
+ S.cart={items:[]};S.dsc=0;S.cpf='';pay=null;toast('Venda registrada');render()})
 const dg=s=>String(s).replace(/\D/g,'').slice(0,11);
 const fcpf=d=>d.replace(/(\d{3})(\d{0,3})(\d{0,3})(\d{0,2})/,(m,a,b,c,e)=>a+(b?'.'+b:'')+(c?'.'+c:'')+(e?'-'+e:''));
 function okCpf(c){if(c.length!=11||/^(\d)\1+$/.test(c))return false;for(let t=9;t<11;t++){let s=0;for(let i=0;i<t;i++)s+=c[i]*(t+1-i);if((s*10%11)%10!=c[t])return false}return true}
@@ -473,7 +529,7 @@ function render(){
  if(rv&&pay=='Dinheiro')setTimeout(()=>{const e=$('#rc');e&&e.focus()});
  if(rv&&!pay&&!help&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
 }
-render();
+boot();
 </script>
 </body>
 </html>
