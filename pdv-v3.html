@@ -684,14 +684,22 @@ function obSave(){
  const m=G();if(!m||!ob)return;
  const x=ob.ix,i=m.items[x];if(!i){ob=null;return render()}
  const txt=String($('#obt')?.value??ob.txt??'').trim().replace(/\s+/g,' ').slice(0,120);
- const pend=Math.max(0,i.q-(i.env||0));
+ const env=Math.max(0,Number(i.env)||0),pend=Math.max(0,(Number(i.q)||0)-env);
  if(!pend){ob=null;toast('Esse item já foi enviado. Adicione uma nova unidade para alterar a observação.');return render()}
- const n=Math.min(Math.max(Number(ob.n)||pend,1),pend),id=i.id;
- // Preserva a quantidade já enviada e aplica a observação apenas às unidades pendentes.
- i.q-=n;let at=x+1;if(i.q<=0){m.items.splice(x,1);at=x}
- const existente=m.items.find(y=>y.id==id&&(y.obs||'')===txt&&Math.max(0,y.q-(y.env||0))>0);
- if(existente)existente.q+=n;else m.items.splice(at,0,{id,q:n,env:0,obs:txt});
- ob=null;render();toast(txt?'Observação salva: '+txt:'Observação removida');
+ const n=Math.min(pend,Math.max(1,Number(ob.n)||pend));
+ // Se a observação vale para todas as unidades ainda não enviadas, anexa-a diretamente
+ // ao item (o formato que o salão e a cozinha usam). Se vale só para parte, separa a quantidade.
+ if(n===pend&&env===0){
+  i.obs=txt;i.o=txt;i.observacao=txt;
+ }else{
+  i.q=(Number(i.q)||0)-n;
+  if(i.q<=env)m.items.splice(x,1);
+  const at=Math.min(x,m.items.length);
+  const existente=m.items.find(y=>y!==i&&y.id==i.id&&String(y.obs||y.o||y.observacao||'').trim()===txt&&Math.max(0,(Number(y.q)||0)-(Number(y.env)||0))>0);
+  if(existente){existente.q=(Number(existente.q)||0)+n;existente.obs=txt;existente.o=txt;existente.observacao=txt;}
+  else m.items.splice(at,0,{id:i.id,q:n,env:0,obs:txt,o:txt,observacao:txt});
+ }
+ ob=null;render();toast(txt?'Observação salva para a cozinha: '+txt:'Observação removida');
 }
 function vObs(){const m=G(),i=m.items[ob.ix];if(!i)return'';const pend=i.q-(i.env||0),a=obList(ob.txt).map(s=>s.toLowerCase());
  return `<div class="mod obmod" onclick="ob=null;render()"><div class="card pm obm" onclick="event.stopPropagation()" role="dialog" aria-label="Observação para a cozinha"><div class="pm-h"><div><h3>Observação para a cozinha</h3><small>${esc(P(i.id).nome)}</small></div><button class="pm-x" onclick="ob=null;render()" aria-label="Fechar">✕</button></div>
@@ -1113,7 +1121,7 @@ function kFil_(f){kFil=f;renderKeep()}
 function enviarCozinha(){
  if(ob&&$('#obt'))obSave();
  const m=G();if(!m||!cur)return;
- const novos=m.items.map(i=>{const obs=String(i.obs??i.o??'').trim();return {id:i.id,n:P(i.id).nome,q:i.q-(i.env||0),ok:0,o:obs,obs}}).filter(x=>x.q>0);
+ const novos=m.items.map(i=>{const obs=String(i.obs??i.o??i.observacao??i.comentario??'').trim();return {id:i.id,n:P(i.id).nome,q:Math.max(0,(Number(i.q)||0)-(Number(i.env)||0)),ok:0,o:obs,obs,observacao:obs,comentario:obs}}).filter(x=>x.q>0);
  if(!novos.length)return toast('Tudo já foi enviado à cozinha');
  if(!m.aberta){m.aberta=true;m.hora=hm()}
  const n=Date.now(),t={id:'k'+n.toString(36)+Math.random().toString(36).slice(2,6),k:cur.k,r:+cur.id,lb:lbl(),g:gn(m)||'',ad:(m.ns||0)>0,it:novos,st:'novo',t0:n,t1:0,t2:0,t3:0,u:n};
@@ -1142,7 +1150,7 @@ function kStrip(){
  if(!cur)return'';
  const L=S.coz.filter(t=>t.k==cur.k&&+t.r==+cur.id&&!t.arq&&t.st!='cancelado').sort((a,b)=>a.t0-b.t0);if(!L.length)return'';
  const nm={novo:['s-n','Na fila'],prep:['s-p','Em preparo'],pronto:['s-r','Pronto'],entregue:['s-d','Entregue']};
- return `<div class="kp"><h3>Cozinha</h3>${L.map(t=>{const s=nm[t.st]||nm.novo;return `<div class="kp-r ${s[0]}"><div><b>${t.ad?'Adicional':'Pedido'} · ${kHm(t.t0)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+(i.o?' ('+esc(i.o)+')':'')).join(', ')}</small></div><span class="kst ${s[0]}">${s[1]}</span>${t.st=='pronto'?`<button class="btn" onclick="kEntrega('${cur.k}',${+cur.id})">Entregue</button>`:''}</div>`}).join('')}</div>`}
+ return `<div class="kp"><h3>Cozinha</h3>${L.map(t=>{const s=nm[t.st]||nm.novo;return `<div class="kp-r ${s[0]}"><div><b>${t.ad?'Adicional':'Pedido'} · ${kHm(t.t0)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+((i.o||i.obs||i.observacao||i.comentario)?' ('+esc(i.o||i.obs||i.observacao||i.comentario)+')':'')).join(', ')}</small></div><span class="kst ${s[0]}">${s[1]}</span>${t.st=='pronto'?`<button class="btn" onclick="kEntrega('${cur.k}',${+cur.id})">Entregue</button>`:''}</div>`}).join('')}</div>`}
 
 /* --- tela da cozinha --- */
 function kCard(t){
@@ -1150,8 +1158,9 @@ function kCard(t){
  const tag=cx?'Cancelado':kLate(t)?'Atrasado':({novo:'Novo',prep:'Em preparo',pronto:'Pronto'}[t.st]||'');
  const bt={novo:['Iniciar preparo','var(--wa)','flame'],prep:['Marcar pronto','var(--ok)','ok'],pronto:['Entregue ao garçom','var(--tx)','ok']}[t.st]||['Ok','var(--tx)','ok'];
  const li=t.it.map((i,x)=>{
+  const observacao=String(i.o??i.obs??i.observacao??i.comentario??'').trim();
   const mk=t.st=='prep'?`<button class="kt-ck ${i.ok?'on':''}" onclick="kItem('${t.id}',${x})" aria-pressed="${!!i.ok}" aria-label="Marcar ${esc(i.n)} como feito">${sv('ok',18)}</button>`:`<span class="kt-dot"><i></i></span>`;
-  return `<li class="${i.ok&&t.st=='prep'?'ok':''}">${mk}<b>${i.q}×</b><div class="kt-n"><span class="kt-nm">${esc(i.n)}</span>${(i.o||i.obs)?`<em class="kt-o">⚠ ${esc(i.o||i.obs)}</em>`:''}</div></li>`}).join('');
+  return `<li class="${i.ok&&t.st=='prep'?'ok':''}">${mk}<b>${i.q}×</b><div class="kt-n"><span class="kt-nm">${esc(i.n)}</span>${observacao?`<em class="kt-o">⚠ ${esc(observacao)}</em>`:''}</div></li>`}).join('');
  const f=cx?`<button class="btn kt-b" style="--bc:var(--ba)" onclick="kCiente('${t.id}')">${sv('ok',20)}Ciente, não preparar</button>`
   :`<button class="btn kt-b" style="--bc:${bt[1]}" onclick="kAv('${t.id}')">${sv(bt[2],20)}${bt[0]}</button>${t.st!='novo'?`<button class="btn kt-u" onclick="kVolta('${t.id}')" aria-label="Voltar uma etapa" title="Voltar uma etapa">${sv('back',20)}</button>`:''}`;
  const meta=cx?'A mesa foi liberada. Pode descartar o pedido.':`${t.g?'Garçom '+esc(t.g)+' · ':''}enviado às ${kHm(t.t0)} · ${n} ${n==1?'item':'itens'}${t.st=='pronto'?' · esperando retirada':''}${t.ad?' <span class="kt-ad">Adicional</span>':''}`;
@@ -1168,7 +1177,7 @@ function vCoz(){
  const col=(c,h,l,v)=>`<section class="kcol ${c}" aria-label="${h}"><h2 class="kcol-h"><span class="kcol-dot"></span>${h}<b>${l.length}</b></h2><div class="kcol-b">${l.length?l.map(kCard).join(''):`<div class="emp card" style="grid-column:1/-1">${v}</div>`}</div></section>`;
  const all=kFil=='todos';
  const body=kFil=='entregue'
-  ?`<div class="khis">${en.length?en.map(t=>`<div class="khr"><div><b>${esc(t.lb)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+(i.o?' ('+esc(i.o)+')':'')).join(' · ')}</small><small>Ficou pronto em ${kDur((t.t2||t.t3)-t.t0)} · entregue às ${kHm(t.t3||t.u)}</small></div><button class="btn" onclick="kVolta('${t.id}')">Reabrir</button></div>`).join(''):'<div class="emp card">Nenhuma entrega registrada hoje.</div>'}</div>`
+  ?`<div class="khis">${en.length?en.map(t=>`<div class="khr"><div><b>${esc(t.lb)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+((i.o||i.obs||i.observacao||i.comentario)?' ('+esc(i.o||i.obs||i.observacao||i.comentario)+')':'')).join(' · ')}</small><small>Ficou pronto em ${kDur((t.t2||t.t3)-t.t0)} · entregue às ${kHm(t.t3||t.u)}</small></div><button class="btn" onclick="kVolta('${t.id}')">Reabrir</button></div>`).join(''):'<div class="emp card">Nenhuma entrega registrada hoje.</div>'}</div>`
   :`<div class="kcols ${all?'':'one'}">${all||kFil=='novo'?col('s-n','Novos',nv,'Nenhum pedido novo.'):''}${all||kFil=='prep'?col('s-p','Em preparo',pp,'Nada no fogo agora.'):''}${all||kFil=='pronto'?col('s-r','Prontos para retirar',pr,'Nenhum prato esperando o garçom.'):''}</div>`;
  const fl=[['todos','Todos',null],['novo','Novos',nn],['prep','Em preparo',pp.length],['pronto','Prontos',pr.length],['entregue','Entregues',en.length]];
  const sy=kSync(),aud=K.som&&(!AC||AC.state!='running');
