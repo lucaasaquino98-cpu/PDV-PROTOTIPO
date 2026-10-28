@@ -265,7 +265,7 @@ body.kds main{padding:0}
 .sg button svg{width:16px;height:16px}
 .sg button:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
 </style>
-<style>\n
+<style>
 /* ===== Ajustes mobile: garçom e caixa no celular ===== */
 @media (max-width:760px){
   html,body{min-height:100%;height:auto}
@@ -325,7 +325,8 @@ body.kds main{padding:0}
   .pm-f .btn{font-size:13px}
 }
 @media(hover:none){.mesa:hover{transform:none}.prod:hover{border-color:var(--bd)}}
-\n</style>\n<style>
+</style>
+<style>
 /* ===== Botão de enviar à cozinha, observações nos pratos ===== */
 .send{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:60px;margin-top:12px;border:0;border-radius:14px;font:inherit;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,#ea580c,#c2410c);cursor:pointer;box-shadow:0 6px 16px rgba(194,65,12,.4);--pc:#f97316;animation:pk 1.6s infinite}
 .send:active{transform:scale(.98)}
@@ -356,6 +357,20 @@ body.kds main{padding:0}
 .sendbar .vc{min-height:60px;padding:6px 12px;flex-shrink:0}
 .send.in{display:none}
 .mod .card.pm{max-height:92%}
+}
+
+/* ===== Modal de observação: estrutura firme no celular ===== */
+.obm{display:flex;flex-direction:column;overflow:hidden}
+.obm .pm-h,.obm .pm-f{flex:0 0 auto}
+.obm .ob-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+@media (max-width:760px){
+.mod.obmod{inset:auto;left:0;right:0;top:var(--vvt,0px);height:var(--vvh,100dvh);align-items:flex-end;padding:0;z-index:60}
+.mod.obmod .card.pm.obm{width:100%;max-width:none;max-height:calc(100% - 12px);overflow:hidden;border-radius:20px 20px 0 0;padding-bottom:0}
+.obm .pm-f{position:static;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--bd);background:var(--sf)}
+.obm .ob-chips{padding:0 14px;gap:6px}
+.obm .ob-chips .chip{padding:6px 12px;font-size:14px;min-height:38px}
+.obm .ob-in{width:calc(100% - 28px);margin:12px 14px 0}
+.obm .ob-n{margin:12px 14px 0}
 }
 </style>
 </head>
@@ -672,10 +687,10 @@ function obSave(){const m=G(),i=m.items[ob.ix];if(!i){ob=null;return render()}
  o?o.q+=n:m.items.splice(at,0,{id:i.id,q:n,env:0,obs:txt});
  ob=null;render()}
 function vObs(){const m=G(),i=m.items[ob.ix];if(!i)return'';const pend=i.q-(i.env||0),a=obList(ob.txt).map(s=>s.toLowerCase());
- return `<div class="mod" onclick="ob=null;render()"><div class="card pm obm" onclick="event.stopPropagation()" role="dialog" aria-label="Observação para a cozinha"><div class="pm-h"><div><h3>Observação para a cozinha</h3><small>${esc(P(i.id).nome)}</small></div><button class="pm-x" onclick="ob=null;render()" aria-label="Fechar">✕</button></div>
- <div class="ob-chips">${OBS.map(t=>`<button class="chip ${a.includes(t.toLowerCase())?'on':''}" data-t="${t}" onclick="obChip(this)">${t}</button>`).join('')}</div>
- <input id="obt" class="ob-in" maxlength="120" autocomplete="off" placeholder="Ou escreva: ex. sem cebola, bem passado" value="${esc(ob.txt)}" oninput="obSync()" onkeydown="if(event.key=='Enter')obSave()">
- ${pend>1?`<div class="ob-n"><span>Vale para quantas unidades?</span><div class="q"><button onclick="obN(-1)">−</button><b id="obn">${ob.n}</b><button onclick="obN(1)">+</button></div><small style="color:var(--mu)">de ${pend} não enviadas</small></div>`:''}
+ return `<div class="mod obmod" onclick="ob=null;render()"><div class="card pm obm" onclick="event.stopPropagation()" role="dialog" aria-label="Observação para a cozinha"><div class="pm-h"><div><h3>Observação para a cozinha</h3><small>${esc(P(i.id).nome)}</small></div><button class="pm-x" onclick="ob=null;render()" aria-label="Fechar">✕</button></div>
+ <div class="ob-body"><div class="ob-chips">${OBS.map(t=>`<button class="chip ${a.includes(t.toLowerCase())?'on':''}" data-t="${t}" onclick="obChip(this)">${t}</button>`).join('')}</div>
+ <input id="obt" class="ob-in" maxlength="120" autocomplete="off" placeholder="Ou escreva a observação" value="${esc(ob.txt)}" oninput="obSync()" onkeydown="if(event.key=='Enter')obSave()">
+ ${pend>1?`<div class="ob-n"><span>Vale para quantas unidades?</span><div class="q"><button onclick="obN(-1)">−</button><b id="obn">${ob.n}</b><button onclick="obN(1)">+</button></div><small style="color:var(--mu)">de ${pend} não enviadas</small></div>`:''}</div>
  <div class="pm-f"><button class="btn" onclick="ob=null;render()">Cancelar</button><button class="btn p" onclick="obSave()">Salvar</button></div></div></div>`}
 function ocupar(){const m=G();m.aberta=true;m.hora=hm();render()}
 function liberar(){const k=cur.k,j=k=='m'&&S.mesas[cur.id].j;kFree(k,cur.id,true);if(k=='m')freeM(cur.id);else delete S.cmds[cur.id];toast(k=='m'?(j?'Mesas liberadas':'Mesa liberada'):'Comanda cancelada');go('mesas')}
@@ -1089,6 +1104,7 @@ function kFil_(f){kFil=f;renderKeep()}
 
 /* --- ações do salão --- */
 function enviarCozinha(){
+ if(ob&&$('#obt'))obSave();
  const m=G();if(!m||!cur)return;
  const novos=m.items.map(i=>({id:i.id,n:P(i.id).nome,q:i.q-(i.env||0),ok:0,o:i.obs||''})).filter(x=>x.q>0);
  if(!novos.length)return toast('Tudo já foi enviado à cozinha');
@@ -1172,6 +1188,8 @@ function render(){
  if((rv||view=='pos')&&!pay&&!help&&!cm&&!cv&&!jn&&!ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
  estSalvar();
 }
+/* teclado virtual: o modal acompanha a área realmente visível */
+(function(){const v=window.visualViewport;if(!v)return;const r=document.documentElement.style,f=()=>{r.setProperty('--vvh',v.height+'px');r.setProperty('--vvt',v.offsetTop+'px')};v.addEventListener('resize',f);v.addEventListener('scroll',f);f()})();
 boot();
 </script>
 </body>
