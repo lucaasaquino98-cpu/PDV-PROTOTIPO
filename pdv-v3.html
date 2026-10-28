@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PDV Fácil · Frente de Caixa</title>
+<title>PDV Fácil · Frente de Caixa e Cozinha</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f766e'/%3E%3Ctext x='16' y='23.5' font-family='Arial,Helvetica,sans-serif' font-size='21' font-weight='700' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
 <style>
 :root{--bg:#f1f3f6;--sf:#fff;--tx:#14181f;--mu:#6b7280;--bd:#e3e6eb;--pr:#0f766e;--prt:#fff;--ok:#16a34a;--wa:#b45309;--ba:#dc2626;--okb:#dcfce7;--wab:#fef3c7;--bab:#fee2e2;--nv:#0b1220;--tc:#fff;--jc:#2563eb;--jb:#dbeafe;--jt:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -164,14 +164,115 @@ input:focus-visible,select:focus-visible,.btn:focus-visible,.chip:focus-visible,
 .local-preview-banner{display:none;margin:0 0 12px;padding:10px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--sf);color:var(--mu);font-size:12px}
 .local-preview-banner strong{color:var(--pr)}
 </style>
+<style>
+/* ===== Cozinha (KDS) e avisos no salão ===== */
+nav button{position:relative}
+.nb{margin-left:auto;background:var(--ok);color:#04201c;border-radius:99px;font-size:11px;font-weight:700;padding:1px 7px;line-height:1.5}
+.kbtn{position:relative}
+.kbtn .nb{position:absolute;top:-7px;right:-7px;margin:0;--pc:var(--ok);animation:pk 1.4s infinite}
+@media (max-width:760px){nav .nb{position:absolute;top:0;right:14%;margin:0}}
+@keyframes pk{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--pc) 55%,transparent)}70%{box-shadow:0 0 0 14px color-mix(in srgb,var(--pc) 0%,transparent)}100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--pc) 0%,transparent)}}
+.s-n{--pc:var(--jc);--pb:var(--jb)}
+.s-p{--pc:var(--wa);--pb:var(--wab)}
+.s-r{--pc:var(--ok);--pb:var(--okb)}
+.s-l{--pc:var(--ba);--pb:var(--bab)}
+.s-d{--pc:var(--bd);--pb:transparent}
+/* selos de status nas mesas e comandas */
+.kst-w{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.kst{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--pc);color:var(--tc);white-space:nowrap}
+.kst.s-d{color:var(--mu)}
+.kst svg{width:12px;height:12px;stroke-width:3}
+.mesa.rd{border-color:var(--ok);--pc:var(--ok);animation:pk 1.2s infinite}
+.mesa.rd.ghost{animation:none}
+.mesa .ent{position:absolute;top:8px;right:10px;padding:6px 12px;font-size:12px;background:var(--ok);border-color:var(--ok);color:var(--tc)}
+/* andamento do pedido dentro da comanda */
+.kp{margin-top:12px;border-top:1px solid var(--bd);padding-top:10px}
+.kp h3{margin:0 0 8px}
+.kp-r{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--pc);background:var(--pb);margin-bottom:6px}
+.kp-r>div{flex:1;min-width:0}
+.kp-r small{display:block;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* tela da cozinha */
+body.kds nav{display:none}
+body.kds main{padding:0}
+.kd{min-height:100%;display:flex;flex-direction:column;background:var(--bg)}
+.kh{position:sticky;top:0;z-index:4;background:var(--nv);color:#fff;padding:12px 18px;display:grid;gap:10px;border-bottom:1px solid rgba(255,255,255,.12)}
+.kh-r1,.kh-r2{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.kh-r2{justify-content:space-between}
+.kh-brand{display:flex;align-items:center;gap:10px}
+.kh-brand i{width:40px;height:40px;border-radius:12px;background:var(--pr);color:var(--prt);display:grid;place-items:center}
+.kh-brand svg{width:24px;height:24px}
+.kh h1{font-size:22px;flex:none;min-width:0;color:#fff}
+.ksy{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.1);color:#cbd5e1}
+.ksy i{width:8px;height:8px;border-radius:50%;background:#94a3b8}
+.ksy.k i{background:#4ade80}
+.ksy.o i{background:#fbbf24;animation:bl 1.2s infinite}
+.kaud{font-size:12px;color:#fde68a;background:rgba(251,191,36,.15);border:1px dashed #fbbf24;border-radius:8px;padding:5px 10px}
+.kclock{font:600 22px/1 ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;color:#e2e8f0}
+.kbn{font:inherit;cursor:pointer;display:inline-flex;gap:8px;align-items:center;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;border-radius:10px;padding:9px 14px;font-weight:600;min-height:42px}
+.kbn:hover{background:rgba(255,255,255,.16)}
+.kbn:focus-visible,.kfi:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.kcs{display:flex;gap:8px;flex-wrap:wrap}
+.kc{display:flex;align-items:baseline;gap:8px;border:1.5px solid var(--pc);background:color-mix(in srgb,var(--pc) 22%,transparent);border-radius:12px;padding:6px 12px;color:#fff}
+.kc b{font-size:22px;font-variant-numeric:tabular-nums}
+.kc small{color:#e2e8f0;font-size:12px}
+.kc.s-t{--pc:#94a3b8}
+.kfs{display:flex;gap:6px;flex-wrap:wrap}
+.kfi{font:inherit;cursor:pointer;border:1px solid rgba(255,255,255,.22);background:transparent;color:#cbd5e1;border-radius:99px;padding:7px 14px;font-weight:600;min-height:38px}
+.kfi.on{background:#fff;color:#0b1220;border-color:#fff}
+.kcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:16px 18px;align-items:start;flex:1}
+.kcols.one{grid-template-columns:minmax(0,1fr)}
+.kcol-h{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-size:16px;color:var(--tx)}
+.kcol-dot{width:12px;height:12px;border-radius:50%;background:var(--pc)}
+.kcol-h b{margin-left:auto;min-width:28px;text-align:center;background:var(--pc);color:var(--tc);border-radius:99px;padding:2px 10px;font-size:14px}
+.kcol-b{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.kt{background:var(--pb);border:2px solid var(--pc);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.kt.s-n,.kt.s-l{animation:pk 1.8s infinite}
+.kt.s-r{animation:pk 2.6s infinite}
+.kt-h{display:flex;align-items:center;gap:8px;padding:12px 14px 4px;flex-wrap:wrap}
+.kt-t{font-size:20px;flex:1;min-width:0}
+.kt .tag{background:var(--pc);color:var(--tc);font-size:12px;padding:3px 10px}
+.kt-tm{font:700 22px/1 ui-monospace,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;color:var(--tx)}
+.kt-tm.w{color:var(--wa)}
+.kt.s-l .kt-tm{color:var(--ba)}
+.kt-m{padding:0 14px 8px;color:var(--mu);font-size:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.kt-ad{background:var(--jc);color:var(--jt);font-weight:700;border-radius:6px;padding:1px 7px;font-size:11px}
+.kt-i{list-style:none;margin:0;padding:0}
+.kt-i li{display:flex;gap:10px;align-items:center;padding:9px 14px;border-top:1px dashed color-mix(in srgb,var(--pc) 40%,transparent);font-size:18px}
+.kt-i li b{min-width:2.2em;font-variant-numeric:tabular-nums}
+.kt-i li.ok span,.kt.x .kt-i li span{text-decoration:line-through;color:var(--mu)}
+.kt-ck{all:unset;cursor:pointer;width:34px;height:34px;border-radius:9px;border:2px solid var(--pc);display:grid;place-items:center;flex-shrink:0;color:var(--tc);box-sizing:border-box}
+.kt-ck.on{background:var(--pc)}
+.kt-ck svg{width:18px;height:18px;stroke-width:3.2;opacity:0}
+.kt-ck.on svg{opacity:1}
+.kt-ck:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+.kt-dot{width:34px;display:grid;place-items:center;flex-shrink:0}
+.kt-dot i{width:10px;height:10px;border-radius:50%;background:var(--pc)}
+.kt-f{display:flex;gap:8px;padding:10px 14px 14px}
+.kt-b{flex:1;min-height:54px;font-size:16px;border-radius:12px;background:var(--bc);border-color:var(--bc);color:var(--tc);display:inline-flex;gap:8px;align-items:center;justify-content:center}
+.kt-u{min-width:54px;min-height:54px;border-radius:12px;display:inline-grid;place-items:center}
+.khis{display:grid;gap:8px;padding:16px 18px}
+.khr{display:flex;gap:12px;align-items:center;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:10px 14px}
+.khr>div{flex:1;min-width:0}
+.khr small{display:block;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kfoot{padding:0 18px 18px;margin-top:0}
+.kfoot pre{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:10px;overflow:auto;font:12px ui-monospace,Menlo,Consolas,monospace;max-height:260px;margin:8px 0}
+@media (max-width:1000px){.kcols{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.kh{padding:10px 12px}.kbl{display:none}.kcols,.khis{padding:12px}.kfoot{padding:0 12px 12px}}
+@media (prefers-reduced-motion:reduce){.mesa.rd,.kt,.kbtn .nb,.ksy.o i{animation:none!important}}
+/* tema nas configurações */
+.cfg-full{grid-column:1/-1}
+.sg button{display:inline-flex;gap:7px;align-items:center}
+.sg button svg{width:16px;height:16px}
+.sg button:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+</style>
 </head>
 <body>
 <div class="app"><nav id="nav"></nav><main id="main"><div id="localPreviewBanner" class="local-preview-banner"><strong>Prévia local das Configurações</strong> — esta cópia serve para visualizar a interface. As alterações ficam neste navegador e não são enviadas ao Supabase.</div></main></div>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
 const SEG={rest:{nome:'Restaurante'},bar:{nome:'Bar'},lanch:{nome:'Lanchonete'},varejo:{nome:'Varejo / Loja'}};
 const mk=()=>({items:[],aberta:false,inv:false,hora:'',nome:'',cpf:'',g:null});
-const S={seg:'rest',taxa:true,prods:[],pid:0,nm:12,mesas:{},cmds:{},cn:0,garcons:[],gid:0,mov:[],clientes:[],kid:0,cart:{items:[]},dsc:0,dt:'%',cpf:''};
+const S={seg:'rest',taxa:true,prods:[],pid:0,nm:12,mesas:{},cmds:{},cn:0,garcons:[],gid:0,mov:[],clientes:[],kid:0,cart:{items:[]},dsc:0,dt:'%',cpf:'',coz:[]};
 for(let i=1;i<=S.nm;i++)S.mesas[i]=mk();
 
 /* ===== Supabase: login, leitura e gravação ===== */
@@ -338,7 +439,7 @@ function vCfgCert(){return `<div class="card cfg"><h3>Certificado digital</h3><p
 function vCfgImpressoras(){const d=cfgGet().impressoras;return `<div class="cfg-layout"><section class="cfg-section"><h3>Dispositivos de impressão</h3><p class="hint">Defina as impressoras que o caixa deverá usar.</p><div class="cfg-fields"><div class="cfg-field full"><label for="recibo">Impressora de comprovantes</label><input id="recibo" value="${esc(d.recibo)}" placeholder="Nome da impressora no Windows"></div><div class="cfg-field full"><label for="cozinha">Impressora de cozinha/produção</label><input id="cozinha" value="${esc(d.cozinha)}" placeholder="Opcional"></div><div class="cfg-field"><label for="papel">Largura do papel</label><select id="papel"><option value="58" ${d.papel=='58'?'selected':''}>58 mm</option><option value="80" ${d.papel=='80'?'selected':''}>80 mm</option><option value="a4" ${d.papel=='a4'?'selected':''}>A4</option></select></div><div class="cfg-field"><label for="copias">Cópias do comprovante</label><input id="copias" type="number" min="1" max="5" value="${esc(d.copias)}"></div><div class="cfg-field"><label for="auto">Impressão automática</label><select id="auto"><option value="nao" ${d.auto=='nao'?'selected':''}>Não</option><option value="sim" ${d.auto=='sim'?'selected':''}>Sim</option></select></div><div class="cfg-field"><label for="pedidos">Imprimir pedidos de cozinha</label><select id="pedidos"><option value="sim" ${d.pedidos=='sim'?'selected':''}>Sim</option><option value="nao" ${d.pedidos=='nao'?'selected':''}>Não</option></select></div><div class="cfg-field full"><label for="fechamento">Imprimir relatório de fechamento</label><select id="fechamento"><option value="sim" ${d.fechamento=='sim'?'selected':''}>Sim</option><option value="nao" ${d.fechamento=='nao'?'selected':''}>Não</option></select></div></div><div class="cfg-actions"><button class="btn p" onclick="cfgSavePrinter()">Salvar preferências</button><button class="btn" onclick="cfgPrintTest()">Testar impressão</button></div><div class="cfg-note">A seleção de uma impressora por nome é uma preferência. Para enviar trabalhos diretamente a uma impressora local, o navegador pode exigir uma ponte ou agente de impressão instalado.</div></section><section class="cfg-section"><h3>Prévia do comprovante</h3><p class="hint">Exemplo de como a impressão será organizada.</p><div style="border:1px dashed var(--bd);border-radius:8px;padding:16px;max-width:360px;font:12px/1.6 ui-monospace,monospace"><b>PDV FÁCIL</b><br>Comprovante de venda<br>--------------------------------<br>Produto demonstrativo&nbsp;&nbsp; R$ 10,00<br>--------------------------------<br><b>TOTAL&nbsp;&nbsp; R$ 10,00</b><br><small>Documento ilustrativo — não fiscal</small></div></section></div>`}
 function cfgPrintTest(){const d=cfgGet(),w=window.open('','_blank','width=420,height=600');if(!w)return toast('Permita a janela de impressão no navegador.');w.document.write(`<!doctype html><html><head><title>Teste de impressão</title><style>body{font:12px monospace;padding:18px;max-width:300px}h2{font-size:16px}hr{border:0;border-top:1px dashed #000}</style></head><body><h2>PDV FÁCIL</h2><p>TESTE DE IMPRESSÃO</p><hr><p>Impressora configurada: ${esc(d.impressoras.recibo||'não informada')}</p><p>Papel: ${esc(d.impressoras.papel)} mm</p><hr><p>Se esta janela foi impressa, o navegador abriu a caixa de impressão.</p><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()}
 function vCfgBackup(){return `<div class="cfg-layout"><section class="cfg-section"><h3>Exportar configurações</h3><p class="hint">Gere um arquivo com as preferências cadastradas nesta versão.</p><div class="cfg-status">Disponível neste navegador</div><div class="cfg-actions"><button class="btn p" onclick="cfgExport()">Exportar JSON</button></div><div class="cfg-note">Este arquivo inclui as configurações locais de empresa, impressoras, aparência e preferências fiscais. <b>Não é um backup completo</b> dos produtos, clientes, vendas, certificado digital ou banco Supabase.</div></section><section class="cfg-section"><h3>Restaurar configurações</h3><p class="hint">Importe um arquivo JSON exportado anteriormente.</p><div class="cfg-field"><label for="cfgImportFile">Arquivo de configurações (.json)</label><input id="cfgImportFile" type="file" accept="application/json,.json" onchange="cfgImport(this)"></div><div class="cfg-note">A importação substitui as configurações locais atuais após confirmação. Para backup integral e restauração do banco, é necessário um processo seguro no backend/Supabase.</div></section></div>`}
-function vCfgAparencia(){const d=cfgGet().aparencia;return `<div class="cfg-layout"><section class="cfg-section"><h3>Cores do sistema</h3><p class="hint">Escolha as cores da identidade visual do PDV.</p><div class="cfg-color-row"><div class="cfg-color"><input id="cfgPrimary" type="color" value="${esc(d.primaria)}" oninput="cfgPreviewColors()"><div><b>Cor primária</b><br><small style="color:var(--mu)">Botões e ações no modo claro</small></div></div><div class="cfg-color"><input id="cfgSecondary" type="color" value="${esc(d.secundaria)}" oninput="cfgPreviewColors()"><div><b>Cor secundária</b><br><small style="color:var(--mu)">Detalhes e destaques</small></div></div></div><div class="cfg-actions"><button class="btn p" onclick="cfgSaveAppearance()">Salvar personalização</button><button class="btn" onclick="cfgResetAppearance()">Restaurar padrão</button></div><div class="cfg-note">No modo escuro, o fundo e os botões principais continuam com as cores próprias do tema escuro. As cores escolhidas são usadas apenas em detalhes secundários, como bordas, pequenos indicadores e destaques.</div></section><section class="cfg-section"><h3>Prévia da aparência</h3><p class="hint">A prévia acompanha o tema atual.</p><div class="cfg-preview" id="cfgPreview"><div class="preview-bar"><span class="preview-dot"></span><b>PDV Fácil</b><span style="margin-left:auto;color:var(--mu);font-size:12px">Prévia</span></div><div style="padding:12px;border:1px solid var(--bd);border-radius:9px;background:var(--bg)"><b>Resumo da venda</b><p style="color:var(--mu);margin:4px 0 10px">Produto demonstrativo · R$ 25,00</p><span class="preview-button">Finalizar venda</span> <span class="preview-secondary">Detalhes</span></div></div><div class="cfg-note">Altere o tema pelo botão de lua/sol no topo para comparar os dois modos.</div></section></div>`}
+function vCfgAparencia(){const d=cfgGet().aparencia,tm=document.documentElement.dataset.theme||'auto';return `<div class="cfg-layout"><section class="cfg-section cfg-full"><h3>Tema</h3><p class="hint">Use o modo claro, o escuro ou deixe o PDV seguir o tema do aparelho.</p><div class="sg" role="group" aria-label="Tema do sistema">${[['light','Claro','sun'],['dark','Escuro','moon'],['auto','Automático','']].map(([v,l,i])=>`<button aria-pressed="${tm==v}" class="${tm==v?'on':''}" onclick="setTema('${v}')">${i?ic(i):''}${l}</button>`).join('')}</div></section><section class="cfg-section"><h3>Cores do sistema</h3><p class="hint">Escolha as cores da identidade visual do PDV.</p><div class="cfg-color-row"><div class="cfg-color"><input id="cfgPrimary" type="color" value="${esc(d.primaria)}" oninput="cfgPreviewColors()"><div><b>Cor primária</b><br><small style="color:var(--mu)">Botões e ações no modo claro</small></div></div><div class="cfg-color"><input id="cfgSecondary" type="color" value="${esc(d.secundaria)}" oninput="cfgPreviewColors()"><div><b>Cor secundária</b><br><small style="color:var(--mu)">Detalhes e destaques</small></div></div></div><div class="cfg-actions"><button class="btn p" onclick="cfgSaveAppearance()">Salvar personalização</button><button class="btn" onclick="cfgResetAppearance()">Restaurar padrão</button></div><div class="cfg-note">No modo escuro, o fundo e os botões principais continuam com as cores próprias do tema escuro. As cores escolhidas são usadas apenas em detalhes secundários, como bordas, pequenos indicadores e destaques.</div></section><section class="cfg-section"><h3>Prévia da aparência</h3><p class="hint">A prévia acompanha o tema atual.</p><div class="cfg-preview" id="cfgPreview"><div class="preview-bar"><span class="preview-dot"></span><b>PDV Fácil</b><span style="margin-left:auto;color:var(--mu);font-size:12px">Prévia</span></div><div style="padding:12px;border:1px solid var(--bd);border-radius:9px;background:var(--bg)"><b>Resumo da venda</b><p style="color:var(--mu);margin:4px 0 10px">Produto demonstrativo · R$ 25,00</p><span class="preview-button">Finalizar venda</span> <span class="preview-secondary">Detalhes</span></div></div><div class="cfg-note">Troque o tema na seção acima para comparar os dois modos.</div></section></div>`}
 function vCfgFiscal(){const d=cfgGet().fiscal;return `<div class="cfg-layout"><section class="cfg-section"><h3>Emissão fiscal</h3><p class="hint">Preferências do estabelecimento para emissão de documentos.</p><div class="cfg-fields"><div class="cfg-field"><label for="f_regime">Regime tributário</label><select id="f_regime"><option value="" ${!d.regime?'selected':''}>Selecione</option><option value="simples" ${d.regime=='simples'?'selected':''}>Simples Nacional</option><option value="mei" ${d.regime=='mei'?'selected':''}>MEI</option><option value="presumido" ${d.regime=='presumido'?'selected':''}>Lucro Presumido</option><option value="real" ${d.regime=='real'?'selected':''}>Lucro Real</option></select></div><div class="cfg-field"><label for="f_modelo">Modelo de documento</label><select id="f_modelo"><option value="65" ${d.modelo=='65'?'selected':''}>NFC-e (65)</option><option value="55" ${d.modelo=='55'?'selected':''}>NF-e (55)</option><option value="nfs-e" ${d.modelo=='nfs-e'?'selected':''}>NFS-e (quando aplicável)</option></select></div><div class="cfg-field"><label for="f_ambiente">Ambiente</label><select id="f_ambiente"><option value="homologacao" ${d.ambiente=='homologacao'?'selected':''}>Homologação</option><option value="producao" ${d.ambiente=='producao'?'selected':''}>Produção</option></select></div><div class="cfg-field"><label for="f_uf">UF de emissão</label><input id="f_uf" maxlength="2" value="${esc(d.uf)}" placeholder="PE"></div><div class="cfg-field"><label for="f_serie">Série</label><input id="f_serie" value="${esc(d.serie)}"></div><div class="cfg-field"><label for="f_numero">Próximo número</label><input id="f_numero" value="${esc(d.numero)}"></div><div class="cfg-field full"><label for="f_impostos">Referência/observações tributárias</label><input id="f_impostos" value="${esc(d.impostos)}" placeholder="Não substitui a configuração tributária validada"></div><div class="cfg-field full"><label for="f_observacoes">Observações internas</label><input id="f_observacoes" value="${esc(d.observacoes)}" placeholder="Observações para o responsável fiscal"></div></div><div class="cfg-actions"><button class="btn p" onclick="cfgSaveFiscal()">Salvar preferências fiscais</button></div></section><section class="cfg-section"><h3>Checklist fiscal</h3><p class="hint">Antes de emitir em produção, confirme os requisitos com o responsável fiscal.</p><div class="row"><span>Dados cadastrais da empresa</span><span class="cfg-accent">Configurar em Empresa</span></div><div class="row"><span>Certificado digital</span><span>${cert?'Configurado':'Verificar'}</span></div><div class="row"><span>CSC e token da SEFAZ</span><span>Verificar</span></div><div class="row"><span>Ambiente de homologação</span><span>Testar</span></div><div class="cfg-note">Estas preferências são apenas informativas nesta versão do HTML e não alteram automaticamente o emissor fiscal. As regras e os parâmetros devem ser validados para a UF, o modelo e a legislação aplicáveis.</div></section></div>`}
 function vCfg(){applyAppearance();const content={empresa:vCfgEmpresa,cert:vCfgCert,impressoras:vCfgImpressoras,backup:vCfgBackup,aparencia:vCfgAparencia,fiscal:vCfgFiscal};return head('Configurações')+`<div class="cfg-wrap">${cfgTabs()}${content[cfgTab]()}</div>`}
 
@@ -347,7 +448,7 @@ async function boot(){
  // Prévia local: permite conferir as telas de Configurações ao abrir o HTML baixado, sem exigir login/Supabase.
  if(location.protocol==='file:'){
   USER='Prévia local';
-  view='cfg';
+  view=location.hash=='#cozinha'?'coz':'cfg';kIniciar();
   document.title='PDV Fácil · Prévia das Configurações';
   const banner=document.getElementById('localPreviewBanner');
   if(banner)banner.style.display='block';
@@ -366,11 +467,12 @@ async function boot(){
   await carregarConfig();
   await carregarEstado();
   await carregarCert();
-  applyAppearance();
+  applyAppearance();kIniciar();
  }catch(e){
   $('#main').innerHTML='<div class="card emp">Não foi possível carregar os dados.<br><small>'+esc((e&&e.message)||e)+'</small><br><br><button class="btn p" onclick="location.reload()">Tentar de novo</button></div>';
   return;
  }
+  if(location.hash=='#cozinha')view='coz';
  render();
 }
 let view='mesas',mode='m',cur=null,cat='Todos',pay=null,q='',help=false,cm=null,cv=null,cq='',ctab='prod';
@@ -381,9 +483,9 @@ const P=id=>S.prods.find(p=>p.id==id)||{nome:'(removido)',preco:0};
 const tot=m=>m.items.reduce((a,i)=>a+i.q*P(i.id).preco,0);
 const G=()=>cur.k=='m'?S.mesas[cur.id]:S.cmds[cur.id];
 const lbl=()=>cur.k=='m'?(G().j?'Mesas '+G().j.join(' + '):'Mesa '+cur.id):'Comanda '+cur.id+(G().nome?' · '+G().nome:'');
-function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',2400)}
+function toast(t,ms=2400){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',ms)}
 function setSeg(v){S.seg=v;try{go('mesas')}catch(e){console.error(e);toast('Erro ao abrir '+((SEG[v]&&SEG[v].nome)||v)+': '+e.message)}cfg({segmento:v})}
-function go(v){view=v;q='';if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;render()}
+function go(v){view=v;q='';try{history.replaceState(null,'',v=='coz'?'#cozinha':location.pathname+location.search)}catch(e){}if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;render()}
 function tgl(){document.body.classList.toggle('nav-off')}
 const IC={
 mesas:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
@@ -399,9 +501,9 @@ const ic=k=>`<svg viewBox="0 0 24 24">${IC[k]}</svg>`;
 function nav(){
  const a=view=='pos'?'mesas':view;
  const it=[['mesas',S.seg=='varejo'?'Venda rápida':'Atendimento'],['caixa','Caixa'],['cad','Cadastros'],['cli','Clientes'],['fin','Financeiro'],['cfg','Configurações']];
- $('#nav').innerHTML=`<div class="brand"><i>P</i>PDV Fácil</div><div class="lb">Menu</div>`+it.map(([k,l])=>`<button class="${a==k?'on':''}" onclick="go('${k}')">${ic(k)}${l}</button>`).join('')+`<div class="sp"></div><div class="usr"><b>${esc((USER||'D')[0].toUpperCase())}</b><div>${esc((USER||'Diretoria').split('@')[0])}<small><a href="#" onclick="sair();return false" style="color:inherit;text-decoration:underline">Sair</a></small></div></div>`;
+ $('#nav').innerHTML=`<div class="brand"><i>P</i>PDV Fácil</div><div class="lb">Menu</div>`+it.map(([k,l])=>`<button class="${a==k?'on':''}" onclick="go('${k}')">${ic(k)}${l}${k=='mesas'&&rst()&&kProntos()?`<span class="nb" aria-label="${kProntos()} pedidos prontos">${kProntos()}</span>`:''}</button>`).join('')+`<div class="sp"></div><div class="usr"><b>${esc((USER||'D')[0].toUpperCase())}</b><div>${esc((USER||'Diretoria').split('@')[0])}<small><a href="#" onclick="sair();return false" style="color:inherit;text-decoration:underline">Sair</a></small></div></div>`;
 }
-function head(t,extra=''){return `<div class="top"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><h1>${t}</h1>${extra}<button class="btn ic" onclick="tth()" aria-label="Alternar tema claro/escuro">${ic(isDark()?'sun':'moon')}</button><select onchange="setSeg(this.value)" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>`}
+function head(t,extra=''){return `<div class="top"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><h1>${t}</h1>${extra}${rst()?`<button class="btn ic kbtn" onclick="go('coz')" aria-label="Abrir a tela da cozinha" title="Tela da cozinha (Alt+K)">${ic('cook')}${kProntos()?`<span class="nb">${kProntos()}</span>`:''}</button>`:''}<select onchange="setSeg(this.value)" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>`}
 function kp(a){return `<div class="kpis">${a.map(([l,v])=>`<div class="card kpi"><small>${l}</small><b>${v}</b></div>`).join('')}</div>`}
 function vSalao(){
  const ms=Object.entries(S.mesas).filter(([,m])=>!m.ref),cs=Object.entries(S.cmds);
@@ -412,11 +514,11 @@ function vSalao(){
  if(mode=='m'){
   b=kp([['Livres',ms.length-oc-iv],['Ocupadas',oc],['Inválidas',iv],['Em aberto',R(aberto)]])+
   `<div class="top" style="margin-bottom:6px"><p class="hint" style="flex:1;margin:0">Toque numa mesa livre para atender. Use ⊘ para marcar ou reativar uma mesa inválida. Arraste uma mesa sobre outra para juntar.</p><button class="btn" onclick="addMesa()">+ Mesa</button><button class="btn" onclick="delMesa()">− Mesa</button></div>
-  <div class="grid">${ms.map(([n,m])=>{const k=m.j?'j':m.aberta?'o':m.inv?'i':'';return `<div class="card mesa ${k}" data-m="${m.inv?'':n}" role="button" onclick="open_('m',${n})"><b>${m.j?'Mesas '+m.j.join(' + '):'Mesa '+n}</b><span class="tag ${k}">${m.j?'Juntas':m.aberta?'Ocupada':m.inv?'Inválida':'Livre'}</span><small>${m.aberta?R(tot(m))+' · desde '+m.hora+gtag(m):m.inv?'Fora de uso':'Disponível'}</small>${m.j?`<button class="btn sep" onclick="event.stopPropagation();sep(${n})">${sv('link',14)}Separar</button>`:''}${m.aberta?'':`<button class="x" onclick="event.stopPropagation();inv(${n})" aria-label="Alternar inválida">⊘</button>`}</div>`}).join('')}</div>`;
+  <div class="grid">${ms.map(([n,m])=>{const k=m.j?'j':m.aberta?'o':m.inv?'i':'';return `<div class="card mesa ${k}${kRd('m',n)?' rd':''}" data-m="${m.inv?'':n}" role="button" onclick="open_('m',${n})"><b>${m.j?'Mesas '+m.j.join(' + '):'Mesa '+n}</b><span class="tag ${k}">${m.j?'Juntas':m.aberta?'Ocupada':m.inv?'Inválida':'Livre'}</span><small>${m.aberta?R(tot(m))+' · desde '+m.hora+gtag(m):m.inv?'Fora de uso':'Disponível'}</small>${kChips('m',n)}${m.j?`<button class="btn sep" onclick="event.stopPropagation();sep(${n})">${sv('link',14)}Separar</button>`:''}${m.aberta?'':`<button class="x" onclick="event.stopPropagation();inv(${n})" aria-label="Alternar inválida">⊘</button>`}</div>`}).join('')}</div>`;
  }else{
   b=kp([['Comandas abertas',cs.length],['Em aberto',R(aberto)]])+
   `<div class="card" style="margin-bottom:14px"><div class="frm" style="margin:0"><input id="cnm" placeholder="Nome do cliente (opcional)">${rst()&&S.garcons.length?`<select id="cg"><option value="">Garçom</option>${S.garcons.map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join('')}</select>`:''}<button class="btn p" onclick="novaCmd()">+ Nova comanda</button></div></div>
-  ${cs.length?`<div class="grid">${cs.map(([n,m])=>`<div class="card mesa o" role="button" onclick="open_('c',${n})"><b>Comanda ${n}</b><span class="tag o">Aberta</span><small>${m.nome?m.nome+' · ':''}${R(tot(m))} · ${m.hora}${gtag(m)}</small></div>`).join('')}</div>`:'<div class="card emp">Nenhuma comanda aberta. Crie a primeira acima.</div>'}`;
+  ${cs.length?`<div class="grid">${cs.map(([n,m])=>`<div class="card mesa o${kRd('c',n)?' rd':''}" role="button" onclick="open_('c',${n})"><b>Comanda ${n}</b><span class="tag o">Aberta</span><small>${m.nome?m.nome+' · ':''}${R(tot(m))} · ${m.hora}${gtag(m)}</small>${kChips('c',n)}</div>`).join('')}</div>`:'<div class="card emp">Nenhuma comanda aberta. Crie a primeira acima.</div>'}`;
  }
  return head('Atendimento',sg)+b;
 }
@@ -434,18 +536,18 @@ function vPos(){
  return `<div class="top"><button class="btn" onclick="go('mesas')">← Voltar</button><h1>${lbl()}</h1><span class="tag ${m.aberta?'o':''}">${m.aberta?'Ocupada desde '+m.hora:'Livre'}</span></div>
  <div class="pos"><div>${left}</div>
  <div class="card" style="align-self:start"><h3>Comanda</h3>${m.items.length?m.items.map(i=>`<div class="it"><div><b>${P(i.id).nome}</b><br><small style="color:var(--mu)">${R(P(i.id).preco)}</small></div><div class="q"><button onclick="chg(${i.id},-1)">−</button>${i.q}<button onclick="chg(${i.id},1)">+</button></div><b>${R(P(i.id).preco*i.q)}</b></div>`).join(''):'<p style="color:var(--mu)">Toque nos produtos para lançar.</p>'}
- ${gsel}
+ <div id="kst">${kStrip()}</div>${gsel}
  <div style="margin-top:12px"><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF do cliente (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div></div>
  <div class="row" style="margin-top:10px"><span>Subtotal</span><span>${R(sub)}</span></div>
  <label class="row"><span><input type="checkbox" ${S.taxa?'checked':''} onchange="S.taxa=this.checked;render();cfg({taxa_servico:S.taxa})"> Serviço 10%</span><span>${R(tx)}</span></label>
  <div class="row tot"><span>Total</span><span>${R(sub+tx)}</span></div>
- ${cur.k=='m'&&m.j?`<button class="btn g" onclick="sep(${cur.id})">Separar mesas</button>`:''}${act}<button class="btn g" ${m.items.length?'':'disabled'} onclick="toast('Pedido enviado à cozinha')">Enviar para cozinha</button>
+ ${cur.k=='m'&&m.j?`<button class="btn g" onclick="sep(${cur.id})">Separar mesas</button>`:''}${act}${(()=>{const pend=m.items.reduce((a,i)=>a+Math.max(0,i.q-(i.env||0)),0);return `<button class="btn g" ${pend?'':'disabled'} onclick="enviarCozinha()">${pend?'Enviar para cozinha · '+pend+(pend==1?' item novo':' itens novos'):(m.items.length?'Tudo enviado à cozinha':'Enviar para cozinha')}</button>`})()}
  <button class="btn p g" ${m.items.length?'':'disabled'} onclick="pay='Pix';render()">Fechar conta</button></div></div>`
 }
 function ocupar(){const m=G();m.aberta=true;m.hora=hm();render()}
-function liberar(){const k=cur.k,j=k=='m'&&S.mesas[cur.id].j;if(k=='m')freeM(cur.id);else delete S.cmds[cur.id];toast(k=='m'?(j?'Mesas liberadas':'Mesa liberada'):'Comanda cancelada');go('mesas')}
+function liberar(){const k=cur.k,j=k=='m'&&S.mesas[cur.id].j;kFree(k,cur.id,true);if(k=='m')freeM(cur.id);else delete S.cmds[cur.id];toast(k=='m'?(j?'Mesas liberadas':'Mesa liberada'):'Comanda cancelada');go('mesas')}
 function add(id,n=1){const m=G();if(!m.aberta){m.aberta=true;m.hora=hm()}const i=m.items.find(x=>x.id==id);i?i.q+=n:m.items.push({id,q:n});render()}
-function chg(id,d){const m=G(),i=m.items.find(x=>x.id==id);i.q+=d;if(i.q<1)m.items=m.items.filter(x=>x!=i);if(!m.items.length&&cur.k=='m'&&!m.j){S.mesas[cur.id]=mk();toast('Mesa liberada')}render()}
+function chg(id,d){const m=G(),i=m.items.find(x=>x.id==id);i.q+=d;if(d<0&&(i.env||0)>Math.max(i.q,0)){i.env=Math.max(i.q,0);toast('Item já enviado à cozinha. Avise o cozinheiro.',4500)}if(i.q<1)m.items=m.items.filter(x=>x!=i);if(!m.items.length&&cur.k=='m'&&!m.j){kFree('m',cur.id,true);S.mesas[cur.id]=mk();toast('Mesa liberada')}render()}
 let jn=null,DR=null,dragSup=false;
 const mesaIds=id=>S.mesas[id].j||[id];
 function freeM(id){mesaIds(id).forEach(x=>S.mesas[x]=mk())}
@@ -455,10 +557,10 @@ function vJoin(){const la=mesaIds(jn.a).join(' + '),lb=mesaIds(jn.b).join(' + ')
  return `<div class="mod" onclick="jn=null;render()"><div class="card jm" onclick="event.stopPropagation()" role="dialog" aria-label="Juntar mesas"><span class="jbx">${sv('link',26)}</span><h3>Juntar mesas?</h3><div class="jcc"><span>Mesa ${la}</span><i>+</i><span>Mesa ${lb}</span></div><p>Os pedidos das duas mesas serão somados em uma única conta.</p><div class="pm-f" style="padding:16px 0 0"><button class="btn" onclick="jn=null;render()">Cancelar</button><button class="btn p" onclick="confirmJoin()">${sv('ok',18)}Juntar mesas</button></div></div></div>`}
 function confirmJoin(){const a=jn.a,b=jn.b;jn=null;const A=S.mesas[a],B=S.mesas[b],ga=mesaIds(a);
  const all=[...new Set([...mesaIds(b),...ga])].sort((x,y)=>x-y);
- A.items.forEach(i=>{const x=B.items.find(y=>y.id==i.id);x?x.q+=i.q:B.items.push({id:i.id,q:i.q})});
- B.g=B.g||A.g;B.cpf=B.cpf||A.cpf;B.hora=B.aberta?B.hora:(A.aberta?A.hora:hm());B.aberta=true;B.j=all;
+ A.items.forEach(i=>{const x=B.items.find(y=>y.id==i.id);x?(x.q+=i.q,x.env=(x.env||0)+(i.env||0)):B.items.push({id:i.id,q:i.q,env:i.env||0})});
+ B.ns=(B.ns||0)+(A.ns||0);B.g=B.g||A.g;B.cpf=B.cpf||A.cpf;B.hora=B.aberta?B.hora:(A.aberta?A.hora:hm());B.aberta=true;B.j=all;
  ga.forEach(x=>{S.mesas[x]=Object.assign(mk(),{ref:b,aberta:true})});
- render();toast('Mesas '+all.join(' + ')+' unificadas')}
+ kRebind(all,b);render();toast('Mesas '+all.join(' + ')+' unificadas')}
 document.addEventListener('pointerdown',e=>{
  if(e.button>0||view!='mesas'||mode!='m'||jn)return;
  const c=e.target.closest('.mesa[data-m]');if(!c||!c.dataset.m||e.target.closest('button'))return;
@@ -535,6 +637,7 @@ const fechar=once(async function(){
  if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');
  const c=cl(),gid=G().g||null;
  try{S.mov.push(await addMov({desc:lbl()+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null,gid}))}catch(e){return dbErr(e)}
+ kFree(cur.k,cur.id,false);
  if(cur.k=='m')freeM(cur.id);else delete S.cmds[cur.id];
  S.cpf='';pay=null;toast('Pagamento registrado');go('mesas');
 })
@@ -677,12 +780,13 @@ function cpfSt(){const e=$('#cs');if(!e)return;const d=S.cpf,c=cl();
  e.innerHTML=!d?'<small style="color:var(--mu)">Opcional. Digite o CPF para puxar o cliente do cadastro.</small>':d.length<11?'':!okCpf(d)?'<small style="color:var(--ba)">CPF inválido</small>':c?`<div style="background:var(--okb);border-radius:8px;padding:8px 10px"><small style="color:var(--ok)">✓ Cliente cadastrado</small><br><b>${esc(c.nome)}</b>${c.tel&&c.tel!='—'?`<br><small style="color:var(--mu)">${esc(c.tel)}</small>`:''}</div>`:`<small style="color:var(--wa)">CPF não cadastrado. Cadastre agora:</small><div class="frm" style="margin:6px 0 0"><input id="cn2" placeholder="Nome" autocomplete="off"><input id="ct2" inputmode="tel" placeholder="Telefone (opcional)" autocomplete="off"><button class="btn" onclick="cpfCad()">Cadastrar</button></div>`}
 function cpfCad(){const n=$('#cn2').value.trim();if(!n)return toast('Informe o nome');S.clientes.push({id:++S.kid,nome:n,tel:$('#ct2').value.trim()||'—',cpf:S.cpf,email:'',obs:''});toast('Cliente cadastrado');cpfSt()}
 function limpa(){S.cart={items:[]};S.dsc=0;S.cpf='';render()}
-function vHelp(){const L=[['F1','Mostrar ou fechar atalhos'],['F2','Buscar produto ou digitar o código'],['F3','CPF do cliente'],['F4','Finalizar venda'],['F6','Desconto'],['F9','Limpar carrinho'],['1 a 4','Forma de pagamento'],['Enter','Confirmar pagamento'],['Esc','Fechar janela ou voltar'],['Alt + 1 a 6','Venda, Caixa, Cadastros, Clientes, Financeiro, Configurações']];
+function vHelp(){const L=[['F1','Mostrar ou fechar atalhos'],['F2','Buscar produto ou digitar o código'],['F3','CPF do cliente'],['F4','Finalizar venda'],['F6','Desconto'],['F9','Limpar carrinho'],['1 a 4','Forma de pagamento'],['Enter','Confirmar pagamento'],['Esc','Fechar janela ou voltar'],['Alt + 1 a 6','Venda, Caixa, Cadastros, Clientes, Financeiro, Configurações'],['Alt + K','Abrir ou sair da tela da cozinha']];
  return `<div class="mod" onclick="help=false;render()"><div class="card" onclick="event.stopPropagation()"><h3>Atalhos do teclado</h3>${L.map(([a,b])=>`<div class="row"><span>${b}</span><span class="kb">${a}</span></div>`).join('')}<button class="btn g" onclick="help=false;render()">Fechar</button></div></div>`}
 document.addEventListener('keydown',e=>{
  const k=e.key,t=e.target,typing=/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName),rv=view=='mesas'&&S.seg=='varejo',f=id=>{e.preventDefault();const x=$(id);x&&x.focus()};
  if(k=='F1'){e.preventDefault();help=!help;return render()}
  if(k=='Escape'){if(jn)jn=null;else if(help)help=false;else if(pay)pay=null;else if(cm)cm=null;else if(cv)cv=null;else if(view=='pos')return go('mesas');else return;return render()}
+ if(e.altKey&&e.code=='KeyK'){e.preventDefault();return go(view=='coz'?'mesas':'coz')}
  if(e.altKey&&['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6'].includes(e.code)){e.preventDefault();return go(['mesas','caixa','cad','cli','fin','cfg'][+e.code.slice(5)-1])}
  if(jn){if(k=='Enter'){e.preventDefault();confirmJoin()}return}
  if(help)return;
@@ -698,12 +802,234 @@ document.addEventListener('keydown',e=>{
  }else if(view=='pos'&&k=='F3')f('#cpf');else if(view=='pos'&&k=='F2')f('#bq');
  else if(view=='pos'&&k=='F4'&&G().items.length){e.preventDefault();pay='Pix';render()}
 });
-function render(){
+/* ===== Cozinha (KDS): o salão envia, a cozinha prepara, o salão é avisado ===== */
+const KDS={alerta:10,atraso:20}; /* minutos: o cronômetro fica âmbar e depois o cartão fica vermelho */
+const K={remoto:null,off:false,som:true,quiet:false};
+let kFil='todos',AC=null,wl=null;
+Object.assign(IC,{cook:'<path d="M6.5 13.5A4 4 0 018 5.7a4.5 4.5 0 018.5 0 4 4 0 011 7.8"/><path d="M6.5 13.5V20h11v-6.5M6.5 17h11"/>'});
+Object.assign(IC2,{
+spk:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a8 8 0 010 11"/>',
+spkx:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
+full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+flame:'<path d="M12 3c1 3.5 5 5.5 5 10a5 5 0 01-10 0c0-2 1-3.2 2-4.2.2 1.2.8 2 1.6 2.4C10.2 8.5 10.6 5.5 12 3z"/>',
+back:'<path d="M9 7L4 12l5 5"/><path d="M4 12h10a6 6 0 010 8h-3"/>'});
+const KSQL=`-- Cozinha: pedidos compartilhados entre o salão e a tela da cozinha
+do $$
+declare t text;
+begin
+  select format_type(a.atttypid, a.atttypmod) into t
+  from pg_attribute a
+  where a.attrelid = 'public.empresas'::regclass and a.attname = 'id';
+  execute format(
+    'create table if not exists public.cozinha_pedidos (
+       id text primary key,
+       empresa_id %s not null references public.empresas(id) on delete cascade,
+       dados jsonb not null,
+       status text not null default ''novo'',
+       atualizado_em timestamptz not null default now())', t);
+end $$;
+
+create index if not exists cozinha_pedidos_emp_idx
+  on public.cozinha_pedidos (empresa_id, atualizado_em desc);
+
+alter table public.cozinha_pedidos enable row level security;
+drop policy if exists cozinha_pedidos_empresa on public.cozinha_pedidos;
+create policy cozinha_pedidos_empresa on public.cozinha_pedidos
+  for all to authenticated
+  using (empresa_id in (select id from public.empresas))
+  with check (empresa_id in (select id from public.empresas));
+grant select, insert, update, delete on public.cozinha_pedidos to authenticated;
+notify pgrst, 'reload schema';`;
+
+/* --- utilidades de tempo e estado --- */
+const kAtivo=t=>t.st=='novo'||t.st=='prep'||t.st=='pronto';
+const kKey=()=>'pdvfacil.coz.'+(S.empId||'local');
+const kOk=n=>!!n&&typeof n.id=='string'&&/^k[a-z0-9]{4,40}$/.test(n.id)&&Array.isArray(n.it)&&(n.k=='m'||n.k=='c');
+const kHm=ms=>new Date(ms).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+const kMin=ms=>{const m=Math.floor(ms/6e4);return m<1?'agora':m+' min'};
+const kDur=ms=>Math.max(1,Math.round(ms/6e4))+' min';
+const kClock=ms=>{const s=Math.max(0,Math.floor(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const kAge=t=>t.st=='pronto'?Date.now()-t.t2:t.st=='entregue'?(t.t3||t.u)-t.t0:Date.now()-t.t0;
+const kLate=t=>(t.st=='novo'||t.st=='prep')&&Date.now()-t.t0>=KDS.atraso*6e4;
+const kWarn=t=>(t.st=='novo'||t.st=='prep')&&Date.now()-t.t0>=KDS.alerta*6e4;
+const kCls=t=>t.st=='cancelado'?'s-l x':kLate(t)?'s-l':({novo:'s-n',prep:'s-p',pronto:'s-r',entregue:'s-d'}[t.st]||'');
+const kGet=id=>S.coz.find(t=>t.id==id);
+const kProntos=()=>S.coz.filter(t=>t.st=='pronto'&&!t.arq).length;
+const kRd=(k,r)=>S.coz.some(t=>t.k==k&&+t.r==+r&&t.st=='pronto'&&!t.arq);
+const kSync=()=>(!sb||!S.empId||K.remoto===false)?['l','Só neste computador']:K.off?['o','Sem conexão · tentando']:K.remoto===true?['k','Sincronizado']:['l','Conectando…'];
+function kPill(){const e=$('#ksy');if(!e)return;const s=kSync();e.className='ksy '+s[0];e.innerHTML='<i></i>'+s[1]}
+function renderKeep(){const m=$('#main'),y=m?m.scrollTop:0;render();if(m)m.scrollTop=y}
+
+/* --- som, tela ligada e tela cheia --- */
+function audio(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume()}catch(e){}return AC}
+document.addEventListener('pointerdown',()=>audio(),{once:true});
+function bip(t){if(!K.som)return;const a=audio();if(!a)return;
+ const seq=t=='pronto'?[[784,0],[988,.15],[1319,.3]]:[[660,0],[660,.22]];
+ seq.forEach(([f,d])=>{const o=a.createOscillator(),g=a.createGain(),s=a.currentTime+d;o.type='sine';o.frequency.value=f;o.connect(g);g.connect(a.destination);
+  g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(.35,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+.22);o.start(s);o.stop(s+.25)})}
+function kSom(){K.som=!K.som;try{localStorage.setItem('pdvfacil.coz.som',K.som?'1':'0')}catch(e){}if(K.som)bip('novo');renderKeep()}
+async function kWake(){if(wl||!navigator.wakeLock)return;try{wl=await navigator.wakeLock.request('screen');wl.addEventListener('release',()=>{wl=null})}catch(e){}}
+function kWakeOff(){if(wl){try{wl.release()}catch(e){}wl=null}}
+function kFull(){const d=document;if(d.fullscreenElement){d.exitFullscreen()}else if(d.documentElement.requestFullscreen){d.documentElement.requestFullscreen().catch(()=>toast('O navegador não permitiu a tela cheia'))}}
+function kCopySql(){try{navigator.clipboard.writeText(KSQL).then(()=>toast('SQL copiado'),()=>toast('Não foi possível copiar'))}catch(e){toast('Não foi possível copiar')}}
+
+/* --- gravar, sincronizar e avisar --- */
+function kLocal(){try{localStorage.setItem(kKey(),JSON.stringify(S.coz))}catch(e){}}
+function kPoda(){const lim=Date.now()-24*36e5;S.coz=S.coz.filter(t=>kOk(t)&&(t.u||0)>lim)}
+function kSave(t){t.u=Date.now();const i=S.coz.findIndex(x=>x.id==t.id);i<0?S.coz.push(t):S.coz[i]=t;kLocal();kPush(t)}
+async function kPush(t){
+ if(!sb||!S.empId||K.remoto===false)return;
+ try{await DBX(sb.from('cozinha_pedidos').upsert({id:t.id,empresa_id:S.empId,dados:t,status:t.st,atualizado_em:new Date(t.u).toISOString()},{onConflict:'id'}));K.off=false;if(K.remoto===null)K.remoto=true}
+ catch(e){kFalhou(e)}
+ kPill()}
+function kFalhou(e){
+ const miss=e&&(['42P01','42501','PGRST205','PGRST204'].includes(e.code)||/does not exist|schema cache|could not find the table|row-level security/i.test(e.message||''));
+ if(miss){if(K.remoto!==false){K.remoto=false;toast('Cozinha ligada só neste computador. Falta rodar o SQL da cozinha no Supabase.',6500);if(view=='coz')renderKeep()}}
+ else{console.warn('cozinha_pedidos:',e);K.off=true}
+ kPill()}
+async function kPull(full){
+ if(!sb||!S.empId||K.remoto===false)return;
+ try{
+  const desde=new Date(Date.now()-(full?24*36e5:5*6e4)).toISOString();
+  const r=await DBX(sb.from('cozinha_pedidos').select('dados').eq('empresa_id',S.empId).gte('atualizado_em',desde).order('atualizado_em',{ascending:false}).limit(500));
+  K.remoto=true;K.off=false;
+  const L=(r||[]).map(x=>x.dados).filter(kOk),q0=K.quiet;K.quiet=!!full;kMerge(L,'remote');K.quiet=q0;
+  if(full){const ids=new Set(L.map(t=>t.id)),lim=Date.now()-24*36e5;S.coz.filter(t=>!ids.has(t.id)&&(t.u||0)>lim).forEach(kPush)}
+ }catch(e){kFalhou(e)}
+ kPill()}
+function kMerge(list,src){
+ let mudou=false;
+ list.forEach(n=>{if(!kOk(n))return;const i=S.coz.findIndex(t=>t.id==n.id),o=S.coz[i];
+  if(!o){S.coz.push(n);mudou=true;kEvt(null,n)}
+  else if((n.u||0)>(o.u||0)){S.coz[i]=n;mudou=true;kEvt(o,n)}
+  else if((n.u||0)<(o.u||0)&&src=='remote')kPush(o)});
+ if(mudou){kLocal();kUi()}
+ return mudou}
+function kEvt(o,n){
+ if(K.quiet)return;
+ if(!o&&n.st=='novo'&&view=='coz'){bip('novo');toast('Novo pedido · '+n.lb)}
+ else if(n.st=='pronto'&&(!o||o.st!='pronto')&&!n.arq&&view!='coz'){bip('pronto');toast('Pedido pronto · '+n.lb+'. Pode retirar!',8000)}
+ else if(n.st=='cancelado'&&(!o||o.st!='cancelado')&&view=='coz'){bip('novo');toast('Pedido cancelado · '+n.lb,5000)}}
+function kUi(){
  nav();
+ const ae=document.activeElement,typing=!!ae&&/^(INPUT|SELECT|TEXTAREA)$/.test(ae.tagName);
+ if(view=='coz'||(view=='mesas'&&!jn&&!DR&&!typing))renderKeep();
+ else if(view=='pos'){const e=$('#kst');if(e)e.innerHTML=kStrip()}}
+function kIniciar(){
+ if(kIniciar.ok)return;kIniciar.ok=1;
+ try{const l=JSON.parse(localStorage.getItem(kKey())||'[]');if(Array.isArray(l))S.coz=l}catch(e){}
+ kPoda();
+ try{K.som=localStorage.getItem('pdvfacil.coz.som')!=='0'}catch(e){}
+ window.addEventListener('storage',e=>{if(e.key!==kKey()||!e.newValue)return;try{kMerge(JSON.parse(e.newValue),'local')}catch(_){}});
+ setInterval(kTick,1000);
+ if(sb&&S.empId){kPull(true);let n=0;setInterval(()=>{if(document.hidden)return;n++;kPull(n%15==0)},4000)}
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)return;if(sb&&S.empId)kPull(true);if(view=='coz')kWake()})}
+function kTick(){
+ if(document.hidden)return;
+ const now=Date.now();
+ document.querySelectorAll('[data-since]').forEach(e=>{e.textContent=kMin(now-(+e.dataset.since))});
+ if(view!='coz')return;
+ const c=$('#kclock');if(c)c.textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ const a=$('#kaud');if(a)a.style.display=(K.som&&(!AC||AC.state!='running'))?'':'none';
+ let mudar=false;
+ document.querySelectorAll('.kt[data-id]').forEach(el=>{const t=kGet(el.dataset.id);if(!t||t.st=='cancelado')return;
+  const tm=el.querySelector('.kt-tm');if(tm){tm.textContent=kClock(kAge(t));tm.classList.toggle('w',kWarn(t)&&!kLate(t))}
+  if(kLate(t)!=el.classList.contains('s-l'))mudar=true});
+ if(mudar)renderKeep()}
+
+/* --- ações da cozinha --- */
+function kAv(id){const t=kGet(id);if(!t)return;const n=Date.now();
+ if(t.st=='novo'){t.st='prep';t.t1=n}
+ else if(t.st=='prep'){t.st='pronto';t.t2=n;t.it.forEach(i=>{i.ok=1})}
+ else if(t.st=='pronto'){t.st='entregue';t.t3=n}
+ kSave(t);renderKeep()}
+function kVolta(id){const t=kGet(id);if(!t)return;
+ if(t.st=='prep'){t.st='novo';t.t1=0;t.it.forEach(i=>{i.ok=0})}
+ else if(t.st=='pronto'){t.st='prep';t.t2=0}
+ else if(t.st=='entregue'){t.st='pronto';t.t2=t.t2||Date.now();t.t3=0}
+ kSave(t);renderKeep()}
+function kItem(id,x){const t=kGet(id);if(!t||!t.it[x])return;t.it[x].ok=t.it[x].ok?0:1;kSave(t);renderKeep()}
+function kCiente(id){const t=kGet(id);if(!t)return;t.ack=1;kSave(t);renderKeep()}
+function kFil_(f){kFil=f;renderKeep()}
+
+/* --- ações do salão --- */
+function enviarCozinha(){
+ const m=G();if(!m||!cur)return;
+ const novos=m.items.map(i=>({id:i.id,n:P(i.id).nome,q:i.q-(i.env||0),ok:0})).filter(x=>x.q>0);
+ if(!novos.length)return toast('Tudo já foi enviado à cozinha');
+ if(!m.aberta){m.aberta=true;m.hora=hm()}
+ const n=Date.now(),t={id:'k'+n.toString(36)+Math.random().toString(36).slice(2,6),k:cur.k,r:+cur.id,lb:lbl(),g:gn(m)||'',ad:(m.ns||0)>0,it:novos,st:'novo',t0:n,t1:0,t2:0,t3:0,u:n};
+ m.items.forEach(i=>{i.env=i.q});m.ns=(m.ns||0)+1;
+ kSave(t);toast('Pedido enviado à cozinha · '+t.lb);render()}
+function kEntrega(k,r){
+ S.coz.filter(t=>t.k==k&&+t.r==+r&&t.st=='pronto'&&!t.arq).forEach(t=>{t.st='entregue';t.t3=Date.now();kSave(t)});
+ toast('Entrega registrada');renderKeep()}
+function kFree(k,id,cancel){
+ const ids=k=='m'?((S.mesas[id]&&S.mesas[id].j)||[id]).map(Number):[+id];
+ S.coz.filter(t=>t.k==k&&ids.includes(+t.r)&&!t.arq).forEach(t=>{if(cancel&&kAtivo(t))t.st='cancelado';t.arq=1;kSave(t)})}
+function kRebind(all,b){
+ const lb='Mesas '+all.join(' + ');
+ S.coz.filter(t=>t.k=='m'&&!t.arq&&all.includes(+t.r)).forEach(t=>{t.r=b;t.lb=lb;kSave(t)})}
+
+/* --- selos no salão e andamento na comanda --- */
+function kChips(k,r){
+ const L=S.coz.filter(t=>t.k==k&&+t.r==+r&&!t.arq&&kAtivo(t));if(!L.length)return'';
+ const n=L.filter(t=>t.st=='novo'),p=L.filter(t=>t.st=='prep'),d=L.filter(t=>t.st=='pronto');
+ let h='';
+ if(d.length)h+=`<span class="kst s-r">${sv('ok',12)}${d.length>1?d.length+' pedidos prontos':'Pedido pronto'} · retirar</span>`;
+ if(p.length){const s=Math.min(...p.map(t=>t.t1||t.t0));h+=`<span class="kst s-p">${sv('flame',12)}Em preparo · <span data-since="${s}">${kMin(Date.now()-s)}</span></span>`}
+ if(n.length)h+=`<span class="kst s-n">Na fila da cozinha</span>`;
+ return `<div class="kst-w">${h}</div>`+(d.length?`<button class="btn ent" onclick="event.stopPropagation();kEntrega('${k}',${+r})">Entregue</button>`:'')}
+function kStrip(){
+ if(!cur)return'';
+ const L=S.coz.filter(t=>t.k==cur.k&&+t.r==+cur.id&&!t.arq&&t.st!='cancelado').sort((a,b)=>a.t0-b.t0);if(!L.length)return'';
+ const nm={novo:['s-n','Na fila'],prep:['s-p','Em preparo'],pronto:['s-r','Pronto'],entregue:['s-d','Entregue']};
+ return `<div class="kp"><h3>Cozinha</h3>${L.map(t=>{const s=nm[t.st]||nm.novo;return `<div class="kp-r ${s[0]}"><div><b>${t.ad?'Adicional':'Pedido'} · ${kHm(t.t0)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)).join(', ')}</small></div><span class="kst ${s[0]}">${s[1]}</span>${t.st=='pronto'?`<button class="btn" onclick="kEntrega('${cur.k}',${+cur.id})">Entregue</button>`:''}</div>`}).join('')}</div>`}
+
+/* --- tela da cozinha --- */
+function kCard(t){
+ const n=t.it.reduce((a,i)=>a+i.q,0),cx=t.st=='cancelado',cls=kCls(t);
+ const tag=cx?'Cancelado':kLate(t)?'Atrasado':({novo:'Novo',prep:'Em preparo',pronto:'Pronto'}[t.st]||'');
+ const bt={novo:['Iniciar preparo','var(--wa)','flame'],prep:['Marcar pronto','var(--ok)','ok'],pronto:['Entregue ao garçom','var(--tx)','ok']}[t.st]||['Ok','var(--tx)','ok'];
+ const li=t.it.map((i,x)=>{
+  const mk=t.st=='prep'?`<button class="kt-ck ${i.ok?'on':''}" onclick="kItem('${t.id}',${x})" aria-pressed="${!!i.ok}" aria-label="Marcar ${esc(i.n)} como feito">${sv('ok',18)}</button>`:`<span class="kt-dot"><i></i></span>`;
+  return `<li class="${i.ok&&t.st=='prep'?'ok':''}">${mk}<b>${i.q}×</b><span>${esc(i.n)}</span></li>`}).join('');
+ const f=cx?`<button class="btn kt-b" style="--bc:var(--ba)" onclick="kCiente('${t.id}')">${sv('ok',20)}Ciente, não preparar</button>`
+  :`<button class="btn kt-b" style="--bc:${bt[1]}" onclick="kAv('${t.id}')">${sv(bt[2],20)}${bt[0]}</button>${t.st!='novo'?`<button class="btn kt-u" onclick="kVolta('${t.id}')" aria-label="Voltar uma etapa" title="Voltar uma etapa">${sv('back',20)}</button>`:''}`;
+ const meta=cx?'A mesa foi liberada. Pode descartar o pedido.':`${t.g?'Garçom '+esc(t.g)+' · ':''}enviado às ${kHm(t.t0)} · ${n} ${n==1?'item':'itens'}${t.st=='pronto'?' · esperando retirada':''}${t.ad?' <span class="kt-ad">Adicional</span>':''}`;
+ return `<article class="kt ${cls}" data-id="${t.id}"><div class="kt-h"><b class="kt-t">${esc(t.lb)}</b><span class="tag">${tag}</span>${cx?'':`<span class="kt-tm ${kWarn(t)&&!kLate(t)?'w':''}">${kClock(kAge(t))}</span>`}</div><div class="kt-m">${meta}</div><ul class="kt-i">${li}</ul><div class="kt-f">${f}</div></article>`}
+function vCoz(){
+ const hoje=ms=>new Date(ms).toDateString()==new Date().toDateString();
+ const nv=S.coz.filter(t=>t.st=='novo'||(t.st=='cancelado'&&!t.ack)).sort((a,b)=>a.t0-b.t0),
+  pp=S.coz.filter(t=>t.st=='prep').sort((a,b)=>a.t0-b.t0),
+  pr=S.coz.filter(t=>t.st=='pronto').sort((a,b)=>a.t2-b.t2),
+  en=S.coz.filter(t=>t.st=='entregue'&&hoje(t.t3||t.u)).sort((a,b)=>(b.t3||b.u)-(a.t3||a.u)).slice(0,40),
+  fe=S.coz.filter(t=>(t.st=='pronto'||t.st=='entregue')&&t.t2&&hoje(t.t2)),
+  med=fe.length?fe.reduce((a,t)=>a+(t.t2-t.t0),0)/fe.length:0,
+  nn=nv.filter(t=>t.st=='novo').length;
+ const col=(c,h,l,v)=>`<section class="kcol ${c}" aria-label="${h}"><h2 class="kcol-h"><span class="kcol-dot"></span>${h}<b>${l.length}</b></h2><div class="kcol-b">${l.length?l.map(kCard).join(''):`<div class="emp card" style="grid-column:1/-1">${v}</div>`}</div></section>`;
+ const all=kFil=='todos';
+ const body=kFil=='entregue'
+  ?`<div class="khis">${en.length?en.map(t=>`<div class="khr"><div><b>${esc(t.lb)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)).join(' · ')}</small><small>Ficou pronto em ${kDur((t.t2||t.t3)-t.t0)} · entregue às ${kHm(t.t3||t.u)}</small></div><button class="btn" onclick="kVolta('${t.id}')">Reabrir</button></div>`).join(''):'<div class="emp card">Nenhuma entrega registrada hoje.</div>'}</div>`
+  :`<div class="kcols ${all?'':'one'}">${all||kFil=='novo'?col('s-n','Novos',nv,'Nenhum pedido novo.'):''}${all||kFil=='prep'?col('s-p','Em preparo',pp,'Nada no fogo agora.'):''}${all||kFil=='pronto'?col('s-r','Prontos para retirar',pr,'Nenhum prato esperando o garçom.'):''}</div>`;
+ const fl=[['todos','Todos',null],['novo','Novos',nn],['prep','Em preparo',pp.length],['pronto','Prontos',pr.length],['entregue','Entregues',en.length]];
+ const sy=kSync(),aud=K.som&&(!AC||AC.state!='running');
+ const foot=`<details class="how kfoot"><summary>Usar a cozinha em outro aparelho</summary><ol><li>No aparelho da cozinha, abra o PDV e entre com a mesma conta.</li><li>Toque no ícone do chapéu de cozinheiro no topo, ou abra o endereço terminando em <code>#cozinha</code>.</li><li>${K.remoto===true?'A sincronização já está ativa: o que o salão enviar aparece aqui em poucos segundos.':'Para sincronizar entre aparelhos, rode o SQL abaixo uma vez no SQL Editor do Supabase.'}</li></ol>${K.remoto===true?'':`<pre>${esc(KSQL)}</pre><button class="btn" onclick="kCopySql()">${sv('copy',16)} Copiar SQL</button>`}</details>`;
+ return `<div class="kd"><header class="kh"><div class="kh-r1"><div class="kh-brand"><i>${ic('cook')}</i><h1>Cozinha</h1></div><span class="ksy ${sy[0]}" id="ksy"><i></i>${sy[1]}</span><span class="kaud" id="kaud" style="display:${aud?'':'none'}">Toque na tela para ativar o som</span><span class="sp"></span><span class="kclock" id="kclock">${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span><button class="kbn" onclick="kSom()" aria-pressed="${K.som}" title="${K.som?'Desligar':'Ligar'} o som dos avisos">${sv(K.som?'spk':'spkx',20)}<span class="kbl">Som</span></button><button class="kbn" onclick="kFull()" title="Tela cheia">${sv('full',20)}<span class="kbl">Tela cheia</span></button><button class="kbn" onclick="go('mesas')">${sv('back',20)}<span>Voltar ao sistema</span></button></div><div class="kh-r2"><div class="kcs"><div class="kc s-n"><b>${nn}</b><small>novos</small></div><div class="kc s-p"><b>${pp.length}</b><small>em preparo</small></div><div class="kc s-r"><b>${pr.length}</b><small>prontos</small></div><div class="kc s-t"><b>${med?kDur(med):'—'}</b><small>tempo médio hoje</small></div></div><div class="kfs" role="group" aria-label="Filtrar pedidos">${fl.map(([k,l,c])=>`<button class="kfi ${kFil==k?'on':''}" aria-pressed="${kFil==k}" onclick="kFil_('${k}')">${l}${c!=null?' · '+c:''}</button>`).join('')}</div></div></header>${body}${foot}</div>`}
+
+/* --- tema (agora em Configurações > Aparência) --- */
+function setTema(t){const r=document.documentElement;
+ if(t=='auto'){delete r.dataset.theme;try{localStorage.removeItem('th')}catch(e){}}
+ else{r.dataset.theme=t;try{localStorage.setItem('th',t)}catch(e){}}
+ applyAppearance();render()}
+try{matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(!document.documentElement.dataset.theme){applyAppearance();render()}})}catch(e){}
+
+function render(){
+ nav();document.body.classList.toggle('kds',view=='coz');if(view=='coz')kWake();else kWakeOff();
  const rv=view=='mesas'&&S.seg=='varejo';
- const localBanner=location.protocol==='file:'?document.getElementById('localPreviewBanner'):null;
+ const localBanner=location.protocol==='file:'&&view!='coz'?document.getElementById('localPreviewBanner'):null;
  const localBannerHtml=localBanner?localBanner.outerHTML.replace('style="display: block;"','style="display:block"'):'';
- $('#main').innerHTML=localBannerHtml+(rv?vVenda()+(pay?vPayV():''):({mesas:vSalao,pos:vPos,caixa:vCaixa,cad:vCad,cli:vCli,fin:vFin,cfg:vCfg})[view]()+(pay&&cur?vPay():''))+(cm?vCliForm():'')+(cv?vCliVer():'')+(help?vHelp():'')+(jn?vJoin():'');
+ $('#main').innerHTML=localBannerHtml+(rv?vVenda()+(pay?vPayV():''):({mesas:vSalao,pos:vPos,caixa:vCaixa,cad:vCad,cli:vCli,fin:vFin,cfg:vCfg,coz:vCoz})[view]()+(pay&&cur?vPay():''))+(cm?vCliForm():'')+(cv?vCliVer():'')+(help?vHelp():'')+(jn?vJoin():'');
  if(rv||view=='pos'){cpfSt();hintQ()}
  if(cm)setTimeout(()=>{const e=$('#kn');e&&e.focus()});
  if(rv&&pay=='Dinheiro')setTimeout(()=>{const e=$('#rc');e&&e.focus()});
