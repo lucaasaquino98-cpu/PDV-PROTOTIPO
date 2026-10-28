@@ -265,7 +265,67 @@ body.kds main{padding:0}
 .sg button svg{width:16px;height:16px}
 .sg button:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
 </style>
-</head>
+<style>\n
+/* ===== Ajustes mobile: garçom e caixa no celular ===== */
+@media (max-width:760px){
+  html,body{min-height:100%;height:auto}
+  body{font-size:15px;-webkit-text-size-adjust:100%}
+  .app{min-height:100dvh;height:100dvh;flex-direction:column-reverse}
+  main{flex:1;min-height:0;overflow:auto;padding:10px 10px calc(14px + env(safe-area-inset-bottom,0px))}
+  nav{position:sticky;bottom:0;z-index:20;width:100%;min-height:64px;padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));background:var(--nv);justify-content:space-around;align-items:stretch;overflow-x:auto;overflow-y:hidden}
+  nav button{flex:1 0 auto;min-width:54px;min-height:48px;justify-content:center;padding:7px 6px;font-size:11px;white-space:normal}
+  nav button svg{width:21px;height:21px}
+  .top{gap:8px;align-items:stretch}
+  h1{font-size:19px;min-width:100%;margin-bottom:2px}
+  .top .btn,.top select{min-height:42px}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .mesa{min-height:100px;padding:12px}
+  .mesa.j{grid-column:span 2}
+  .pos{grid-template-columns:minmax(0,1fr);gap:10px}
+  .pos>*{min-width:0}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .kpi b{font-size:18px}
+  .card{padding:12px;border-radius:12px}
+  .prod{min-height:76px;padding:12px}
+  .btn,.chip,.sg button{min-height:42px}
+  .q button{width:36px;height:36px}
+  .frm{gap:8px}
+  .frm input,.frm select,.frm .btn{width:100%;min-width:0;flex:1 1 100%;min-height:44px}
+  .wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:520px}
+  .mod{align-items:flex-end;padding:0;z-index:50}
+  .mod .card,.mod .card.pm,.mod .card.jm{width:100%;max-width:none;max-height:92dvh;overflow-y:auto;border-radius:20px 20px 0 0;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+  .pm-h{padding:15px 14px 12px}
+  .pm-sum{margin:0 14px;padding:14px}
+  .pm-big{font-size:30px}
+  .pm-sec{padding:14px 14px 8px}
+  .pm-opts{padding:0 14px;gap:8px}
+  .pm-o{min-height:64px;padding:10px;font-size:14px}
+  .pm-o .ib{width:34px;height:34px}
+  .pm-box{margin:12px 14px 0;padding:12px}
+  .pm-pix{align-items:flex-start;gap:10px;justify-content:flex-start}
+  .pix-manual-icon{width:54px;height:54px;flex:0 0 54px;border-radius:12px;display:grid;place-items:center;background:var(--okb)}
+  .pm-pixi{min-width:0;width:100%}
+  .pm-f{position:sticky;bottom:0;background:var(--sf);padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));}
+  .pm-f .btn{min-height:48px;padding:12px 8px}
+  .pm-code{flex-wrap:wrap}
+  .pm-cash input{min-height:48px;font-size:20px}
+  .cfg-fields,.cfg-layout{grid-template-columns:minmax(0,1fr)}
+  .cfg-field input,.cfg-field select,select,input{max-width:100%}
+  .kh-r1,.kh-r2{gap:8px}
+}
+.pix-warning{padding:10px 12px;border:1px solid var(--wa);border-radius:10px;background:var(--wab);color:var(--tx);font-size:12px;margin:10px 0}
+.pix-check{display:flex;gap:10px;align-items:flex-start;font-size:13px;font-weight:650;line-height:1.4;padding:10px 0}
+.pix-check input{width:22px;height:22px;flex:0 0 22px;margin:0;accent-color:var(--pr)}
+@media(max-width:380px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pm-opts{grid-template-columns:1fr 1fr}
+  .pm-o{gap:7px;padding:9px}
+  .pm-f{gap:7px}
+  .pm-f .btn{font-size:13px}
+}
+@media(hover:none){.mesa:hover{transform:none}.prod:hover{border-color:var(--bd)}}
+\n</style>\n</head>
 <body>
 <div class="app"><nav id="nav"></nav><main id="main"><div id="localPreviewBanner" class="local-preview-banner"><strong>Prévia local das Configurações</strong> — esta cópia serve para visualizar a interface. As alterações ficam neste navegador e não são enviadas ao Supabase.</div></main></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -443,7 +503,22 @@ function vCfgAparencia(){const d=cfgGet().aparencia,tm=document.documentElement.
 function vCfgFiscal(){const d=cfgGet().fiscal;return `<div class="cfg-layout"><section class="cfg-section"><h3>Emissão fiscal</h3><p class="hint">Preferências do estabelecimento para emissão de documentos.</p><div class="cfg-fields"><div class="cfg-field"><label for="f_regime">Regime tributário</label><select id="f_regime"><option value="" ${!d.regime?'selected':''}>Selecione</option><option value="simples" ${d.regime=='simples'?'selected':''}>Simples Nacional</option><option value="mei" ${d.regime=='mei'?'selected':''}>MEI</option><option value="presumido" ${d.regime=='presumido'?'selected':''}>Lucro Presumido</option><option value="real" ${d.regime=='real'?'selected':''}>Lucro Real</option></select></div><div class="cfg-field"><label for="f_modelo">Modelo de documento</label><select id="f_modelo"><option value="65" ${d.modelo=='65'?'selected':''}>NFC-e (65)</option><option value="55" ${d.modelo=='55'?'selected':''}>NF-e (55)</option><option value="nfs-e" ${d.modelo=='nfs-e'?'selected':''}>NFS-e (quando aplicável)</option></select></div><div class="cfg-field"><label for="f_ambiente">Ambiente</label><select id="f_ambiente"><option value="homologacao" ${d.ambiente=='homologacao'?'selected':''}>Homologação</option><option value="producao" ${d.ambiente=='producao'?'selected':''}>Produção</option></select></div><div class="cfg-field"><label for="f_uf">UF de emissão</label><input id="f_uf" maxlength="2" value="${esc(d.uf)}" placeholder="PE"></div><div class="cfg-field"><label for="f_serie">Série</label><input id="f_serie" value="${esc(d.serie)}"></div><div class="cfg-field"><label for="f_numero">Próximo número</label><input id="f_numero" value="${esc(d.numero)}"></div><div class="cfg-field full"><label for="f_impostos">Referência/observações tributárias</label><input id="f_impostos" value="${esc(d.impostos)}" placeholder="Não substitui a configuração tributária validada"></div><div class="cfg-field full"><label for="f_observacoes">Observações internas</label><input id="f_observacoes" value="${esc(d.observacoes)}" placeholder="Observações para o responsável fiscal"></div></div><div class="cfg-actions"><button class="btn p" onclick="cfgSaveFiscal()">Salvar preferências fiscais</button></div></section><section class="cfg-section"><h3>Checklist fiscal</h3><p class="hint">Antes de emitir em produção, confirme os requisitos com o responsável fiscal.</p><div class="row"><span>Dados cadastrais da empresa</span><span class="cfg-accent">Configurar em Empresa</span></div><div class="row"><span>Certificado digital</span><span>${cert?'Configurado':'Verificar'}</span></div><div class="row"><span>CSC e token da SEFAZ</span><span>Verificar</span></div><div class="row"><span>Ambiente de homologação</span><span>Testar</span></div><div class="cfg-note">Estas preferências são apenas informativas nesta versão do HTML e não alteram automaticamente o emissor fiscal. As regras e os parâmetros devem ser validados para a UF, o modelo e a legislação aplicáveis.</div></section></div>`}
 function vCfg(){applyAppearance();const content={empresa:vCfgEmpresa,cert:vCfgCert,impressoras:vCfgImpressoras,backup:vCfgBackup,aparencia:vCfgAparencia,fiscal:vCfgFiscal};return head('Configurações')+`<div class="cfg-wrap">${cfgTabs()}${content[cfgTab]()}</div>`}
 
-async function sair(){if(estTimer){clearTimeout(estTimer);await estPush()}try{await sb.auth.signOut()}catch(e){}location.replace(SB.login)}
+async function sair(){if(estTimer){clearTimeout(estTimer);await estPush()}try{await sb.auth.signOut()}catch(e){}irLogin()}
+
+/* ===== Login dentro do PDV (evita o vai e vem quando SB.login aponta para esta mesma página) ===== */
+function irLogin(){new URL(SB.login,location.href).pathname!==location.pathname?location.replace(SB.login):location.reload()}
+function telaLogin(){
+ document.body.classList.add('nav-off');
+ $('#main').innerHTML=`<div style="min-height:100%;display:grid;place-items:center;padding:16px"><form class="card" style="width:100%;max-width:360px;padding:22px" onsubmit="entrar(event)"><div class="brand" style="color:var(--tx);padding:0 0 16px"><i>P</i>PDV Fácil</div><h3 style="font-size:17px;margin:0 0 4px">Entrar no sistema</h3><p class="hint">Use o e-mail e a senha da sua conta.</p><div class="cfg-field" style="margin-bottom:10px"><label for="lge">E-mail</label><input id="lge" type="email" autocomplete="username" inputmode="email" required></div><div class="cfg-field"><label for="lgs">Senha</label><input id="lgs" type="password" autocomplete="current-password" required></div><div id="lgm" role="alert" style="color:var(--ba);min-height:20px;margin:10px 0 0;font-size:13px"></div><button id="lgb" class="btn p g" type="submit">Entrar</button></form></div>`;
+ const e=$('#lge');e&&e.focus()}
+async function entrar(ev){
+ ev.preventDefault();
+ const b=$('#lgb'),m=$('#lgm'),email=$('#lge').value.trim(),senha=$('#lgs').value;
+ if(!email||!senha){m.textContent='Informe o e-mail e a senha.';return}
+ b.disabled=true;b.textContent='Entrando…';m.textContent='';
+ try{const {error}=await sb.auth.signInWithPassword({email,password:senha});if(error)throw error;location.reload()}
+ catch(err){b.disabled=false;b.textContent='Entrar';const t=(err&&err.message)||String(err);
+  m.textContent=/invalid login/i.test(t)?'E-mail ou senha incorretos.':/not confirmed/i.test(t)?'Confirme o e-mail antes de entrar.':'Não foi possível entrar: '+t}}
 async function boot(){
  // Prévia local: permite conferir as telas de Configurações ao abrir o HTML baixado, sem exigir login/Supabase.
  if(location.protocol==='file:'){
@@ -460,9 +535,13 @@ async function boot(){
   await loadSdk();
   sb=window.supabase.createClient(SB.url,SB.key);
   const {data}=await sb.auth.getSession();
-  if(!data.session){location.replace(SB.login);return}
+  if(!data.session){if(new URL(SB.login,location.href).pathname!==location.pathname)location.replace(SB.login);else telaLogin();return}
+  try{const {data:gu,error:ge}=await sb.auth.getUser();
+   if((ge&&(ge.status===401||ge.status===403||ge.status===404||/does not exist|jwt|session/i.test(ge.message||'')))||(!ge&&gu&&!gu.user)){
+    try{await sb.auth.signOut({scope:'local'})}catch(e){}
+    irLogin();return}}catch(e){}
   USER=data.session.user.email||'';
-  sb.auth.onAuthStateChange(ev=>{if(ev=='SIGNED_OUT')location.replace(SB.login)});
+  sb.auth.onAuthStateChange(ev=>{if(ev=='SIGNED_OUT')irLogin()});
   await carregar();
   await carregarConfig();
   await carregarEstado();
@@ -613,7 +692,7 @@ function trc(v){const r=+($('#rc').value)||0;$('#tr').textContent=R(Math.max(0,r
 function rcSet(n,v){$('#rc').value=n.toFixed(2);trc(v)}
 const MQ='<svg viewBox="0 0 120 120" style="width:84px;height:84px;flex-shrink:0;stroke:none" aria-hidden="true"><rect x="30" y="6" width="60" height="108" rx="11" fill="#1e293b"/><rect x="38" y="15" width="44" height="28" rx="5" fill="#14b8a6"/><path d="M46 29h28" stroke="#04201c" stroke-width="3.5" stroke-linecap="round"/><g fill="#64748b">'+[56,70,84,98].map(y=>[44,60,76].map(x=>`<circle cx="${x}" cy="${y}" r="3.6"/>`).join('')).join('')+'</g></svg>';
 function payBox(f,v){
- if(f=='Pix')return `<div class="pm-pix"><div class="qr">${qrSvg(v.toFixed(2))}<span class="qrl">${pixLogo(28)}</span></div><div class="pm-pixi"><div class="pm-pixh">${pixLogo(20)}<b>Pagamento via Pix</b></div><p>Abra o app do banco, escolha Pix e aponte a câmera para o QR Code.</p><span class="pm-st"><i></i>Aguardando pagamento</span><div class="pm-code"><code>${pixCode(v)}</code><button class="btn" onclick="cpPix(${+v.toFixed(2)})">${sv('copy',16)}Copiar</button></div><small style="color:var(--mu)">Ilustração do Pix. Nenhuma cobrança real é gerada no protótipo.</small></div></div>`;
+ if(f=='Pix')return `<div class="pm-pix"><div class="pix-manual-icon">${pixLogo(38)}</div><div class="pm-pixi"><div class="pm-pixh">${pixLogo(20)}<b>Pix · conferência manual</b></div><p>Use o Pix real do estabelecimento (QR Code da conta ou cobrança gerada no aplicativo bancário). Confira no aplicativo do banco se o valor de <b>${R(v)}</b> foi recebido antes de concluir a venda.</p><div class="pix-warning">Este PDV ainda não gera cobrança Pix nem confirma pagamentos automaticamente.</div><label class="pix-check"><input id="pixConfirmado" type="checkbox"> Confirmei no aplicativo do banco que o Pix caiu nesta conta.</label></div></div>`;
  if(f=='Dinheiro'){const o=[...new Set([+v.toFixed(2),Math.ceil(v/10)*10,50,100,200].filter(n=>n>=v-.001))].slice(0,4);
   return `<div class="pm-cash"><label style="color:var(--mu);font-size:12px;font-weight:600">Valor recebido</label><input id="rc" type="number" step="0.01" inputmode="decimal" placeholder="0,00" oninput="trc(${+v.toFixed(2)})"><div class="pm-q">${o.map((n,i)=>`<button class="chip" onclick="rcSet(${n},${+v.toFixed(2)})">${i?R(n).replace(',00',''):'Exato'}</button>`).join('')}</div><div class="pm-tr"><span>Troco</span><b id="tr">${R(0)}</b></div></div>`}
  const t={Débito:'Insira ou aproxime o cartão de débito.',Crédito:'Insira ou aproxime o cartão de crédito.',Cartão:'Insira, passe ou aproxime o cartão.',Vale:'Passe o vale-refeição ou alimentação.'}[f];
@@ -633,6 +712,7 @@ function vPay(){const m=G(),s=tot(m),tx=S.taxa?s*.1:0;
 function vPayV(){const s=tot(S.cart),d=dsc(s);
  return payModal({t:'Finalizar venda',n:S.cart.items.reduce((a,i)=>a+i.q,0),v:s-d,lines:[['Subtotal',R(s)]].concat(d?[['Desconto','− '+R(d)]]:[]),ms:['Pix','Débito','Crédito','Dinheiro'],fn:'fecharV()'})}
 const fechar=once(async function(){
+ if(pay=='Pix'&&!($('#pixConfirmado')?.checked))return toast('Confira o recebimento no aplicativo do banco e marque a confirmação.');
  const v=tot(G())*(S.taxa?1.1:1);
  if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');
  const c=cl(),gid=G().g||null;
@@ -765,7 +845,7 @@ function bar(){const mesa=view=='pos',{n,t}=parseQ(q);if(!t)return;const r=achar
 function vAdd(id,n=1){const p=P(id),i=S.cart.items.find(x=>x.id==id),k=(i?i.q:0)+n;if(p.est!=null&&k>p.est)return toast(p.est?'Estoque insuficiente':'Produto sem estoque');i?i.q=k:S.cart.items.push({id,q:n});render()}
 function vChg(id,d){const i=S.cart.items.find(x=>x.id==id),p=P(id);if(d>0&&p.est!=null&&i.q+1>p.est)return toast('Estoque insuficiente');i.q+=d;if(i.q<1)S.cart.items=S.cart.items.filter(x=>x!=i);render()}
 
-const fecharV=once(async function(){const s=tot(S.cart),v=s-dsc(s);if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');if(pay=='Dinheiro'&&(+(($('#rc')||{}).value)||0)<v-.001)return toast('Valor recebido menor que o total');
+const fecharV=once(async function(){if(pay=='Pix'&&!($('#pixConfirmado')?.checked))return toast('Confira o recebimento no aplicativo do banco e marque a confirmação.');const s=tot(S.cart),v=s-dsc(s);if(S.cpf&&!okCpf(S.cpf))return toast('CPF inválido. Corrija ou apague');if(pay=='Dinheiro'&&(+(($('#rc')||{}).value)||0)<v-.001)return toast('Valor recebido menor que o total');
  const c=cl();
  try{S.mov.push(await addMov({desc:'Venda'+(c?' · '+c.nome:''),tipo:'in',val:v,forma:pay,cat:'Vendas',cpf:S.cpf,cid:c?c.id:null}))}catch(e){return dbErr(e)}
  const bx=[];S.cart.items.forEach(i=>{const p=P(i.id);if(p.est!=null){p.est-=i.q;bx.push(DBX(sb.from('produtos').update({estoque:p.est}).eq('id',p.id)))}});
