@@ -693,8 +693,9 @@ function obSave(){
   i.obs=txt;i.o=txt;i.observacao=txt;
  }else{
   i.q=(Number(i.q)||0)-n;
-  if(i.q<=env)m.items.splice(x,1);
-  const at=Math.min(x,m.items.length);
+  let at=x+1;
+  if(i.q<=0){m.items.splice(x,1);at=x}
+  at=Math.min(at,m.items.length);
   const existente=m.items.find(y=>y!==i&&y.id==i.id&&String(y.obs||y.o||y.observacao||'').trim()===txt&&Math.max(0,(Number(y.q)||0)-(Number(y.env)||0))>0);
   if(existente){existente.q=(Number(existente.q)||0)+n;existente.obs=txt;existente.o=txt;existente.observacao=txt;}
   else m.items.splice(at,0,{id:i.id,q:n,env:0,obs:txt,o:txt,observacao:txt});
@@ -1068,7 +1069,7 @@ function kMerge(list,src){
   if(!o){S.coz.push(n);mudou=true;kEvt(null,n)}
   else if((n.u||0)>(o.u||0)){
    // Não deixe um campo vazio apagar a observação que já existe no outro aparelho/versão.
-   if(Array.isArray(n.it)&&Array.isArray(o.it)){n.it=n.it.map((ni,ix)=>{const oi=o.it.find(x=>(x.id!=null&&x.id==ni.id)||String(x.n||'')===String(ni.n||''))||o.it[ix];if(!oi)return ni;const obsNova=[ni.o,ni.obs,ni.observacao,ni.comentario,ni.observacao_cozinha,ni.nota].find(v=>String(v??'').trim());const obsAntiga=[oi.o,oi.obs,oi.observacao,oi.comentario,oi.observacao_cozinha,oi.nota].find(v=>String(v??'').trim());const obs=String(obsNova??obsAntiga??'').trim();return {...ni,...(obs?{o:obs,obs,observacao:obs,comentario:obs,observacao_cozinha:obs}: {})}})}
+   if(Array.isArray(n.it)&&Array.isArray(o.it)){n.it=n.it.map((ni,ix)=>{const oi=(o.it[ix]&&o.it[ix].id==ni.id&&String(o.it[ix].n||'')===String(ni.n||''))?o.it[ix]:null;if(!oi)return ni;const obsNova=[ni.o,ni.obs,ni.observacao,ni.comentario,ni.observacao_cozinha,ni.nota].find(v=>String(v??'').trim());const obsAntiga=[oi.o,oi.obs,oi.observacao,oi.comentario,oi.observacao_cozinha,oi.nota].find(v=>String(v??'').trim());const obs=String(obsNova??obsAntiga??'').trim();return {...ni,...(obs?{o:obs,obs,observacao:obs,comentario:obs,observacao_cozinha:obs}: {})}})}
    S.coz[i]=n;mudou=true;kEvt(o,n)}
   else if((n.u||0)<(o.u||0)&&src=='remote')kPush(o)});
  if(mudou){kLocal();kUi()}
