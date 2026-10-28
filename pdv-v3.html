@@ -239,7 +239,7 @@ body.kds main{padding:0}
 .kt-i{list-style:none;margin:0;padding:0}
 .kt-i li{display:flex;gap:10px;align-items:center;padding:9px 14px;border-top:1px dashed color-mix(in srgb,var(--pc) 40%,transparent);font-size:18px}
 .kt-i li b{min-width:2.2em;font-variant-numeric:tabular-nums}
-.kt-i li.ok span,.kt.x .kt-i li span{text-decoration:line-through;color:var(--mu)}
+.kt-i li.ok .kt-nm,.kt.x .kt-i li .kt-nm{text-decoration:line-through;color:var(--mu)}
 .kt-ck{all:unset;cursor:pointer;width:34px;height:34px;border-radius:9px;border:2px solid var(--pc);display:grid;place-items:center;flex-shrink:0;color:var(--tc);box-sizing:border-box}
 .kt-ck.on{background:var(--pc)}
 .kt-ck svg{width:18px;height:18px;stroke-width:3.2;opacity:0}
@@ -325,7 +325,40 @@ body.kds main{padding:0}
   .pm-f .btn{font-size:13px}
 }
 @media(hover:none){.mesa:hover{transform:none}.prod:hover{border-color:var(--bd)}}
-\n</style>\n</head>
+\n</style>\n<style>
+/* ===== Botão de enviar à cozinha, observações nos pratos ===== */
+.send{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:60px;margin-top:12px;border:0;border-radius:14px;font:inherit;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,#ea580c,#c2410c);cursor:pointer;box-shadow:0 6px 16px rgba(194,65,12,.4);--pc:#f97316;animation:pk 1.6s infinite}
+.send:active{transform:scale(.98)}
+.send .sn{background:#fff;color:#c2410c;border-radius:99px;min-width:30px;height:30px;display:grid;place-items:center;padding:0 9px;font-size:16px}
+.send.done{animation:none;box-shadow:none;background:var(--okb);color:var(--ok);border:1.5px solid var(--ok);cursor:default}
+.send.idle{animation:none;box-shadow:none;background:var(--bd);color:var(--mu);cursor:not-allowed}
+.sendbar{display:none}
+.it{flex-wrap:wrap}
+.it-o{flex:0 0 100%}
+.ob-b{font:inherit;font-size:13px;cursor:pointer;min-height:38px;padding:6px 12px;border-radius:10px;border:1.5px dashed var(--bd);background:transparent;color:var(--mu);text-align:left;max-width:100%}
+.ob-b.has{border:1.5px solid var(--wa);background:var(--wab);color:var(--wa);font-weight:700}
+.ob-b:disabled{cursor:default;opacity:1}
+.kp-r small{white-space:normal}
+.obm .ob-chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 18px}
+.obm .ob-chips .chip{padding:9px 14px;font-size:14px}
+.obm .ob-in{display:block;width:calc(100% - 36px);margin:14px 18px 0;font-size:16px;padding:12px}
+.obm .ob-n{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 18px 0;padding:10px 12px;border-radius:12px;background:var(--bg)}
+.obm .ob-n .q{margin-left:auto}
+.obm .ob-n .q button{width:36px;height:36px;font-size:18px}
+.kt-i li{align-items:flex-start}
+.kt-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.kt-o{display:block;font-style:normal;font-weight:800;font-size:17px;text-transform:uppercase;background:var(--wa);color:var(--tc);padding:4px 10px;border-radius:8px;width:fit-content;max-width:100%;overflow-wrap:anywhere}
+@media (pointer:coarse){.q button{width:36px;height:36px;font-size:18px}}
+@media (prefers-reduced-motion:reduce){.send{animation:none}}
+@media (max-width:760px){
+.sendbar{display:flex;gap:8px;align-items:center;position:sticky;bottom:0;z-index:6;margin:12px -12px 0;padding:10px 12px;background:var(--bg);border-top:1px solid var(--bd);box-shadow:0 -6px 16px rgba(0,0,0,.14)}
+.sendbar .send{margin:0;flex:1;min-width:0}
+.sendbar .vc{min-height:60px;padding:6px 12px;flex-shrink:0}
+.send.in{display:none}
+.mod .card.pm{max-height:92%}
+}
+</style>
+</head>
 <body>
 <div class="app"><nav id="nav"></nav><main id="main"><div id="localPreviewBanner" class="local-preview-banner"><strong>Prévia local das Configurações</strong> — esta cópia serve para visualizar a interface. As alterações ficam neste navegador e não são enviadas ao Supabase.</div></main></div>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -564,7 +597,7 @@ const G=()=>cur.k=='m'?S.mesas[cur.id]:S.cmds[cur.id];
 const lbl=()=>cur.k=='m'?(G().j?'Mesas '+G().j.join(' + '):'Mesa '+cur.id):'Comanda '+cur.id+(G().nome?' · '+G().nome:'');
 function toast(t,ms=2400){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',ms)}
 function setSeg(v){S.seg=v;try{go('mesas')}catch(e){console.error(e);toast('Erro ao abrir '+((SEG[v]&&SEG[v].nome)||v)+': '+e.message)}cfg({segmento:v})}
-function go(v){view=v;q='';try{history.replaceState(null,'',v=='coz'?'#cozinha':location.pathname+location.search)}catch(e){}if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;render()}
+function go(v){view=v;q='';try{history.replaceState(null,'',v=='coz'?'#cozinha':location.pathname+location.search)}catch(e){}if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;ob=null;render()}
 function tgl(){document.body.classList.toggle('nav-off')}
 const IC={
 mesas:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
@@ -614,19 +647,41 @@ function vPos(){
  const act=!m.aberta?`<button class="btn p g" onclick="ocupar()">Ocupar mesa</button>`:(!m.items.length?`<button class="btn g" onclick="liberar()">${cur.k=='m'?(m.j?'Liberar mesas':'Liberar mesa'):'Cancelar comanda'}</button>`:`<button class="btn g" onclick="liberar()">Cancelar compra e liberar ${cur.k=='m'?(m.j?'mesas':'mesa'):'comanda'}</button>`);
  return `<div class="top"><button class="btn" onclick="go('mesas')">← Voltar</button><h1>${lbl()}</h1><span class="tag ${m.aberta?'o':''}">${m.aberta?'Ocupada desde '+m.hora:'Livre'}</span></div>
  <div class="pos"><div>${left}</div>
- <div class="card" style="align-self:start"><h3>Comanda</h3>${m.items.length?m.items.map(i=>`<div class="it"><div><b>${P(i.id).nome}</b><br><small style="color:var(--mu)">${R(P(i.id).preco)}</small></div><div class="q"><button onclick="chg(${i.id},-1)">−</button>${i.q}<button onclick="chg(${i.id},1)">+</button></div><b>${R(P(i.id).preco*i.q)}</b></div>`).join(''):'<p style="color:var(--mu)">Toque nos produtos para lançar.</p>'}
+ <div class="card" id="cmd" style="align-self:start"><h3>Comanda</h3>${m.items.length?m.items.map((i,x)=>{const lk=!(i.q-(i.env||0));return `<div class="it"><div><b>${P(i.id).nome}</b><br><small style="color:var(--mu)">${R(P(i.id).preco)}</small></div><div class="q"><button onclick="chgL(${x},-1)">−</button>${i.q}<button onclick="chgL(${x},1)">+</button></div><b>${R(P(i.id).preco*i.q)}</b>${lk&&!i.obs?'':`<div class="it-o"><button class="ob-b ${i.obs?'has':''}" ${lk?'disabled':''} onclick="obOpen(${x})">${i.obs?'📝 '+esc(i.obs)+(lk?' · já enviado':''):'+ Observação (sem cebola, sem arroz…)'}</button></div>`}</div>`}).join(''):'<p style="color:var(--mu)">Toque nos produtos para lançar.</p>'}
  <div id="kst">${kStrip()}</div>${gsel}
  <div style="margin-top:12px"><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF do cliente (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div></div>
  <div class="row" style="margin-top:10px"><span>Subtotal</span><span>${R(sub)}</span></div>
  <label class="row"><span><input type="checkbox" ${S.taxa?'checked':''} onchange="S.taxa=this.checked;render();cfg({taxa_servico:S.taxa})"> Serviço 10%</span><span>${R(tx)}</span></label>
  <div class="row tot"><span>Total</span><span>${R(sub+tx)}</span></div>
- ${cur.k=='m'&&m.j?`<button class="btn g" onclick="sep(${cur.id})">Separar mesas</button>`:''}${act}${(()=>{const pend=m.items.reduce((a,i)=>a+Math.max(0,i.q-(i.env||0)),0);return `<button class="btn g" ${pend?'':'disabled'} onclick="enviarCozinha()">${pend?'Enviar para cozinha · '+pend+(pend==1?' item novo':' itens novos'):(m.items.length?'Tudo enviado à cozinha':'Enviar para cozinha')}</button>`})()}
- <button class="btn p g" ${m.items.length?'':'disabled'} onclick="pay='Pix';render()">Fechar conta</button></div></div>`
+ ${cur.k=='m'&&m.j?`<button class="btn g" onclick="sep(${cur.id})">Separar mesas</button>`:''}${act}${kSendBtn(m,'in')}
+ <button class="btn p g" ${m.items.length?'':'disabled'} onclick="pay='Pix';render()">Fechar conta</button></div></div>${m.items.length?`<div class="sendbar"><button class="btn vc" onclick="document.getElementById('cmd').scrollIntoView({behavior:'smooth'})">Comanda ↓</button>${kSendBtn(m,'bar')}</div>`:''}`
 }
+/* ===== Botão enviar e observações nos pratos ===== */
+const OBS=['Sem arroz','Sem feijão','Sem cebola','Sem tomate','Sem alho','Sem pimenta','Sem sal','Sem salada','Sem farofa','Sem gelo','Molho à parte','Mal passado','Ao ponto','Bem passado'];
+const obList=t=>t.split(/\s*[,;]\s*/).map(s=>s.trim()).filter(Boolean);
+function kSendBtn(m,w){const pend=m.items.reduce((a,i)=>a+Math.max(0,i.q-(i.env||0)),0),has=m.items.length;
+ return `<button class="send ${w} ${pend?'':(has?'done':'idle')}" ${pend?'':'disabled'} onclick="enviarCozinha()">${pend?sv('flame',24)+'<span>Enviar para cozinha</span><b class="sn">'+pend+'</b>':(has?sv('ok',22)+'<span>Tudo enviado à cozinha</span>':sv('flame',22)+'<span>Enviar para cozinha</span>')}</button>`}
+function obOpen(x){const i=G().items[x];if(!i||i.q-(i.env||0)<1)return;ob={ix:x,txt:i.obs||'',n:i.q-(i.env||0)};render()}
+function obSync(){ob.txt=$('#obt').value;const a=obList(ob.txt).map(s=>s.toLowerCase());document.querySelectorAll('.obm .chip').forEach(c=>c.classList.toggle('on',a.includes(c.dataset.t.toLowerCase())))}
+function obChip(el){const e=$('#obt'),t=el.dataset.t,a=obList(e.value),k=a.findIndex(x=>x.toLowerCase()==t.toLowerCase());k<0?a.push(t):a.splice(k,1);e.value=a.join(', ');obSync()}
+function obN(d){const i=G().items[ob.ix],p=i.q-(i.env||0);ob.n=Math.min(p,Math.max(1,ob.n+d));$('#obn').textContent=ob.n}
+function obSave(){const m=G(),i=m.items[ob.ix];if(!i){ob=null;return render()}
+ const txt=$('#obt').value.trim().replace(/\s+/g,' ').slice(0,120),pend=i.q-(i.env||0),n=Math.min(Math.max(+ob.n||pend,1),pend),x=ob.ix;
+ i.q-=n;let at=x+1;if(i.q<1){m.items.splice(x,1);at=x}
+ const o=m.items.find(y=>y.id==i.id&&(y.obs||'')==txt&&!y.env);
+ o?o.q+=n:m.items.splice(at,0,{id:i.id,q:n,env:0,obs:txt});
+ ob=null;render()}
+function vObs(){const m=G(),i=m.items[ob.ix];if(!i)return'';const pend=i.q-(i.env||0),a=obList(ob.txt).map(s=>s.toLowerCase());
+ return `<div class="mod" onclick="ob=null;render()"><div class="card pm obm" onclick="event.stopPropagation()" role="dialog" aria-label="Observação para a cozinha"><div class="pm-h"><div><h3>Observação para a cozinha</h3><small>${esc(P(i.id).nome)}</small></div><button class="pm-x" onclick="ob=null;render()" aria-label="Fechar">✕</button></div>
+ <div class="ob-chips">${OBS.map(t=>`<button class="chip ${a.includes(t.toLowerCase())?'on':''}" data-t="${t}" onclick="obChip(this)">${t}</button>`).join('')}</div>
+ <input id="obt" class="ob-in" maxlength="120" autocomplete="off" placeholder="Ou escreva: ex. sem cebola, bem passado" value="${esc(ob.txt)}" oninput="obSync()" onkeydown="if(event.key=='Enter')obSave()">
+ ${pend>1?`<div class="ob-n"><span>Vale para quantas unidades?</span><div class="q"><button onclick="obN(-1)">−</button><b id="obn">${ob.n}</b><button onclick="obN(1)">+</button></div><small style="color:var(--mu)">de ${pend} não enviadas</small></div>`:''}
+ <div class="pm-f"><button class="btn" onclick="ob=null;render()">Cancelar</button><button class="btn p" onclick="obSave()">Salvar</button></div></div></div>`}
 function ocupar(){const m=G();m.aberta=true;m.hora=hm();render()}
 function liberar(){const k=cur.k,j=k=='m'&&S.mesas[cur.id].j;kFree(k,cur.id,true);if(k=='m')freeM(cur.id);else delete S.cmds[cur.id];toast(k=='m'?(j?'Mesas liberadas':'Mesa liberada'):'Comanda cancelada');go('mesas')}
-function add(id,n=1){const m=G();if(!m.aberta){m.aberta=true;m.hora=hm()}const i=m.items.find(x=>x.id==id);i?i.q+=n:m.items.push({id,q:n});render()}
-function chg(id,d){const m=G(),i=m.items.find(x=>x.id==id);i.q+=d;if(d<0&&(i.env||0)>Math.max(i.q,0)){i.env=Math.max(i.q,0);toast('Item já enviado à cozinha. Avise o cozinheiro.',4500)}if(i.q<1)m.items=m.items.filter(x=>x!=i);if(!m.items.length&&cur.k=='m'&&!m.j){kFree('m',cur.id,true);S.mesas[cur.id]=mk();toast('Mesa liberada')}render()}
+function add(id,n=1){const m=G();if(!m.aberta){m.aberta=true;m.hora=hm()}const i=m.items.find(x=>x.id==id&&!x.obs);i?i.q+=n:m.items.push({id,q:n});render()}
+function chgL(ix,d){const m=G(),i=m.items[ix];if(!i)return;i.q+=d;if(d<0&&(i.env||0)>Math.max(i.q,0)){i.env=Math.max(i.q,0);toast('Item já enviado à cozinha. Avise o cozinheiro.',4500)}if(i.q<1)m.items=m.items.filter(x=>x!=i);if(!m.items.length&&cur.k=='m'&&!m.j){kFree('m',cur.id,true);S.mesas[cur.id]=mk();toast('Mesa liberada')}render()}
+let ob=null;
 let jn=null,DR=null,dragSup=false;
 const mesaIds=id=>S.mesas[id].j||[id];
 function freeM(id){mesaIds(id).forEach(x=>S.mesas[x]=mk())}
@@ -636,7 +691,7 @@ function vJoin(){const la=mesaIds(jn.a).join(' + '),lb=mesaIds(jn.b).join(' + ')
  return `<div class="mod" onclick="jn=null;render()"><div class="card jm" onclick="event.stopPropagation()" role="dialog" aria-label="Juntar mesas"><span class="jbx">${sv('link',26)}</span><h3>Juntar mesas?</h3><div class="jcc"><span>Mesa ${la}</span><i>+</i><span>Mesa ${lb}</span></div><p>Os pedidos das duas mesas serão somados em uma única conta.</p><div class="pm-f" style="padding:16px 0 0"><button class="btn" onclick="jn=null;render()">Cancelar</button><button class="btn p" onclick="confirmJoin()">${sv('ok',18)}Juntar mesas</button></div></div></div>`}
 function confirmJoin(){const a=jn.a,b=jn.b;jn=null;const A=S.mesas[a],B=S.mesas[b],ga=mesaIds(a);
  const all=[...new Set([...mesaIds(b),...ga])].sort((x,y)=>x-y);
- A.items.forEach(i=>{const x=B.items.find(y=>y.id==i.id);x?(x.q+=i.q,x.env=(x.env||0)+(i.env||0)):B.items.push({id:i.id,q:i.q,env:i.env||0})});
+ A.items.forEach(i=>{const x=B.items.find(y=>y.id==i.id&&(y.obs||'')==(i.obs||''));x?(x.q+=i.q,x.env=(x.env||0)+(i.env||0)):B.items.push({id:i.id,q:i.q,env:i.env||0,obs:i.obs||''})});
  B.ns=(B.ns||0)+(A.ns||0);B.g=B.g||A.g;B.cpf=B.cpf||A.cpf;B.hora=B.aberta?B.hora:(A.aberta?A.hora:hm());B.aberta=true;B.j=all;
  ga.forEach(x=>{S.mesas[x]=Object.assign(mk(),{ref:b,aberta:true})});
  kRebind(all,b);render();toast('Mesas '+all.join(' + ')+' unificadas')}
@@ -1035,7 +1090,7 @@ function kFil_(f){kFil=f;renderKeep()}
 /* --- ações do salão --- */
 function enviarCozinha(){
  const m=G();if(!m||!cur)return;
- const novos=m.items.map(i=>({id:i.id,n:P(i.id).nome,q:i.q-(i.env||0),ok:0})).filter(x=>x.q>0);
+ const novos=m.items.map(i=>({id:i.id,n:P(i.id).nome,q:i.q-(i.env||0),ok:0,o:i.obs||''})).filter(x=>x.q>0);
  if(!novos.length)return toast('Tudo já foi enviado à cozinha');
  if(!m.aberta){m.aberta=true;m.hora=hm()}
  const n=Date.now(),t={id:'k'+n.toString(36)+Math.random().toString(36).slice(2,6),k:cur.k,r:+cur.id,lb:lbl(),g:gn(m)||'',ad:(m.ns||0)>0,it:novos,st:'novo',t0:n,t1:0,t2:0,t3:0,u:n};
@@ -1064,7 +1119,7 @@ function kStrip(){
  if(!cur)return'';
  const L=S.coz.filter(t=>t.k==cur.k&&+t.r==+cur.id&&!t.arq&&t.st!='cancelado').sort((a,b)=>a.t0-b.t0);if(!L.length)return'';
  const nm={novo:['s-n','Na fila'],prep:['s-p','Em preparo'],pronto:['s-r','Pronto'],entregue:['s-d','Entregue']};
- return `<div class="kp"><h3>Cozinha</h3>${L.map(t=>{const s=nm[t.st]||nm.novo;return `<div class="kp-r ${s[0]}"><div><b>${t.ad?'Adicional':'Pedido'} · ${kHm(t.t0)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)).join(', ')}</small></div><span class="kst ${s[0]}">${s[1]}</span>${t.st=='pronto'?`<button class="btn" onclick="kEntrega('${cur.k}',${+cur.id})">Entregue</button>`:''}</div>`}).join('')}</div>`}
+ return `<div class="kp"><h3>Cozinha</h3>${L.map(t=>{const s=nm[t.st]||nm.novo;return `<div class="kp-r ${s[0]}"><div><b>${t.ad?'Adicional':'Pedido'} · ${kHm(t.t0)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+(i.o?' ('+esc(i.o)+')':'')).join(', ')}</small></div><span class="kst ${s[0]}">${s[1]}</span>${t.st=='pronto'?`<button class="btn" onclick="kEntrega('${cur.k}',${+cur.id})">Entregue</button>`:''}</div>`}).join('')}</div>`}
 
 /* --- tela da cozinha --- */
 function kCard(t){
@@ -1073,7 +1128,7 @@ function kCard(t){
  const bt={novo:['Iniciar preparo','var(--wa)','flame'],prep:['Marcar pronto','var(--ok)','ok'],pronto:['Entregue ao garçom','var(--tx)','ok']}[t.st]||['Ok','var(--tx)','ok'];
  const li=t.it.map((i,x)=>{
   const mk=t.st=='prep'?`<button class="kt-ck ${i.ok?'on':''}" onclick="kItem('${t.id}',${x})" aria-pressed="${!!i.ok}" aria-label="Marcar ${esc(i.n)} como feito">${sv('ok',18)}</button>`:`<span class="kt-dot"><i></i></span>`;
-  return `<li class="${i.ok&&t.st=='prep'?'ok':''}">${mk}<b>${i.q}×</b><span>${esc(i.n)}</span></li>`}).join('');
+  return `<li class="${i.ok&&t.st=='prep'?'ok':''}">${mk}<b>${i.q}×</b><div class="kt-n"><span class="kt-nm">${esc(i.n)}</span>${i.o?`<em class="kt-o">⚠ ${esc(i.o)}</em>`:''}</div></li>`}).join('');
  const f=cx?`<button class="btn kt-b" style="--bc:var(--ba)" onclick="kCiente('${t.id}')">${sv('ok',20)}Ciente, não preparar</button>`
   :`<button class="btn kt-b" style="--bc:${bt[1]}" onclick="kAv('${t.id}')">${sv(bt[2],20)}${bt[0]}</button>${t.st!='novo'?`<button class="btn kt-u" onclick="kVolta('${t.id}')" aria-label="Voltar uma etapa" title="Voltar uma etapa">${sv('back',20)}</button>`:''}`;
  const meta=cx?'A mesa foi liberada. Pode descartar o pedido.':`${t.g?'Garçom '+esc(t.g)+' · ':''}enviado às ${kHm(t.t0)} · ${n} ${n==1?'item':'itens'}${t.st=='pronto'?' · esperando retirada':''}${t.ad?' <span class="kt-ad">Adicional</span>':''}`;
@@ -1090,7 +1145,7 @@ function vCoz(){
  const col=(c,h,l,v)=>`<section class="kcol ${c}" aria-label="${h}"><h2 class="kcol-h"><span class="kcol-dot"></span>${h}<b>${l.length}</b></h2><div class="kcol-b">${l.length?l.map(kCard).join(''):`<div class="emp card" style="grid-column:1/-1">${v}</div>`}</div></section>`;
  const all=kFil=='todos';
  const body=kFil=='entregue'
-  ?`<div class="khis">${en.length?en.map(t=>`<div class="khr"><div><b>${esc(t.lb)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)).join(' · ')}</small><small>Ficou pronto em ${kDur((t.t2||t.t3)-t.t0)} · entregue às ${kHm(t.t3||t.u)}</small></div><button class="btn" onclick="kVolta('${t.id}')">Reabrir</button></div>`).join(''):'<div class="emp card">Nenhuma entrega registrada hoje.</div>'}</div>`
+  ?`<div class="khis">${en.length?en.map(t=>`<div class="khr"><div><b>${esc(t.lb)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+(i.o?' ('+esc(i.o)+')':'')).join(' · ')}</small><small>Ficou pronto em ${kDur((t.t2||t.t3)-t.t0)} · entregue às ${kHm(t.t3||t.u)}</small></div><button class="btn" onclick="kVolta('${t.id}')">Reabrir</button></div>`).join(''):'<div class="emp card">Nenhuma entrega registrada hoje.</div>'}</div>`
   :`<div class="kcols ${all?'':'one'}">${all||kFil=='novo'?col('s-n','Novos',nv,'Nenhum pedido novo.'):''}${all||kFil=='prep'?col('s-p','Em preparo',pp,'Nada no fogo agora.'):''}${all||kFil=='pronto'?col('s-r','Prontos para retirar',pr,'Nenhum prato esperando o garçom.'):''}</div>`;
  const fl=[['todos','Todos',null],['novo','Novos',nn],['prep','Em preparo',pp.length],['pronto','Prontos',pr.length],['entregue','Entregues',en.length]];
  const sy=kSync(),aud=K.som&&(!AC||AC.state!='running');
@@ -1109,11 +1164,12 @@ function render(){
  const rv=view=='mesas'&&S.seg=='varejo';
  const localBanner=location.protocol==='file:'&&view!='coz'?document.getElementById('localPreviewBanner'):null;
  const localBannerHtml=localBanner?localBanner.outerHTML.replace('style="display: block;"','style="display:block"'):'';
- $('#main').innerHTML=localBannerHtml+(rv?vVenda()+(pay?vPayV():''):({mesas:vSalao,pos:vPos,caixa:vCaixa,cad:vCad,cli:vCli,fin:vFin,cfg:vCfg,coz:vCoz})[view]()+(pay&&cur?vPay():''))+(cm?vCliForm():'')+(cv?vCliVer():'')+(help?vHelp():'')+(jn?vJoin():'');
+ $('#main').innerHTML=localBannerHtml+(rv?vVenda()+(pay?vPayV():''):({mesas:vSalao,pos:vPos,caixa:vCaixa,cad:vCad,cli:vCli,fin:vFin,cfg:vCfg,coz:vCoz})[view]()+(pay&&cur?vPay():''))+(cm?vCliForm():'')+(cv?vCliVer():'')+(help?vHelp():'')+(jn?vJoin():'')+(ob?vObs():'');
  if(rv||view=='pos'){cpfSt();hintQ()}
  if(cm)setTimeout(()=>{const e=$('#kn');e&&e.focus()});
  if(rv&&pay=='Dinheiro')setTimeout(()=>{const e=$('#rc');e&&e.focus()});
- if((rv||view=='pos')&&!pay&&!help&&!cm&&!cv&&!jn&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
+ if(ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#obt');e&&e.focus()});
+ if((rv||view=='pos')&&!pay&&!help&&!cm&&!cv&&!jn&&!ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
  estSalvar();
 }
 boot();
