@@ -1066,7 +1066,10 @@ function kMerge(list,src){
  let mudou=false;
  list.forEach(n=>{if(!kOk(n))return;const i=S.coz.findIndex(t=>t.id==n.id),o=S.coz[i];
   if(!o){S.coz.push(n);mudou=true;kEvt(null,n)}
-  else if((n.u||0)>(o.u||0)){S.coz[i]=n;mudou=true;kEvt(o,n)}
+  else if((n.u||0)>(o.u||0)){
+   // Não deixe um campo vazio apagar a observação que já existe no outro aparelho/versão.
+   if(Array.isArray(n.it)&&Array.isArray(o.it)){n.it=n.it.map((ni,ix)=>{const oi=o.it.find(x=>(x.id!=null&&x.id==ni.id)||String(x.n||'')===String(ni.n||''))||o.it[ix];if(!oi)return ni;const obsNova=[ni.o,ni.obs,ni.observacao,ni.comentario,ni.observacao_cozinha,ni.nota].find(v=>String(v??'').trim());const obsAntiga=[oi.o,oi.obs,oi.observacao,oi.comentario,oi.observacao_cozinha,oi.nota].find(v=>String(v??'').trim());const obs=String(obsNova??obsAntiga??'').trim();return {...ni,...(obs?{o:obs,obs,observacao:obs,comentario:obs,observacao_cozinha:obs}: {})}})}
+   S.coz[i]=n;mudou=true;kEvt(o,n)}
   else if((n.u||0)<(o.u||0)&&src=='remote')kPush(o)});
  if(mudou){kLocal();kUi()}
  return mudou}
@@ -1121,7 +1124,7 @@ function kFil_(f){kFil=f;renderKeep()}
 function enviarCozinha(){
  if(ob&&$('#obt'))obSave();
  const m=G();if(!m||!cur)return;
- const novos=m.items.map(i=>{const obs=String(i.obs??i.o??i.observacao??i.comentario??'').trim();return {id:i.id,n:P(i.id).nome,q:Math.max(0,(Number(i.q)||0)-(Number(i.env)||0)),ok:0,o:obs,obs,observacao:obs,comentario:obs}}).filter(x=>x.q>0);
+ const novos=m.items.map(i=>{const obs=String([i.obs,i.o,i.observacao,i.comentario,i.observacao_cozinha,i.nota].find(v=>String(v??'').trim())??'').trim();return {id:i.id,n:P(i.id).nome,q:Math.max(0,(Number(i.q)||0)-(Number(i.env)||0)),ok:0,o:obs,obs,observacao:obs,comentario:obs,observacao_cozinha:obs}}).filter(x=>x.q>0);
  if(!novos.length)return toast('Tudo já foi enviado à cozinha');
  if(!m.aberta){m.aberta=true;m.hora=hm()}
  const n=Date.now(),t={id:'k'+n.toString(36)+Math.random().toString(36).slice(2,6),k:cur.k,r:+cur.id,lb:lbl(),g:gn(m)||'',ad:(m.ns||0)>0,it:novos,st:'novo',t0:n,t1:0,t2:0,t3:0,u:n};
@@ -1150,7 +1153,7 @@ function kStrip(){
  if(!cur)return'';
  const L=S.coz.filter(t=>t.k==cur.k&&+t.r==+cur.id&&!t.arq&&t.st!='cancelado').sort((a,b)=>a.t0-b.t0);if(!L.length)return'';
  const nm={novo:['s-n','Na fila'],prep:['s-p','Em preparo'],pronto:['s-r','Pronto'],entregue:['s-d','Entregue']};
- return `<div class="kp"><h3>Cozinha</h3>${L.map(t=>{const s=nm[t.st]||nm.novo;return `<div class="kp-r ${s[0]}"><div><b>${t.ad?'Adicional':'Pedido'} · ${kHm(t.t0)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+((i.o||i.obs||i.observacao||i.comentario)?' ('+esc(i.o||i.obs||i.observacao||i.comentario)+')':'')).join(', ')}</small></div><span class="kst ${s[0]}">${s[1]}</span>${t.st=='pronto'?`<button class="btn" onclick="kEntrega('${cur.k}',${+cur.id})">Entregue</button>`:''}</div>`}).join('')}</div>`}
+ return `<div class="kp"><h3>Cozinha</h3>${L.map(t=>{const s=nm[t.st]||nm.novo;return `<div class="kp-r ${s[0]}"><div><b>${t.ad?'Adicional':'Pedido'} · ${kHm(t.t0)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+(([i.o,i.obs,i.observacao,i.comentario,i.observacao_cozinha,i.nota].find(v=>String(v??'').trim()))?' ('+esc([i.o,i.obs,i.observacao,i.comentario,i.observacao_cozinha,i.nota].find(v=>String(v??'').trim()))+')':'')).join(', ')}</small></div><span class="kst ${s[0]}">${s[1]}</span>${t.st=='pronto'?`<button class="btn" onclick="kEntrega('${cur.k}',${+cur.id})">Entregue</button>`:''}</div>`}).join('')}</div>`}
 
 /* --- tela da cozinha --- */
 function kCard(t){
@@ -1158,7 +1161,7 @@ function kCard(t){
  const tag=cx?'Cancelado':kLate(t)?'Atrasado':({novo:'Novo',prep:'Em preparo',pronto:'Pronto'}[t.st]||'');
  const bt={novo:['Iniciar preparo','var(--wa)','flame'],prep:['Marcar pronto','var(--ok)','ok'],pronto:['Entregue ao garçom','var(--tx)','ok']}[t.st]||['Ok','var(--tx)','ok'];
  const li=t.it.map((i,x)=>{
-  const observacao=String(i.o??i.obs??i.observacao??i.comentario??'').trim();
+  const observacao=String([i.o,i.obs,i.observacao,i.comentario,i.observacao_cozinha,i.nota].find(v=>String(v??'').trim())??'').trim();
   const mk=t.st=='prep'?`<button class="kt-ck ${i.ok?'on':''}" onclick="kItem('${t.id}',${x})" aria-pressed="${!!i.ok}" aria-label="Marcar ${esc(i.n)} como feito">${sv('ok',18)}</button>`:`<span class="kt-dot"><i></i></span>`;
   return `<li class="${i.ok&&t.st=='prep'?'ok':''}">${mk}<b>${i.q}×</b><div class="kt-n"><span class="kt-nm">${esc(i.n)}</span>${observacao?`<em class="kt-o">⚠ ${esc(observacao)}</em>`:''}</div></li>`}).join('');
  const f=cx?`<button class="btn kt-b" style="--bc:var(--ba)" onclick="kCiente('${t.id}')">${sv('ok',20)}Ciente, não preparar</button>`
@@ -1177,7 +1180,7 @@ function vCoz(){
  const col=(c,h,l,v)=>`<section class="kcol ${c}" aria-label="${h}"><h2 class="kcol-h"><span class="kcol-dot"></span>${h}<b>${l.length}</b></h2><div class="kcol-b">${l.length?l.map(kCard).join(''):`<div class="emp card" style="grid-column:1/-1">${v}</div>`}</div></section>`;
  const all=kFil=='todos';
  const body=kFil=='entregue'
-  ?`<div class="khis">${en.length?en.map(t=>`<div class="khr"><div><b>${esc(t.lb)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+((i.o||i.obs||i.observacao||i.comentario)?' ('+esc(i.o||i.obs||i.observacao||i.comentario)+')':'')).join(' · ')}</small><small>Ficou pronto em ${kDur((t.t2||t.t3)-t.t0)} · entregue às ${kHm(t.t3||t.u)}</small></div><button class="btn" onclick="kVolta('${t.id}')">Reabrir</button></div>`).join(''):'<div class="emp card">Nenhuma entrega registrada hoje.</div>'}</div>`
+  ?`<div class="khis">${en.length?en.map(t=>`<div class="khr"><div><b>${esc(t.lb)}</b><small>${t.it.map(i=>i.q+'× '+esc(i.n)+(([i.o,i.obs,i.observacao,i.comentario,i.observacao_cozinha,i.nota].find(v=>String(v??'').trim()))?' ('+esc([i.o,i.obs,i.observacao,i.comentario,i.observacao_cozinha,i.nota].find(v=>String(v??'').trim()))+')':'')).join(' · ')}</small><small>Ficou pronto em ${kDur((t.t2||t.t3)-t.t0)} · entregue às ${kHm(t.t3||t.u)}</small></div><button class="btn" onclick="kVolta('${t.id}')">Reabrir</button></div>`).join(''):'<div class="emp card">Nenhuma entrega registrada hoje.</div>'}</div>`
   :`<div class="kcols ${all?'':'one'}">${all||kFil=='novo'?col('s-n','Novos',nv,'Nenhum pedido novo.'):''}${all||kFil=='prep'?col('s-p','Em preparo',pp,'Nada no fogo agora.'):''}${all||kFil=='pronto'?col('s-r','Prontos para retirar',pr,'Nenhum prato esperando o garçom.'):''}</div>`;
  const fl=[['todos','Todos',null],['novo','Novos',nn],['prep','Em preparo',pp.length],['pronto','Prontos',pr.length],['entregue','Entregues',en.length]];
  const sy=kSync(),aud=K.som&&(!AC||AC.state!='running');
