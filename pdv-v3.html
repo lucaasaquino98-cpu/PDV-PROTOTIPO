@@ -404,6 +404,86 @@ body.kds main{padding:0}
 .obm .ob-n{margin:12px 14px 0}
 }
 </style>
+
+<style>
+/* Frente de caixa varejista: layout limpo, rápido e orientado ao caixa */
+.retail-page{max-width:1600px;margin:0 auto}
+.retail-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 16px;padding:2px 0 14px;border-bottom:1px solid var(--bd)}
+.retail-head h1{font-size:25px;margin:2px 0 3px;min-width:0}
+.retail-head small,.retail-eyebrow{color:var(--mu)}
+.retail-eyebrow{font-size:10px;letter-spacing:.13em;font-weight:800}
+.retail-head-actions{display:flex;gap:8px;align-items:center}
+.retail-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,390px);gap:16px;align-items:start}
+.retail-catalog,.retail-cart{min-width:0;background:var(--sf);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.retail-catalog{padding:16px}
+.retail-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.retail-section-head h2,.retail-cart-head h2{font-size:16px;margin:0}
+.retail-section-head span,.retail-cart-head small{font-size:12px;color:var(--mu)}
+.retail-searchrow{display:flex;align-items:center;gap:8px;border:2px solid var(--pr);border-radius:11px;padding:0 10px;background:var(--sf)}
+.retail-searchrow .retail-scan{display:grid;place-items:center;color:var(--pr)}
+.retail-searchrow .srch{flex:1;width:100%;margin:0;border:0;outline:0;box-shadow:none;padding:13px 2px;font-size:16px}
+.retail-key{font:700 11px ui-monospace,monospace;border:1px solid var(--bd);background:var(--bg);border-radius:5px;padding:3px 6px;color:var(--mu)}
+.retail-cats{margin:12px 0}
+.retail-products{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px}
+.retail-products .prod{min-height:100px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:12px;border-radius:10px;transition:border-color .12s,background .12s,transform .12s}
+.retail-products .prod b{font-size:14px;line-height:1.3;color:var(--tx)}
+.retail-products .prod span:not(.bd){font-size:15px;font-weight:800;color:var(--pr)}
+.retail-products .prod:hover{background:color-mix(in srgb,var(--pr) 5%,var(--sf));transform:translateY(-1px)}
+.retail-cart{position:sticky;top:12px;display:flex;flex-direction:column;max-height:calc(100vh - 48px)}
+.retail-cart-head{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--bd)}
+.retail-cart-head small{display:block;margin-top:3px}
+.retail-count{font-size:12px;font-weight:800;background:var(--jb);color:var(--jc);padding:5px 9px;border-radius:99px;white-space:nowrap}
+.retail-cart-items{overflow:auto;min-height:130px;max-height:42vh;padding:0 14px}
+.retail-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:13px 0;border-bottom:1px solid var(--bd)}
+.retail-item-name{min-width:0;display:flex;flex-direction:column;gap:3px}
+.retail-item-name b{font-size:13px;overflow-wrap:anywhere}
+.retail-item-name small{font-size:11px;color:var(--mu)}
+.retail-item .q{grid-column:2;grid-row:1;justify-content:flex-end}
+.retail-item .q b{min-width:18px;text-align:center}
+.retail-line-total{grid-column:1/-1;text-align:right;font-size:14px}
+.retail-empty{min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;color:var(--mu);padding:20px}
+.retail-empty-icon{display:grid;place-items:center;width:54px;height:54px;border-radius:16px;background:var(--bg);color:var(--mu)}
+.retail-empty b{color:var(--tx);font-size:14px}
+.retail-empty small{max-width:230px;line-height:1.5}
+.retail-cart-bottom{border-top:1px solid var(--bd);padding:12px 14px 14px;background:var(--sf)}
+.retail-options{border-bottom:1px solid var(--bd);padding-bottom:10px;margin-bottom:10px}
+.retail-options summary{cursor:pointer;font-size:12px;font-weight:750;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.retail-options summary span{color:var(--mu);font-weight:500}
+.retail-option-body{padding-top:10px}
+.retail-option-body label,.retail-discount label{display:block;font-size:11px;font-weight:700;color:var(--mu);margin-bottom:4px}
+.retail-option-body input{width:100%}
+.retail-discount{display:grid;grid-template-columns:1fr minmax(70px,100px) 70px;align-items:end;gap:7px;margin-top:10px}
+.retail-discount label{grid-column:1/-1;margin:0}
+.retail-summary{display:grid;gap:5px;margin-bottom:10px}
+.retail-summary>div{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--mu)}
+.retail-summary b{color:var(--tx)}
+.retail-summary .retail-discount-value{color:var(--ba)}
+.retail-total{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:11px;background:var(--bg);padding:13px;margin-bottom:10px}
+.retail-total span{font-size:12px;font-weight:850;letter-spacing:.08em}
+.retail-total strong{font-size:clamp(24px,2.2vw,32px);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.retail-pay{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:54px;border:0;border-radius:11px;background:var(--pr);color:var(--prt);font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.retail-pay span{font:700 11px ui-monospace,monospace;opacity:.8;margin-left:auto}
+.retail-pay svg{margin-left:auto}
+.retail-pay:disabled{opacity:.4;cursor:not-allowed}
+.retail-clear{width:100%;margin-top:6px;border:0;background:transparent;color:var(--mu);font:inherit;font-size:12px;padding:9px;cursor:pointer}
+.retail-clear:disabled{opacity:.35;cursor:not-allowed}
+@media(max-width:1050px){.retail-layout{grid-template-columns:minmax(0,1fr) 330px}.retail-products{grid-template-columns:repeat(auto-fill,minmax(125px,1fr))}}
+@media(max-width:760px){
+ .retail-head{align-items:flex-start;flex-direction:column;gap:10px}
+ .retail-head h1{font-size:21px}
+ .retail-head-actions{width:100%}.retail-head-actions .btn{flex:1}
+ .retail-layout{grid-template-columns:minmax(0,1fr);gap:10px}
+ .retail-catalog{padding:10px}
+ .retail-cart{position:static;max-height:none;order:-1}
+ .retail-cart-items{max-height:30vh;min-height:90px}
+ .retail-empty{min-height:110px}
+ .retail-products{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .retail-products .prod{min-height:84px;padding:10px}
+ .retail-cart-bottom{padding:10px}
+ .retail-total strong{font-size:28px}
+}
+</style>
+
 </head>
 <body>
 <div class="app"><nav id="nav"></nav><main id="main"><div id="localPreviewBanner" class="local-preview-banner"><strong>Prévia local das Configurações</strong> — esta cópia serve para visualizar a interface. As alterações ficam neste navegador e não são enviadas ao Supabase.</div></main></div>
@@ -1038,15 +1118,45 @@ const pgrid=(fn='vAdd')=>{const t=parseQ(q).t,ps=t?achar(t):S.prods.filter(p=>ca
 function hintQ(){const e=$('#qh');if(!e)return;const {n,t}=parseQ(q);if(!t){e.innerHTML='Digite o código e tecle <b>Enter</b> · <b>3*101</b> lança 3 unidades';return}const r=achar(t),ex=r.filter(p=>p.cod&&norm(p.cod)==norm(t)),p=ex.length==1?ex[0]:r.length==1?r[0]:null;e.innerHTML=p?`<b>Enter</b> adiciona ${n>1?n+' × ':''}<b>${esc(p.nome)}</b> · ${R(p.preco)}`:r.length?`${r.length} produtos · digite o código completo`:'Nenhum produto com esse código ou nome'}
 function bqIn(fn){q=$('#bq').value;$('#pg').innerHTML=pgrid(fn);hintQ()}
 function vVenda(){
- const c=S.cart,sub=tot(c),d=dsc(sub),qtd=c.items.reduce((a,i)=>a+i.q,0),cats=['Todos',...new Set(S.prods.map(p=>p.cat))];
- const vs=S.mov.filter(x=>x.cat=='Vendas'),fat=vs.reduce((a,x)=>a+x.val,0),low=S.prods.filter(p=>p.est!=null&&p.est<=5).length;
- const left=S.prods.length?`<input id="bq" class="srch" autocomplete="off" placeholder="Código ou nome do produto (F2)" value="${esc(q)}" oninput="bqIn('vAdd')" onkeydown="if(event.key=='Enter')bar()"><div class="qh" id="qh"></div><div class="chips">${cats.map(x=>`<button class="chip ${x==cat?'on':''}" onclick="cat='${x}';render()">${x}</button>`).join('')}</div><div class="grid" id="pg">${pgrid()}</div>`:`<div class="card emp">Nenhum produto cadastrado ainda.<br><br><button class="btn p" onclick="go('cad')">Ir para Cadastros</button></div>`;
- return head('Venda rápida')+kp([['Vendas hoje',vs.length],['Faturamento',R(fat)],['Ticket médio',R(fat/Math.max(1,vs.length))],['Estoque baixo',low]])+
- `<p class="hint">F2 buscar · F3 CPF · F4 finalizar · F6 desconto · F9 limpar · F1 todos os atalhos</p><div class="pos"><div>${left}</div><div class="card" style="align-self:start"><h3>Carrinho · ${qtd} ${qtd==1?'item':'itens'}</h3>${c.items.length?c.items.map(i=>{const p=P(i.id);return `<div class="it"><div><b>${esc(p.nome)}</b><br><small style="color:var(--mu)">${R(p.preco)}</small></div><div class="q"><button onclick="vChg(${i.id},-1)" aria-label="Diminuir">−</button>${i.q}<button onclick="vChg(${i.id},1)" aria-label="Aumentar">+</button></div><b>${R(p.preco*i.q)}</b></div>`}).join(''):'<p style="color:var(--mu)">Digite o código ou toque nos produtos.</p>'}
- <div style="margin-top:12px"><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF do cliente (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div></div>
- <div class="frm"><input id="dv" type="number" min="0" step="0.01" placeholder="Desconto (F6)" value="${S.dsc||''}" onchange="S.dsc=Math.max(0,+this.value||0);render()"><select onchange="S.dt=this.value;render()"><option value="%" ${S.dt=='%'?'selected':''}>%</option><option value="R" ${S.dt=='R'?'selected':''}>R$</option></select></div>
- <div class="row" style="margin-top:10px"><span>Subtotal</span><span>${R(sub)}</span></div><div class="row"><span>Desconto</span><span>− ${R(d)}</span></div><div class="row tot"><span>Total</span><span>${R(sub-d)}</span></div>
- <button class="btn p g" ${c.items.length?'':'disabled'} onclick="pay='Pix';render()">Finalizar venda (F4)</button><button class="btn g" ${c.items.length?'':'disabled'} onclick="limpa()">Limpar carrinho (F9)</button></div></div>`
+ const c=S.cart,sub=tot(c),d=dsc(sub),total=Math.max(0,sub-d),qtd=c.items.reduce((a,i)=>a+i.q,0),cats=['Todos',...new Set(S.prods.map(p=>p.cat))];
+ const vs=S.mov.filter(x=>x.cat=='Vendas'&&isHoje(x)),fat=vs.reduce((a,x)=>a+x.val,0);
+ const left=S.prods.length?`
+ <div class="retail-searchrow">
+  <span class="retail-scan" aria-hidden="true">⌕</span>
+  <input id="bq" class="srch" autocomplete="off" placeholder="Leia o código de barras ou busque um produto (F2)" value="${esc(q)}" oninput="bqIn('vAdd')" onkeydown="if(event.key=='Enter')bar()">
+  <span class="retail-key">F2</span>
+ </div>
+ <div class="qh" id="qh"></div>
+ <div class="chips retail-cats">${cats.map(x=>`<button class="chip ${x==cat?'on':''}" onclick="cat='${x}';render()">${esc(x)}</button>`).join('')}</div>
+ <div class="grid retail-products" id="pg">${pgrid()}</div>`
+ :`<div class="card emp">Nenhum produto cadastrado ainda.<br><br><button class="btn p" onclick="go('cad')">Cadastrar produtos</button></div>`;
+ return `<div class="retail-page">
+ <div class="retail-head">
+  <div><div class="retail-eyebrow">PDV FÁCIL · VAREJO</div><h1>Frente de caixa</h1><small>Venda rápida · ${vs.length} venda(s) hoje · ${R(fat)}</small></div>
+  <div class="retail-head-actions"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><button class="btn" onclick="go('cad')">＋ Produtos</button><button class="btn" onclick="help=true;render()">Atalhos <span class="kb">F1</span></button><select onchange="setSeg(this.value)" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>
+ </div>
+ <div class="retail-layout">
+  <section class="retail-catalog">
+   <div class="retail-section-head"><h2>Produtos</h2><span>${S.prods.length} cadastrado(s)</span></div>
+   ${left}
+  </section>
+  <aside class="retail-cart">
+   <div class="retail-cart-head"><div><h2>Venda atual</h2><small>Caixa · Balcão</small></div><span class="retail-count">${qtd} ${qtd==1?'item':'itens'}</span></div>
+   <div class="retail-cart-items">${c.items.length?c.items.map(i=>{const p=P(i.id);return `<div class="retail-item"><div class="retail-item-name"><b>${esc(p.nome)}</b><small>${R(p.preco)} / un.</small></div><div class="q"><button onclick="vChg(${i.id},-1)" aria-label="Diminuir">−</button><b>${i.q}</b><button onclick="vChg(${i.id},1)" aria-label="Aumentar">+</button></div><strong class="retail-line-total">${R(p.preco*i.q)}</strong></div>`}).join(''):`<div class="retail-empty"><span class="retail-empty-icon">${sv('card',30)}</span><b>Caixa pronto para vender</b><small>Escaneie um código de barras ou toque em um produto.</small></div>`}</div>
+   <div class="retail-cart-bottom">
+    <details class="retail-options"><summary>Cliente e desconto <span>Opcional</span></summary>
+     <div class="retail-option-body"><label for="cpf">CPF do cliente</label><input id="cpf" style="width:100%" inputmode="numeric" autocomplete="off" placeholder="CPF na nota (F3)" value="${fcpf(S.cpf)}" oninput="cpfIn(this)"><div id="cs" style="margin-top:6px"></div>
+      <div class="retail-discount"><label for="dv">Desconto</label><input id="dv" type="number" min="0" step="0.01" placeholder="0,00" value="${S.dsc||''}" onchange="S.dsc=Math.max(0,+this.value||0);render()"><select aria-label="Tipo de desconto" onchange="S.dt=this.value;render()"><option value="%" ${S.dt=='%'?'selected':''}>%</option><option value="R" ${S.dt=='R'?'selected':''}>R$</option></select></div>
+     </div>
+    </details>
+    <div class="retail-summary"><div><span>Subtotal (${qtd} itens)</span><b>${R(sub)}</b></div>${d?`<div><span>Desconto</span><b class="retail-discount-value">− ${R(d)}</b></div>`:''}</div>
+    <div class="retail-total"><span>TOTAL</span><strong>${R(total)}</strong></div>
+    <button class="retail-pay" ${c.items.length?'':'disabled'} onclick="pay='Pix';render()">${sv('card',22)} Finalizar venda <span>F4</span></button>
+    <button class="retail-clear" ${c.items.length?'':'disabled'} onclick="limpa()">Cancelar / limpar venda <span>F9</span></button>
+   </div>
+  </aside>
+ </div>
+ </div>`;
 }
 function bar(){const mesa=view=='pos',{n,t}=parseQ(q);if(!t)return;const r=achar(t),ex=r.filter(p=>p.cod&&norm(p.cod)==norm(t)),p=ex.length==1?ex[0]:r.length==1?r[0]:null;
  if(!p)return toast(r.length?'Vários produtos: digite o código completo':'Código ou produto não encontrado');
