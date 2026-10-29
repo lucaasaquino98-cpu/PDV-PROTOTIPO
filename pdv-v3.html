@@ -201,6 +201,30 @@ nav button{position:relative}
 /* tela da cozinha */
 body.kds nav{display:none}
 body.kds main{padding:0}
+/* ===== Trava da cozinha (arrastar para abrir/fechar) ===== */
+.klock{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(8,10,16,.85);backdrop-filter:blur(6px);animation:fi .15s}
+.kl-c{--kc:#dc2626;width:min(100%,460px);background:var(--sf);color:var(--tx);border-radius:22px;border:2px solid var(--kc);padding:28px 22px 22px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.kl-ic{width:76px;height:76px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;background:var(--kc);color:#fff}
+.kl-ic svg{width:40px;height:40px}
+.kl-c h2{color:var(--kc);font-size:26px;margin:0 0 6px}
+.kl-c p{color:var(--mu);margin:0 0 22px;font-size:15px;line-height:1.4}
+.kl-sl{position:relative;height:64px;border-radius:99px;background:var(--kc);user-select:none;-webkit-user-select:none;touch-action:none;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.kl-tx{color:#fff;font-weight:700;font-size:15px;padding:0 74px;pointer-events:none;text-align:center;line-height:1.2}
+.kl-th{position:absolute;left:6px;top:6px;width:52px;height:52px;border-radius:50%;background:#fff;color:var(--kc);display:grid;place-items:center;cursor:grab;touch-action:none;box-shadow:0 2px 8px rgba(0,0,0,.35);outline-offset:3px}
+.kl-th:active{cursor:grabbing}
+.kl-th.back{transition:transform .25s ease}
+.kl-th svg{width:28px;height:28px;stroke-width:2.6}
+.kl-ac{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.kop{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;border:0;color:#fff;font-family:inherit}
+.kop i{width:8px;height:8px;border-radius:50%;background:#fff}
+.kop.on{background:#16a34a;cursor:pointer}
+.kop.off{background:#dc2626}
+.kdot{position:absolute;bottom:3px;right:3px;width:10px;height:10px;border-radius:50%;border:2px solid var(--sf)}
+.kdot.on{background:#16a34a}.kdot.off{background:#dc2626}
+.kav{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.55);backdrop-filter:blur(3px);animation:fi .15s}
+.kav .kl-c{width:min(100%,420px)}
+.kav .kl-c p{margin-bottom:18px}
+
 .kd{min-height:100%;display:flex;flex-direction:column;background:var(--bg)}
 .kh{position:sticky;top:0;z-index:4;background:var(--nv);color:#fff;padding:12px 18px;display:grid;gap:10px;border-bottom:1px solid rgba(255,255,255,.12)}
 .kh-r1,.kh-r2{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -656,7 +680,7 @@ function nav(){
  const it=[['mesas',S.seg=='varejo'?'Venda rápida':'Atendimento'],['caixa','Caixa'],['cad','Cadastros'],['cli','Clientes'],['fin','Financeiro'],['cfg','Configurações']];
  $('#nav').innerHTML=`<div class="brand"><i>P</i>PDV Fácil</div><div class="lb">Menu</div>`+it.map(([k,l])=>`<button class="${a==k?'on':''}" onclick="go('${k}')">${ic(k)}${l}${k=='mesas'&&rst()&&kProntos()?`<span class="nb" aria-label="${kProntos()} pedidos prontos">${kProntos()}</span>`:''}</button>`).join('')+`<div class="sp"></div><div class="usr"><b>${esc((USER||'D')[0].toUpperCase())}</b><div>${esc((USER||'Diretoria').split('@')[0])}<small><a href="#" onclick="sair();return false" style="color:inherit;text-decoration:underline">Sair</a></small></div></div>`;
 }
-function head(t,extra=''){return `<div class="top"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><h1>${t}</h1>${extra}${rst()?`<button class="btn ic kbtn" onclick="go('coz')" aria-label="Abrir a tela da cozinha" title="Tela da cozinha (Alt+K)">${ic('cook')}${kProntos()?`<span class="nb">${kProntos()}</span>`:''}</button>`:''}<select onchange="setSeg(this.value)" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>`}
+function head(t,extra=''){return `<div class="top"><button class="btn ic" onclick="tgl()" aria-label="Mostrar ou ocultar menu">${ic('menu')}</button><h1>${t}</h1>${extra}${rst()?`<button class="btn ic kbtn" onclick="go('coz')" aria-label="Abrir a tela da cozinha" title="Tela da cozinha (Alt+K)">${ic('cook')}<i class="kdot ${kAberta()?'on':'off'}"></i>${kProntos()?`<span class="nb">${kProntos()}</span>`:''}</button>`:''}<select onchange="setSeg(this.value)" aria-label="Segmento">${Object.entries(SEG).map(([k,v])=>`<option value="${k}" ${k==S.seg?'selected':''}>${v.nome}</option>`).join('')}</select></div>`}
 function kp(a){return `<div class="kpis">${a.map(([l,v])=>`<div class="card kpi"><small>${l}</small><b>${v}</b></div>`).join('')}</div>`}
 function vSalao(){
  const ms=Object.entries(S.mesas).filter(([,m])=>!m.ref),cs=Object.entries(S.cmds);
@@ -1224,9 +1248,63 @@ function kItem(id,x){const t=kGet(id);if(!t||!t.it[x])return;t.it[x].ok=t.it[x].
 function kCiente(id){const t=kGet(id);if(!t)return;t.ack=1;kSave(t);renderKeep()}
 function kFil_(f){kFil=f;renderKeep()}
 
+
+/* --- trava da cozinha: só recebe pedidos depois de confirmar com o deslizador --- */
+const kSt=()=>S.coz.find(t=>t.id=='kstatuscoz');
+const kAberta=()=>!!(kSt()&&kSt().ab);
+function kSetAberta(v){
+ const t=kSt()||{id:'kstatuscoz',k:'c',r:0,lb:'Status da cozinha',g:'',ad:false,it:[],st:'config',t0:Date.now(),t1:0,t2:0,t3:0,arq:1};
+ t.ab=v?1:0;K.pf=false;kSave(t);
+ renderKeep();toast(v?'Cozinha aberta · recebendo pedidos':'Cozinha fechada · pedidos bloqueados',3200)}
+function kPedeFechar(){K.pf=true;kLockUpdate()}
+const KL_R=[220,38,38],KL_G=[22,163,74];
+const klMix=p=>KL_R.map((r,i)=>Math.round(r+(KL_G[i]-r)*p)).join(',');
+function kLockUpdate(){
+ let el=document.getElementById('klock');
+ const ab=kAberta(),show=view=='coz'&&(!ab||K.pf),key=show?(ab?'close':'open'):'';
+ if(key===kLockUpdate.k&&(!key||el))return;
+ kLockUpdate.k=key;
+ if(!key){if(el)el.remove();return}
+ if(!el){el=document.createElement('div');el.id='klock';el.className='klock';document.body.appendChild(el)}
+ const abrir=key=='open';
+ const arrow='<svg viewBox="0 0 24 24" style="'+(abrir?'':'transform:rotate(180deg)')+'"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+ el.innerHTML=`<div class="kl-c" role="dialog" aria-modal="true" aria-label="${abrir?'Cozinha fechada':'Cozinha aberta'}"><div class="kl-ic"><svg viewBox="0 0 24 24">${IC.cook}</svg></div><h2>${abrir?'Cozinha fechada':'Cozinha aberta'}</h2><p>${abrir?'O salão não consegue enviar pedidos enquanto a cozinha estiver fechada. Arraste o botão para a direita para confirmar que a cozinha está aberta para pedidos.':'A cozinha está recebendo pedidos do salão. Para parar de receber, arraste o botão para a esquerda.'}</p><div class="kl-sl"><span class="kl-tx">${abrir?'Arraste para abrir a cozinha':'Arraste para fechar a cozinha'}</span><div class="kl-th" role="button" tabindex="0" aria-label="${abrir?'Arrastar para abrir a cozinha. Também funciona com Enter.':'Arrastar para fechar a cozinha. Também funciona com Enter.'}">${arrow}</div></div><div class="kl-ac">${abrir?`<button class="btn" onclick="go('mesas')">${sv('back',18)} Voltar ao sistema</button>`:`<button class="btn" onclick="K.pf=false;kLockUpdate()">Manter aberta</button>`}</div></div>`;
+ const sl=el.querySelector('.kl-sl'),th=el.querySelector('.kl-th'),c=el.querySelector('.kl-c'),tx=el.querySelector('.kl-tx'),h2=el.querySelector('h2'),pp=el.querySelector('p'),ico=el.querySelector('.kl-ic');
+ let max=0,x=0,drag=false,sx=0,done=false;
+ const paint=()=>{const p=max?(abrir?x/max:(max-x)/max):0,g=abrir?p:1-p;
+  c.style.setProperty('--kc','rgb('+klMix(g)+')');th.style.transform='translateX('+x+'px)';tx.style.opacity=String(1-p*.85)};
+ const setX=v=>{x=v;paint()};
+ const medir=()=>{max=Math.max(0,sl.clientWidth-th.offsetWidth-12)};
+ const fim=()=>{if(done)return;done=true;drag=false;th.classList.add('back');setX(abrir?max:0);
+  tx.style.opacity='0';h2.textContent=abrir?'Cozinha aberta!':'Cozinha fechada';
+  pp.textContent=abrir?'Pronto! Os pedidos do salão já chegam aqui.':'Os pedidos do salão ficam bloqueados.';
+  setTimeout(()=>kSetAberta(abrir),600)};
+ medir();setX(abrir?0:max);
+ try{new ResizeObserver(()=>{if(drag||done)return;medir();setX(abrir?0:max)}).observe(sl)}catch(e){}
+ th.addEventListener('pointerdown',e=>{if(done)return;medir();drag=true;sx=e.clientX-x;th.classList.remove('back');try{th.setPointerCapture(e.pointerId)}catch(_){}e.preventDefault()});
+ th.addEventListener('pointermove',e=>{if(!drag)return;setX(Math.min(max,Math.max(0,e.clientX-sx)))});
+ const solta=()=>{if(!drag)return;drag=false;const p=max?(abrir?x/max:(max-x)/max):0;
+  if(p>=.92)fim();else{th.classList.add('back');setX(abrir?0:max)}};
+ th.addEventListener('pointerup',solta);th.addEventListener('pointercancel',solta);
+ th.addEventListener('keydown',e=>{if(e.key=='Enter'||e.key==' '||e.key==(abrir?'ArrowRight':'ArrowLeft')){e.preventDefault();fim()}});
+}
+document.addEventListener('keydown',e=>{if(e.key=='Escape'&&K.pf&&kAberta()){K.pf=false;kLockUpdate()}});
+/* aviso no salão quando a cozinha está fechada */
+function kAvisoFechada(){
+ if(document.getElementById('kaviso'))return;
+ const el=document.createElement('div');el.id='kaviso';el.className='kav';
+ const fecha=()=>el.remove();
+ el.innerHTML=`<div class="kl-c" role="alertdialog" aria-modal="true" aria-label="Cozinha fechada"><div class="kl-ic"><svg viewBox="0 0 24 24">${IC.cook}</svg></div><h2>Cozinha fechada</h2><p>O pedido não foi enviado. A cozinha ainda não foi aberta para receber pedidos. Avise o responsável para abrir a cozinha e tente novamente.</p><div class="kl-ac"><button class="btn p" id="kav-ok">Entendi</button><button class="btn" id="kav-go">Ir para a cozinha</button></div></div>`;
+ el.addEventListener('click',e=>{if(e.target===el)fecha()});
+ document.body.appendChild(el);
+ el.querySelector('#kav-ok').onclick=fecha;
+ el.querySelector('#kav-go').onclick=()=>{fecha();go('coz')};
+ el.querySelector('#kav-ok').focus()}
+
 /* --- ações do salão --- */
 function enviarCozinha(){
  if(ob&&$('#obt'))obSave();
+ if(!kAberta()){kAvisoFechada();return}
  const m=G();if(!m||!cur)return;
  const novos=m.items.map(i=>{const obs=String([i.obs,i.o,i.observacao,i.comentario,i.observacao_cozinha,i.nota].find(v=>String(v??'').trim())??'').trim();return {id:i.id,n:P(i.id).nome,q:Math.max(0,(Number(i.q)||0)-(Number(i.env)||0)),ok:0,o:obs,obs,observacao:obs,comentario:obs,observacao_cozinha:obs}}).filter(x=>x.q>0);
  if(!novos.length)return toast('Tudo já foi enviado à cozinha');
@@ -1289,7 +1367,7 @@ function vCoz(){
  const fl=[['todos','Todos',null],['novo','Novos',nn],['prep','Em preparo',pp.length],['pronto','Prontos',pr.length],['entregue','Entregues',en.length]];
  const sy=kSync(),aud=K.som&&(!AC||AC.state!='running');
  const foot=`<details class="how kfoot"><summary>Usar a cozinha em outro aparelho</summary><ol><li>No aparelho da cozinha, abra o PDV e entre com a mesma conta.</li><li>Toque no ícone do chapéu de cozinheiro no topo, ou abra o endereço terminando em <code>#cozinha</code>.</li><li>${K.remoto===true?'A sincronização já está ativa: o que o salão enviar aparece aqui em poucos segundos.':'Para sincronizar entre aparelhos, rode o SQL abaixo uma vez no SQL Editor do Supabase.'}</li></ol>${K.remoto===true?'':`<pre>${esc(KSQL)}</pre><button class="btn" onclick="kCopySql()">${sv('copy',16)} Copiar SQL</button>`}</details>`;
- return `<div class="kd"><header class="kh"><div class="kh-r1"><div class="kh-brand"><i>${ic('cook')}</i><h1>Cozinha <small style="opacity:.6;font-size:11px;font-weight:600">v8</small></h1></div><span class="ksy ${sy[0]}" id="ksy"><i></i>${sy[1]}</span><span class="kaud" id="kaud" style="display:${aud?'':'none'}">Toque na tela para ativar o som</span><span class="sp"></span><span class="kclock" id="kclock">${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span><button class="kbn" onclick="kSom()" aria-pressed="${K.som}" title="${K.som?'Desligar':'Ligar'} o som dos avisos">${sv(K.som?'spk':'spkx',20)}<span class="kbl">Som</span></button><button class="kbn" onclick="kFull()" title="Tela cheia">${sv('full',20)}<span class="kbl">Tela cheia</span></button><button class="kbn" onclick="go('mesas')">${sv('back',20)}<span>Voltar ao sistema</span></button></div><div class="kh-r2"><div class="kcs"><div class="kc s-n"><b>${nn}</b><small>novos</small></div><div class="kc s-p"><b>${pp.length}</b><small>em preparo</small></div><div class="kc s-r"><b>${pr.length}</b><small>prontos</small></div><div class="kc s-t"><b>${med?kDur(med):'—'}</b><small>tempo médio hoje</small></div></div><div class="kfs" role="group" aria-label="Filtrar pedidos">${fl.map(([k,l,c])=>`<button class="kfi ${kFil==k?'on':''}" aria-pressed="${kFil==k}" onclick="kFil_('${k}')">${l}${c!=null?' · '+c:''}</button>`).join('')}</div></div></header>${body}${foot}</div>`}
+ return `<div class="kd"><header class="kh"><div class="kh-r1"><div class="kh-brand"><i>${ic('cook')}</i><h1>Cozinha <small style="opacity:.6;font-size:11px;font-weight:600">v8</small></h1></div><span class="ksy ${sy[0]}" id="ksy"><i></i>${sy[1]}</span>${kAberta()?`<button class="kop on" onclick="kPedeFechar()" title="Clique para fechar a cozinha"><i></i>Cozinha aberta</button>`:`<span class="kop off"><i></i>Cozinha fechada</span>`}<span class="kaud" id="kaud" style="display:${aud?'':'none'}">Toque na tela para ativar o som</span><span class="sp"></span><span class="kclock" id="kclock">${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}</span><button class="kbn" onclick="kSom()" aria-pressed="${K.som}" title="${K.som?'Desligar':'Ligar'} o som dos avisos">${sv(K.som?'spk':'spkx',20)}<span class="kbl">Som</span></button><button class="kbn" onclick="kFull()" title="Tela cheia">${sv('full',20)}<span class="kbl">Tela cheia</span></button><button class="kbn" onclick="go('mesas')">${sv('back',20)}<span>Voltar ao sistema</span></button></div><div class="kh-r2"><div class="kcs"><div class="kc s-n"><b>${nn}</b><small>novos</small></div><div class="kc s-p"><b>${pp.length}</b><small>em preparo</small></div><div class="kc s-r"><b>${pr.length}</b><small>prontos</small></div><div class="kc s-t"><b>${med?kDur(med):'—'}</b><small>tempo médio hoje</small></div></div><div class="kfs" role="group" aria-label="Filtrar pedidos">${fl.map(([k,l,c])=>`<button class="kfi ${kFil==k?'on':''}" aria-pressed="${kFil==k}" onclick="kFil_('${k}')">${l}${c!=null?' · '+c:''}</button>`).join('')}</div></div></header>${body}${foot}</div>`}
 
 /* --- tema (agora em Configurações > Aparência) --- */
 function setTema(t){const r=document.documentElement;
@@ -1310,6 +1388,7 @@ function render(){
  if(ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#obt');e&&e.focus()});
  if((rv||view=='pos')&&!pay&&!help&&!cm&&!cv&&!jn&&!ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
  estSalvar();
+ kLockUpdate();
 }
 /* teclado virtual: o modal acompanha a área realmente visível */
 (function(){const v=window.visualViewport;if(!v)return;const r=document.documentElement.style,f=()=>{r.setProperty('--vvh',v.height+'px');r.setProperty('--vvt',v.offsetTop+'px')};v.addEventListener('resize',f);v.addEventListener('scroll',f);f()})();
