@@ -201,6 +201,56 @@ nav button{position:relative}
 /* tela da cozinha */
 body.kds nav{display:none}
 body.kds main{padding:0}
+/* ===== Tela de login ===== */
+.lg{position:fixed;inset:0;z-index:80;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);background:var(--bg);color:var(--tx);overflow:auto}
+.lg-l{position:relative;overflow:hidden;color:#fff;padding:48px 56px;display:flex;flex-direction:column;justify-content:space-between;gap:32px;background:radial-gradient(900px 520px at 10% 0%,rgba(45,212,191,.30),transparent 60%),radial-gradient(760px 520px at 100% 100%,rgba(15,118,110,.60),transparent 60%),#0b1220}
+.lg-l::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(circle at 30% 30%,#000,transparent 75%);mask-image:radial-gradient(circle at 30% 30%,#000,transparent 75%);pointer-events:none}
+.lg-l>*{position:relative}
+.lg-logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:20px;letter-spacing:.01em}
+.lg-logo i{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#14b8a6,#0f766e);display:grid;place-items:center;font-style:normal;font-size:22px;font-family:Arial,Helvetica,sans-serif;box-shadow:0 8px 24px rgba(20,184,166,.35)}
+.lg-hero h1{font-size:clamp(30px,3.4vw,46px);line-height:1.12;margin:0 0 14px;font-weight:800;letter-spacing:-.02em}
+.lg-hero h1 em{font-style:normal;color:#2dd4bf}
+.lg-hero p{margin:0;color:#cbd5e1;font-size:17px;line-height:1.55;max-width:520px}
+.lg-feat{list-style:none;margin:26px 0 0;padding:0;display:grid;gap:14px}
+.lg-feat li{display:flex;align-items:center;gap:14px;color:#e2e8f0;font-size:15px}
+.lg-feat span{width:38px;height:38px;flex:none;border-radius:11px;background:rgba(45,212,191,.14);border:1px solid rgba(45,212,191,.28);display:grid;place-items:center;color:#2dd4bf}
+.lg-feat svg{width:20px;height:20px}
+.lg-card{position:absolute!important;right:40px;top:44px;width:220px;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);box-shadow:0 20px 50px rgba(0,0,0,.35);transform:rotate(3deg);animation:lgfl 6s ease-in-out infinite}
+.lg-card small{color:#94a3b8;letter-spacing:.12em;font-weight:700;font-size:11px}
+.lg-card b{display:block;font-size:30px;color:#4ade80;margin:2px 0 8px;font-variant-numeric:tabular-nums}
+.lg-card div{display:flex;gap:6px;flex-wrap:wrap}
+.lg-card span{font-size:11px;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.1);color:#e2e8f0}
+@keyframes lgfl{0%,100%{transform:rotate(3deg) translateY(0)}50%{transform:rotate(3deg) translateY(-8px)}}
+.lg-foot{color:#94a3b8;font-size:13px}
+.lg-r{display:grid;place-items:center;padding:32px 24px}
+.lg-f{width:100%;max-width:400px;animation:lgin .5s ease both}
+@keyframes lgin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.lg-mlogo{display:none}
+.lg-f h2{font-size:30px;margin:0 0 6px;letter-spacing:-.02em}
+.lg-f .sub{color:var(--mu);margin:0 0 26px;font-size:15px}
+.lg-fd{margin-bottom:16px}
+.lg-fd label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.lg-in{position:relative;display:flex;align-items:center}
+.lg-in>svg{position:absolute;left:14px;width:19px;height:19px;color:var(--mu);pointer-events:none}
+.lg-in input{width:100%;height:50px;padding:0 46px 0 44px;border:1.5px solid var(--bd);border-radius:12px;background:var(--sf);color:var(--tx);font:inherit;font-size:16px;transition:border-color .15s,box-shadow .15s}
+.lg-in input:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 4px color-mix(in srgb,var(--pr) 22%,transparent)}
+.lg-eye{position:absolute;right:6px;width:38px;height:38px;border:0;border-radius:9px;background:none;color:var(--mu);cursor:pointer;display:grid;place-items:center}
+.lg-eye:hover{color:var(--tx);background:var(--bg)}
+.lg-eye svg{width:20px;height:20px}
+.lg-row{display:flex;justify-content:flex-end;margin:-6px 0 18px}
+.lg-link{background:none;border:0;padding:0;color:var(--pr);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.lg-link:hover{text-decoration:underline}
+.lg-msg{min-height:22px;font-size:13px;margin:0 0 10px;color:var(--ba)}
+.lg-msg.info{color:var(--mu)}
+.lg-btn{width:100%;height:54px;border:0;border-radius:12px;font:inherit;font-size:17px;font-weight:800;color:#fff;cursor:pointer;background:linear-gradient(135deg,#14b8a6,#0f766e);box-shadow:0 10px 24px rgba(15,118,110,.35);transition:transform .15s,box-shadow .15s,opacity .15s}
+.lg-btn:hover{transform:translateY(-1px);box-shadow:0 14px 28px rgba(15,118,110,.42)}
+.lg-btn:disabled{opacity:.7;cursor:wait;transform:none}
+.lg-sec{margin-top:22px;text-align:center;color:var(--mu);font-size:12.5px;display:flex;align-items:center;justify-content:center;gap:6px}
+.lg-sec svg{width:15px;height:15px}
+@media (max-width:900px){.lg{grid-template-columns:1fr}.lg-l{display:none}.lg-mlogo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;margin-bottom:26px}.lg-mlogo i{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#14b8a6,#0f766e);color:#fff;display:grid;place-items:center;font-style:normal;font-family:Arial,sans-serif;font-size:21px}.lg-r{align-items:start;padding-top:48px}}
+@media (max-width:1180px){.lg-card{display:none}}
+@media (prefers-reduced-motion:reduce){.lg-card,.lg-f{animation:none}}
+
 /* ===== Varejo: tela de caixa de supermercado ===== */
 .cx{display:grid;grid-template-columns:minmax(0,1fr) 430px;grid-template-areas:"l r" "keys keys";gap:12px;align-items:start}
 .cx-l,.cx-r{display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -653,18 +703,34 @@ async function sair(){if(estTimer){clearTimeout(estTimer);await estPush()}try{aw
 function irLogin(){new URL(SB.login,location.href).pathname!==location.pathname?location.replace(SB.login):location.reload()}
 function telaLogin(){
  document.body.classList.add('nav-off');
- $('#main').innerHTML=`<div style="min-height:100%;display:grid;place-items:center;padding:16px"><form class="card" style="width:100%;max-width:360px;padding:22px" onsubmit="entrar(event)"><div class="brand" style="color:var(--tx);padding:0 0 16px"><i>P</i>PDV Fácil</div><h3 style="font-size:17px;margin:0 0 4px">Entrar no sistema</h3><p class="hint">Use o e-mail e a senha da sua conta.</p><div class="cfg-field" style="margin-bottom:10px"><label for="lge">E-mail</label><input id="lge" type="email" autocomplete="username" inputmode="email" required></div><div class="cfg-field"><label for="lgs">Senha</label><input id="lgs" type="password" autocomplete="current-password" required></div><div id="lgm" role="alert" style="color:var(--ba);min-height:20px;margin:10px 0 0;font-size:13px"></div><button id="lgb" class="btn p g" type="submit">Entrar</button></form></div>`;
+ const old=document.getElementById('lg');if(old)old.remove();
+ const I={mail:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',lock:'<svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',eye:'<svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>',shield:'<svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>',cook:'<svg viewBox="0 0 24 24">'+IC.cook+'</svg>',cart:'<svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.7 11.5a2 2 0 0 0 2 1.5h7.6a2 2 0 0 0 2-1.5L21 7H6"/></svg>',chart:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>'};
+ const el=document.createElement('div');el.id='lg';el.className='lg';
+ el.innerHTML=`<aside class="lg-l"><div class="lg-logo"><i>P</i>PDV Fácil</div><div class="lg-hero"><h1>Venda mais.<br><em>Controle tudo.</em><br>Em um só lugar.</h1><p>Do balcão ao salão, do caixa à cozinha: um sistema simples para quem atende de verdade.</p><ul class="lg-feat"><li><span>${I.cook}</span>Salão, mesas e cozinha conectados em tempo real</li><li><span>${I.cart}</span>Caixa de varejo com leitor de código de barras</li><li><span>${I.chart}</span>Vendas, estoque e financeiro sempre à mão</li></ul></div><div class="lg-foot">© PDV Fácil · Feito para o comércio brasileiro</div><div class="lg-card"><small>TOTAL A PAGAR</small><b>R$ 54,40</b><div><span>Pix</span><span>Débito</span><span>Crédito</span><span>Dinheiro</span></div></div></aside>
+ <section class="lg-r"><form class="lg-f" onsubmit="entrar(event)" novalidate><div class="lg-mlogo"><i>P</i>PDV Fácil</div><h2>Bem-vindo de volta</h2><p class="sub">Entre com a sua conta para abrir o caixa.</p>
+ <div class="lg-fd"><label for="lge">E-mail</label><div class="lg-in">${I.mail}<input id="lge" type="email" autocomplete="username" inputmode="email" placeholder="voce@empresa.com" required></div></div>
+ <div class="lg-fd"><label for="lgs">Senha</label><div class="lg-in">${I.lock}<input id="lgs" type="password" autocomplete="current-password" placeholder="Sua senha" required><button type="button" class="lg-eye" id="lgv" aria-label="Mostrar senha" aria-pressed="false">${I.eye}</button></div></div>
+ <div class="lg-row"><button type="button" class="lg-link" id="lgf">Esqueci minha senha</button></div>
+ <div id="lgm" class="lg-msg" role="alert"></div><button id="lgb" class="lg-btn" type="submit">Entrar</button>
+ <div class="lg-sec">${I.shield}Conexão segura · seus dados protegidos</div></form></section>`;
+ document.body.appendChild(el);
+ $('#main').innerHTML='';
+ $('#lgv').onclick=()=>{const i=$('#lgs'),on=i.type=='password';i.type=on?'text':'password';$('#lgv').setAttribute('aria-pressed',on);$('#lgv').setAttribute('aria-label',on?'Ocultar senha':'Mostrar senha')};
+ $('#lgf').onclick=()=>{const m=$('#lgm');m.className='lg-msg info';m.textContent='Para redefinir a senha, fale com o administrador do sistema.'};
  const e=$('#lge');e&&e.focus()}
 async function entrar(ev){
  ev.preventDefault();
  const b=$('#lgb'),m=$('#lgm'),email=$('#lge').value.trim(),senha=$('#lgs').value;
+ m.className='lg-msg';
  if(!email||!senha){m.textContent='Informe o e-mail e a senha.';return}
+ if(!sb){m.textContent='Prévia: o acesso real funciona quando o sistema está publicado na internet.';return}
  b.disabled=true;b.textContent='Entrando…';m.textContent='';
  try{const {error}=await sb.auth.signInWithPassword({email,password:senha});if(error)throw error;location.reload()}
  catch(err){b.disabled=false;b.textContent='Entrar';const t=(err&&err.message)||String(err);
   m.textContent=/invalid login/i.test(t)?'E-mail ou senha incorretos.':/not confirmed/i.test(t)?'Confirme o e-mail antes de entrar.':'Não foi possível entrar: '+t}}
 async function boot(){
  // Prévia local: permite conferir as telas de Configurações ao abrir o HTML baixado, sem exigir login/Supabase.
+ if(location.protocol==='file:'&&location.hash=='#login'){telaLogin();return}
  if(location.protocol==='file:'){
   USER='Prévia local';
   view=location.hash=='#cozinha'?'coz':'cfg';kIniciar();
