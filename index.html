@@ -540,6 +540,24 @@ body.kds main{padding:0}
 .obm .ob-n{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 18px 0;padding:10px 12px;border-radius:12px;background:var(--bg)}
 .obm .ob-n .q{margin-left:auto}
 .obm .ob-n .q button{width:36px;height:36px;font-size:18px}
+.obm .ob-sec{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 18px 8px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--mu)}
+.obm .ob-sec:first-child{margin-top:4px}
+.obm .ob-sec small{font-weight:500;text-transform:none;letter-spacing:0;margin-left:4px}
+.obm .ac-lk{all:unset;cursor:pointer;color:var(--pr);font-size:13px;font-weight:800;text-transform:none;letter-spacing:0;padding:4px 8px;border-radius:8px}
+.obm .ac-lk:hover{background:color-mix(in srgb,var(--pr) 12%,transparent)}
+.obm .chip.ac::before{content:"+ ";opacity:.6}
+.obm .chip.ac.on::before{content:"✓ ";opacity:1}
+.obm .ac-mg{display:grid;gap:8px;margin:0 18px}
+.obm .ac-add{display:flex;gap:8px}
+.obm .ac-add input{flex:1;min-width:0}
+.obm .ac-row{display:flex;align-items:center;gap:6px;padding:6px 6px 6px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--sf)}
+.obm .ac-row b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.obm .ac-row input{flex:1;min-width:0}
+.obm .ac-ib{all:unset;cursor:pointer;width:36px;height:36px;display:grid;place-items:center;border-radius:8px;color:var(--mu)}
+.obm .ac-ib:hover,.obm .ac-ib:focus-visible{background:var(--bg);color:var(--tx)}
+.obm .ac-ib.d:hover{color:var(--ba)}
+.obm .ac-ib svg{width:18px;height:18px}
+.obm .ob-vz{margin:0 18px;padding:12px;border:1px dashed var(--bd);border-radius:10px;color:var(--mu);font-size:14px;text-align:center}
 .kt-i li{align-items:flex-start}
 .kt-n{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
 .kt-o{display:block;font-style:normal;font-weight:800;font-size:17px;text-transform:uppercase;background:var(--wa);color:var(--tc);padding:4px 10px;border-radius:8px;width:fit-content;max-width:100%;overflow-wrap:anywhere}
@@ -565,6 +583,8 @@ body.kds main{padding:0}
 .obm .ob-chips .chip{padding:6px 12px;font-size:14px;min-height:38px}
 .obm .ob-in{width:calc(100% - 28px);margin:12px 14px 0}
 .obm .ob-n{margin:12px 14px 0}
+.obm .ob-sec,.obm .ac-mg,.obm .ob-vz{margin-left:14px;margin-right:14px}
+.obm .ob-vz{margin-top:0}
 }
 </style>
 </head>
@@ -574,7 +594,7 @@ body.kds main{padding:0}
 <script>
 const SEG={rest:{nome:'Restaurante'},bar:{nome:'Bar'},lanch:{nome:'Lanchonete'},varejo:{nome:'Varejo / Loja'}};
 const mk=()=>({items:[],aberta:false,inv:false,hora:'',nome:'',cpf:'',g:null});
-const S={seg:'rest',taxa:true,prods:[],pid:0,nm:12,mesas:{},cmds:{},cn:0,garcons:[],gid:0,mov:[],clientes:[],kid:0,cart:{items:[]},dsc:0,dt:'%',cpf:'',coz:[]};
+const S={seg:'rest',taxa:true,prods:[],pid:0,nm:12,mesas:{},cmds:{},cn:0,garcons:[],gid:0,acomp:[{id:1,nome:'Macarrão'},{id:2,nome:'Arroz'},{id:3,nome:'Feijão'},{id:4,nome:'Purê de batata'},{id:5,nome:'Vinagrete'},{id:6,nome:'Farofa'}],aid:6,mov:[],clientes:[],kid:0,cart:{items:[]},dsc:0,dt:'%',cpf:'',coz:[]};
 for(let i=1;i<=S.nm;i++)S.mesas[i]=mk();
 
 /* ===== Supabase: login, leitura e gravação ===== */
@@ -630,7 +650,7 @@ async function carregar(){
 /* ===== Mesas, comandas e carrinho em aberto: guardados no Supabase + cópia no navegador ===== */
 let estUlt='',estTimer=null,estAt=0;
 const estKey=()=>'pdvfacil.estado.'+S.empId;
-const estSnap=()=>({mesas:S.mesas,cmds:S.cmds,cn:S.cn,cart:S.cart,dsc:S.dsc,dt:S.dt});
+const estSnap=()=>({mesas:S.mesas,cmds:S.cmds,cn:S.cn,cart:S.cart,dsc:S.dsc,dt:S.dt,acomp:S.acomp,aid:S.aid});
 function estApply(d){
  const itens=it=>(Array.isArray(it)?it:[]).filter(i=>S.prods.some(p=>p.id==i.id)&&i.q>0);
  const mesas={};
@@ -639,6 +659,7 @@ function estApply(d){
  Object.keys(d.cmds||{}).forEach(k=>{const c=d.cmds[k];S.cmds[k]=Object.assign({items:[],aberta:true,inv:false,hora:'',nome:'',cpf:'',g:null},c,{items:itens(c.items)})});
  S.cn=Math.max(+d.cn||0,0,...Object.keys(S.cmds).map(Number));
  S.cart={items:itens(d.cart&&d.cart.items)};S.dsc=+d.dsc||0;S.dt=d.dt=='R'?'R':'%';
+ if(Array.isArray(d.acomp)){S.acomp=d.acomp.filter(a=>a&&a.nome).map(a=>({id:+a.id||0,nome:String(a.nome)}));S.aid=Math.max(+d.aid||0,0,...S.acomp.map(a=>a.id))}
 }
 async function carregarEstado(){
  let remoto=null,local=null;
@@ -917,18 +938,27 @@ function vPos(){
  <button class="btn p g" ${m.items.length?'':'disabled'} onclick="pay='Pix';render()">Fechar conta</button></div></div>${m.items.length?`<div class="sendbar"><button class="btn vc" onclick="document.getElementById('cmd').scrollIntoView({behavior:'smooth'})">Comanda ↓</button>${kSendBtn(m,'bar')}</div>`:''}`
 }
 /* ===== Botão enviar e observações nos pratos ===== */
-const OBS=['Sem arroz','Sem feijão','Sem cebola','Sem tomate','Sem alho','Sem pimenta','Sem sal','Sem salada','Sem farofa','Sem gelo','Molho à parte','Mal passado','Ao ponto','Bem passado'];
+const OBS=['Sem cebola','Sem tomate','Sem alho','Sem pimenta','Sem sal','Sem salada','Sem gelo','Molho à parte','Mal passado','Ao ponto','Bem passado'];
+let obMg=false,obEd=null;
+const acOk=n=>String(n||'').replace(/[,;]/g,' ').replace(/\s+/g,' ').trim().slice(0,40);
+const acDup=(n,id)=>S.acomp.some(a=>a.id!=id&&a.nome.toLowerCase()==n.toLowerCase());
+function acMg(){obMg=!obMg;obEd=null;render()}
+function acAdd(){const n=acOk($('#acn').value);if(!n)return toast('Digite o nome do acompanhamento');if(acDup(n,0))return toast('Esse acompanhamento já existe');S.acomp.push({id:++S.aid,nome:n});render();toast('Acompanhamento cadastrado')}
+function acEdit(id){obEd=id;render()}
+function acSave(id){const n=acOk($('#ace').value);if(!n)return toast('Digite o nome do acompanhamento');if(acDup(n,id))return toast('Esse acompanhamento já existe');const a=S.acomp.find(x=>x.id==id);if(a)a.nome=n;obEd=null;render();toast('Acompanhamento atualizado')}
+function acDel(id){const a=S.acomp.find(x=>x.id==id);if(!a)return;cxModal({title:'Excluir acompanhamento?',msg:'"'+a.nome+'" deixa de aparecer nas opções dos pratos. Pedidos já lançados não mudam.',ok:'Excluir',danger:true,onOk:()=>{S.acomp=S.acomp.filter(x=>x.id!=id);obEd=null;render();toast('Acompanhamento excluído')}})}
+function acPanel(){return `<div class="ac-mg"><div class="ac-add"><input id="acn" maxlength="40" autocomplete="off" placeholder="Novo acompanhamento (ex.: Batata frita)" onkeydown="if(event.key=='Enter'){event.preventDefault();acAdd()}"><button class="btn p" onclick="acAdd()">Adicionar</button></div>${S.acomp.map(a=>obEd==a.id?`<div class="ac-row"><input id="ace" maxlength="40" autocomplete="off" value="${esc(a.nome)}" onkeydown="if(event.key=='Enter'){event.preventDefault();acSave(${a.id})}"><button class="ac-ib" onclick="acSave(${a.id})" aria-label="Salvar">${cxSvg('ok')}</button><button class="ac-ib" onclick="obEd=null;render()" aria-label="Cancelar">✕</button></div>`:`<div class="ac-row"><b>${esc(a.nome)}</b><button class="ac-ib" onclick="acEdit(${a.id})" aria-label="Editar ${esc(a.nome)}">${cxSvg('edit')}</button><button class="ac-ib d" onclick="acDel(${a.id})" aria-label="Excluir ${esc(a.nome)}">${cxSvg('trash')}</button></div>`).join('')}${S.acomp.length?'':'<div class="ob-vz">Nenhum acompanhamento cadastrado ainda.</div>'}</div>`}
 const obList=t=>t.split(/\s*[,;]\s*/).map(s=>s.trim()).filter(Boolean);
 function kSendBtn(m,w){const pend=m.items.reduce((a,i)=>a+Math.max(0,i.q-(i.env||0)),0),has=m.items.length;
  return `<button class="send ${w} ${pend?'':(has?'done':'idle')}" ${pend?'':'disabled'} onclick="enviarCozinha()">${pend?sv('flame',24)+'<span>Enviar para cozinha</span><b class="sn">'+pend+'</b>':(has?sv('ok',22)+'<span>Tudo enviado à cozinha</span>':sv('flame',22)+'<span>Enviar para cozinha</span>')}</button>`}
-function obOpen(x){const i=G().items[x];if(!i||i.q-(i.env||0)<1)return;ob={ix:x,txt:i.obs||'',n:i.q-(i.env||0)};render()}
+function obOpen(x){const i=G().items[x];if(!i||i.q-(i.env||0)<1)return;ob={ix:x,txt:i.obs||'',n:i.q-(i.env||0)};obMg=false;obEd=null;render()}
 function obSync(){ob.txt=$('#obt').value;const a=obList(ob.txt).map(s=>s.toLowerCase());document.querySelectorAll('.obm .chip').forEach(c=>c.classList.toggle('on',a.includes(c.dataset.t.toLowerCase())))}
 function obChip(el){const e=$('#obt'),t=el.dataset.t,a=obList(e.value),k=a.findIndex(x=>x.toLowerCase()==t.toLowerCase());k<0?a.push(t):a.splice(k,1);e.value=a.join(', ');obSync()}
 function obN(d){const i=G().items[ob.ix],p=i.q-(i.env||0);ob.n=Math.min(p,Math.max(1,ob.n+d));$('#obn').textContent=ob.n}
 function obSave(){
  const m=G();if(!m||!ob)return;
  const x=ob.ix,i=m.items[x];if(!i){ob=null;return render()}
- const txt=String($('#obt')?.value??ob.txt??'').trim().replace(/\s+/g,' ').slice(0,120);
+ const txt=String($('#obt')?.value??ob.txt??'').trim().replace(/\s+/g,' ').slice(0,200);
  const env=Math.max(0,Number(i.env)||0),pend=Math.max(0,(Number(i.q)||0)-env);
  if(!pend){ob=null;toast('Esse item já foi enviado. Adicione uma nova unidade para alterar a observação.');return render()}
  const n=Math.min(pend,Math.max(1,Number(ob.n)||pend));
@@ -949,8 +979,11 @@ function obSave(){
 }
 function vObs(){const m=G(),i=m.items[ob.ix];if(!i)return'';const pend=i.q-(i.env||0),a=obList(ob.txt).map(s=>s.toLowerCase());
  return `<div class="mod obmod" onclick="ob=null;render()"><div class="card pm obm" onclick="event.stopPropagation()" role="dialog" aria-label="Observação para a cozinha"><div class="pm-h"><div><h3>Observação para a cozinha</h3><small>${esc(P(i.id).nome)}</small></div><button class="pm-x" onclick="ob=null;render()" aria-label="Fechar">✕</button></div>
- <div class="ob-body"><div class="ob-chips">${OBS.map(t=>`<button class="chip ${a.includes(t.toLowerCase())?'on':''}" data-t="${t}" onclick="obChip(this)">${t}</button>`).join('')}</div>
- <input id="obt" class="ob-in" maxlength="120" autocomplete="off" placeholder="Ou escreva a observação" value="${esc(ob.txt)}" oninput="obSync()" onkeydown="if(event.key=='Enter')obSave()">
+ <div class="ob-body"><div class="ob-sec"><span>Acompanhamentos <small>vão junto com o prato</small></span><button class="ac-lk" onclick="acMg()">${obMg?'Concluir':'Gerenciar'}</button></div>
+ ${obMg?acPanel():(S.acomp.length?`<div class="ob-chips">${S.acomp.map(c=>{const t='Com '+c.nome.toLowerCase();return `<button class="chip ac ${a.includes(t.toLowerCase())?'on':''}" data-t="${esc(t)}" onclick="obChip(this)">${esc(c.nome)}</button>`}).join('')}</div>`:'<div class="ob-vz">Nenhum acompanhamento cadastrado. Toque em Gerenciar para cadastrar.</div>')}
+ <div class="ob-sec"><span>Outras observações</span></div>
+ <div class="ob-chips">${OBS.map(t=>`<button class="chip ${a.includes(t.toLowerCase())?'on':''}" data-t="${t}" onclick="obChip(this)">${t}</button>`).join('')}</div>
+ <input id="obt" class="ob-in" maxlength="200" autocomplete="off" placeholder="Ou escreva a observação" value="${esc(ob.txt)}" oninput="obSync()" onkeydown="if(event.key=='Enter')obSave()">
  ${pend>1?`<div class="ob-n"><span>Vale para quantas unidades?</span><div class="q"><button onclick="obN(-1)">−</button><b id="obn">${ob.n}</b><button onclick="obN(1)">+</button></div><small style="color:var(--mu)">de ${pend} não enviadas</small></div>`:''}</div>
  <div class="pm-f"><button class="btn" onclick="ob=null;render()">Cancelar</button><button class="btn p" onclick="obSave()">Salvar</button></div></div></div>`}
 function ocupar(){const m=G();m.aberta=true;m.hora=hm();render()}
@@ -1717,7 +1750,7 @@ function render(){
  if(rv){const tp=$('#tape');if(tp)tp.scrollTop=tp.scrollHeight;const g=$('#pgs');if(g)g.scrollTop=psy}
  if(cm)setTimeout(()=>{const e=$('#kn');e&&e.focus()});
  if(rv&&pay=='Dinheiro')setTimeout(()=>{const e=$('#rc');e&&e.focus()});
- if(ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#obt');e&&e.focus()});
+ if(ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$(obMg?(obEd?'#ace':'#acn'):'#obt');e&&e.focus()});
  if((rv||view=='pos')&&!pay&&!help&&!cm&&!cv&&!jn&&!ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
  estSalvar();
  kLockUpdate();
