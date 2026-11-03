@@ -282,7 +282,7 @@ body.kds main{padding:0}
 .auth-submit{box-shadow:0 10px 26px rgba(20,184,166,.28)}
 .auth-switch{color:#9aa7b4}
 .auth-switch button{color:#2dd4bf}
-@media (min-width:1100px){.auth-page{place-items:center start;padding-left:clamp(32px,6vw,130px)}.auth-shell{width:min(900px,100%)}}
+@media (min-width:1100px){.auth-shell{width:min(1000px,100%)}}
 @media(max-width:760px){
  .auth-page{background:#000}
  .auth-info{background:linear-gradient(180deg,rgba(2,10,28,.55),rgba(2,10,28,.88)),var(--auth-img) 80% center/cover no-repeat}
@@ -317,6 +317,19 @@ body.kds main{padding:0}
 .btn.ctxd{background:var(--ba);border-color:var(--ba);color:#fff}
 @media(hover:none){.ctx-hint{display:none}}
 @media (prefers-reduced-motion:reduce){.ctx,.ctxm{animation:none}}
+
+/* ===== Login: caixa de vidro fosco (desktop) ===== */
+@media (min-width:761px){
+ .auth-page{place-items:center;background:radial-gradient(ellipse at center,rgba(2,8,23,.08) 0%,rgba(2,8,23,.55) 100%),var(--auth-img) right center/cover no-repeat,#020817}
+ .auth-shell{background:transparent;border:1px solid rgba(255,255,255,.2);box-shadow:0 30px 90px rgba(0,10,40,.55),inset 0 1px 0 rgba(255,255,255,.14)}
+ .auth-info{background:linear-gradient(145deg,rgba(9,30,64,.50) 0%,rgba(10,70,86,.40) 62%,rgba(20,184,166,.30) 130%);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%)}
+ .auth-form-wrap{background:linear-gradient(160deg,rgba(20,34,58,.52) 0%,rgba(4,11,26,.70) 100%);-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%)}
+ .auth-input{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+ .auth-input:focus{background:rgba(255,255,255,.12)}
+ .auth-sub,.auth-switch{color:#b3c0cf}
+ .auth-info p{color:rgba(255,255,255,.86)}
+ .auth-foot{color:rgba(255,255,255,.7)}
+}
 /* ===== Varejo: tela de caixa de supermercado ===== */
 .cx{display:grid;grid-template-columns:minmax(0,1fr) 430px;grid-template-areas:"l r" "keys keys";gap:12px;align-items:start}
 .cx-l,.cx-r{display:flex;flex-direction:column;gap:12px;min-width:0}
