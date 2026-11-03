@@ -288,6 +288,35 @@ body.kds main{padding:0}
  .auth-info{background:linear-gradient(180deg,rgba(2,10,28,.55),rgba(2,10,28,.88)),var(--auth-img) 80% center/cover no-repeat}
  .auth-form-wrap{background:linear-gradient(180deg,#23282d 0%,#0b0d0f 55%,#000 100%)}
 }
+
+/* ===== Menu do botão direito (mesas e comandas) ===== */
+.ctx{position:fixed;z-index:70;min-width:230px;max-width:300px;background:var(--sf);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:6px;box-shadow:0 14px 44px rgba(0,0,0,.30),0 2px 8px rgba(0,0,0,.12);font-size:14px;animation:ctxin .12s ease}
+@keyframes ctxin{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.ctx-h{padding:8px 10px 6px;line-height:1.25}
+.ctx-h b{display:block;font-size:14px}
+.ctx-h small{color:var(--mu);font-size:12px}
+.ctx-sep{height:1px;background:var(--bd);margin:5px 4px}
+.ctx-w{position:relative}
+.ctx-i{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border-radius:8px;cursor:pointer;line-height:1.2;font-size:14px;color:var(--tx)}
+.ctx-i svg{width:17px;height:17px;flex:none;color:var(--mu)}
+.ctx-i .l{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctx-i .r{color:var(--mu);font-size:12px;display:flex;align-items:center}
+.ctx-i .r svg{width:15px;height:15px}
+.ctx-i:hover,.ctx-i:focus-visible,.ctx-w.open>.ctx-i{background:color-mix(in srgb,var(--pr) 13%,var(--sf))}
+.ctx-i.danger,.ctx-i.danger svg{color:var(--ba)}
+.ctx-i.dis{opacity:.4;cursor:default;pointer-events:none}
+.ctx-sub{position:absolute;left:calc(100% + 2px);top:-7px;display:none;max-height:min(320px,70vh);overflow:auto;min-width:200px}
+.ctx-sub::before{content:"";position:absolute;left:-8px;top:0;bottom:0;width:8px}
+.ctx-sub.flip{left:auto;right:calc(100% + 2px)}
+.ctx-sub.flip::before{left:auto;right:-8px}
+.ctx-w.open>.ctx-sub{display:block}
+.ctxm{max-width:380px;padding:22px;border-radius:18px;animation:up .2s ease}
+.ctxm h3{margin:0 0 6px;font-size:19px}
+.ctxm p{margin:0;color:var(--mu);font-size:14px;line-height:1.5}
+.ctxin{width:100%;margin-top:14px}
+.btn.ctxd{background:var(--ba);border-color:var(--ba);color:#fff}
+@media(hover:none){.ctx-hint{display:none}}
+@media (prefers-reduced-motion:reduce){.ctx,.ctxm{animation:none}}
 /* ===== Varejo: tela de caixa de supermercado ===== */
 .cx{display:grid;grid-template-columns:minmax(0,1fr) 430px;grid-template-areas:"l r" "keys keys";gap:12px;align-items:start}
 .cx-l,.cx-r{display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -856,12 +885,12 @@ function vSalao(){
  let b;
  if(mode=='m'){
   b=kp([['Livres',ms.length-oc-iv],['Ocupadas',oc],['Inválidas',iv],['Em aberto',R(aberto)]])+
-  `<div class="top" style="margin-bottom:6px"><p class="hint" style="flex:1;margin:0">Toque numa mesa livre para atender. Use ⊘ para marcar ou reativar uma mesa inválida. Arraste uma mesa sobre outra para juntar.</p><button class="btn" onclick="addMesa()">+ Mesa</button><button class="btn" onclick="delMesa()">− Mesa</button></div>
-  <div class="grid">${ms.map(([n,m])=>{const k=m.j?'j':m.aberta?'o':m.inv?'i':'';return `<div class="card mesa ${k}${kRd('m',n)?' rd':''}" data-m="${m.inv?'':n}" role="button" onclick="open_('m',${n})"><b>${m.j?'Mesas '+m.j.join(' + '):'Mesa '+n}</b><span class="tag ${k}">${m.j?'Juntas':m.aberta?'Ocupada':m.inv?'Inválida':'Livre'}</span><small>${m.aberta?R(tot(m))+' · desde '+m.hora+gtag(m):m.inv?'Fora de uso':'Disponível'}</small>${kChips('m',n)}${m.j?`<button class="btn sep" onclick="event.stopPropagation();sep(${n})">${sv('link',14)}Separar</button>`:''}${m.aberta?'':`<button class="x" onclick="event.stopPropagation();inv(${n})" aria-label="Alternar inválida">⊘</button>`}</div>`}).join('')}</div>`;
+  `<div class="top" style="margin-bottom:6px"><p class="hint" style="flex:1;margin:0">Toque numa mesa livre para atender. Use ⊘ para marcar ou reativar uma mesa inválida. Arraste uma mesa sobre outra para juntar.<span class="ctx-hint"> Clique com o botão direito para mais opções.</span></p><button class="btn" onclick="addMesa()">+ Mesa</button><button class="btn" onclick="delMesa()">− Mesa</button></div>
+  <div class="grid">${ms.map(([n,m])=>{const k=m.j?'j':m.aberta?'o':m.inv?'i':'';return `<div class="card mesa ${k}${kRd('m',n)?' rd':''}" data-m="${m.inv?'':n}" data-k="m" data-id="${n}" role="button" onclick="open_('m',${n})"><b>${m.j?'Mesas '+m.j.join(' + '):'Mesa '+n}</b><span class="tag ${k}">${m.j?'Juntas':m.aberta?'Ocupada':m.inv?'Inválida':'Livre'}</span><small>${m.aberta?R(tot(m))+' · desde '+m.hora+gtag(m):m.inv?'Fora de uso':'Disponível'}</small>${kChips('m',n)}${m.j?`<button class="btn sep" onclick="event.stopPropagation();sep(${n})">${sv('link',14)}Separar</button>`:''}${m.aberta?'':`<button class="x" onclick="event.stopPropagation();inv(${n})" aria-label="Alternar inválida">⊘</button>`}</div>`}).join('')}</div>`;
  }else{
   b=kp([['Comandas abertas',cs.length],['Em aberto',R(aberto)]])+
   `<div class="card" style="margin-bottom:14px"><div class="frm" style="margin:0"><input id="cnm" placeholder="Nome do cliente (opcional)">${rst()&&S.garcons.length?`<select id="cg"><option value="">Garçom</option>${S.garcons.map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join('')}</select>`:''}<button class="btn p" onclick="novaCmd()">+ Nova comanda</button></div></div>
-  ${cs.length?`<div class="grid">${cs.map(([n,m])=>`<div class="card mesa o${kRd('c',n)?' rd':''}" role="button" onclick="open_('c',${n})"><b>Comanda ${n}</b><span class="tag o">Aberta</span><small>${m.nome?m.nome+' · ':''}${R(tot(m))} · ${m.hora}${gtag(m)}</small>${kChips('c',n)}</div>`).join('')}</div>`:'<div class="card emp">Nenhuma comanda aberta. Crie a primeira acima.</div>'}`;
+  ${cs.length?`<div class="grid">${cs.map(([n,m])=>`<div class="card mesa o${kRd('c',n)?' rd':''}" data-k="c" data-id="${n}" role="button" onclick="open_('c',${n})"><b>Comanda ${n}</b><span class="tag o">Aberta</span><small>${m.nome?m.nome+' · ':''}${R(tot(m))} · ${m.hora}${gtag(m)}</small>${kChips('c',n)}</div>`).join('')}</div>`:'<div class="card emp">Nenhuma comanda aberta. Crie a primeira acima.</div>'}`;
  }
  return head('Atendimento',sg)+b;
 }
@@ -966,6 +995,130 @@ document.addEventListener('pointerup',()=>dragEnd(true));
 document.addEventListener('pointercancel',()=>dragEnd(false));
 document.addEventListener('touchmove',e=>{if(DR&&(DR.on||DR.armed))e.preventDefault()},{passive:false});
 document.addEventListener('click',e=>{if(dragSup){e.stopPropagation();e.preventDefault();dragSup=false}},true);
+/* ===== Menu do botão direito (mesas e comandas) ===== */
+let CX=null;
+const CXI={
+ open:'<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+ user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>',
+ link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+ unlink:'<path d="M9 15l6-6M10.5 6.5l1-1a4 4 0 0 1 5.7 5.7l-1 1M13.5 17.5l-1 1a4 4 0 0 1-5.7-5.7l1-1"/>',
+ tag:'<path d="M20 12l-8 8-9-9V4h7z"/><circle cx="7.5" cy="7.5" r="1"/>',
+ block:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
+ trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12M9 7V4h6v3"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',
+ refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+ ok:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ arr:'<path d="M9 6l6 6-6 6"/>'};
+const cxSvg=k=>'<svg viewBox="0 0 24 24">'+(CXI[k]||'')+'</svg>';
+function cxClose(){if(CX){CX.remove();CX=null}}
+function cxOpenSub(w){
+ [...w.parentNode.children].forEach(x=>{if(x!==w)x.classList&&x.classList.remove('open')});
+ w.classList.add('open');
+ const p=w.querySelector(':scope>.ctx-sub');p.classList.remove('flip');p.style.top='';
+ let r=p.getBoundingClientRect();
+ if(r.right>innerWidth-8)p.classList.add('flip');
+ r=p.getBoundingClientRect();
+ if(r.bottom>innerHeight-8)p.style.top=(-7-(r.bottom-innerHeight+8))+'px'}
+function cxList(items,sub){
+ const box=document.createElement('div');box.className='ctx'+(sub?' ctx-sub':'');box.setAttribute('role','menu');
+ items.forEach(it=>{
+  if(!it)return;
+  if(it.sep){const d=document.createElement('div');d.className='ctx-sep';box.appendChild(d);return}
+  if(it.head){const d=document.createElement('div');d.className='ctx-h';d.innerHTML=it.head;box.appendChild(d);return}
+  const b=document.createElement('button');b.type='button';b.setAttribute('role','menuitem');b.tabIndex=-1;
+  b.className='ctx-i'+(it.danger?' danger':'')+(it.d?' dis':'');
+  b.innerHTML=(it.ic?cxSvg(it.ic):'')+'<span class="l"></span><span class="r">'+(it.sub?cxSvg('arr'):it.ck?cxSvg('ok'):'')+'</span>';
+  b.querySelector('.l').textContent=it.t;
+  if(it.sub){
+   const w=document.createElement('div');w.className='ctx-w';w.appendChild(b);w.appendChild(cxList(it.sub.length?it.sub:[{t:'Nenhuma opção disponível',d:true}],true));
+   w.addEventListener('mouseenter',()=>cxOpenSub(w));
+   w.addEventListener('mouseleave',()=>w.classList.remove('open'));
+   b.addEventListener('click',e=>{e.stopPropagation();cxOpenSub(w)});
+   box.appendChild(w)}
+  else{b.addEventListener('click',e=>{e.stopPropagation();cxClose();it.f&&it.f()});
+   b.addEventListener('mouseenter',()=>{[...box.children].forEach(x=>x.classList&&x.classList.remove('open'))});
+   box.appendChild(b)}});
+ return box}
+function cxShow(x,y,items){
+ cxClose();
+ const el=cxList(items,false);el.style.left='0px';el.style.top='0px';el.style.visibility='hidden';
+ document.body.appendChild(el);CX=el;
+ const w=el.offsetWidth,h=el.offsetHeight;
+ let L=x+w>innerWidth-8?x-w:x,T=y+h>innerHeight-8?y-h:y;
+ L=Math.max(8,Math.min(L,innerWidth-w-8));T=Math.max(8,Math.min(T,innerHeight-h-8));
+ el.style.left=L+'px';el.style.top=T+'px';el.style.visibility=''}
+function cxModal(o){
+ const el=document.createElement('div');el.className='mod';el.style.zIndex=75;
+ el.innerHTML=`<div class="card ctxm" role="dialog" aria-modal="true" aria-label="${esc(o.title)}"><h3>${esc(o.title)}</h3>${o.msg?`<p>${esc(o.msg)}</p>`:''}${o.input?`<input id="ctxi" class="ctxin" autocomplete="off" placeholder="${esc(o.input.ph||'')}" value="${esc(o.input.value||'')}">`:''}<div class="pm-f" style="padding:16px 0 0"><button class="btn" data-n>Cancelar</button><button class="btn ${o.danger?'ctxd':'p'}" data-y>${esc(o.ok||'OK')}</button></div></div>`;
+ const close=()=>{document.removeEventListener('keydown',kd,true);el.remove()};
+ const yes=()=>{const v=o.input?el.querySelector('#ctxi').value:null;close();o.onOk&&o.onOk(v)};
+ const kd=e=>{if(e.key=='Escape'){e.preventDefault();e.stopPropagation();close()}else if(e.key=='Enter'&&document.activeElement&&document.activeElement.tagName=='INPUT'){e.preventDefault();yes()}};
+ el.addEventListener('click',e=>{if(e.target===el)close()});
+ el.querySelector('[data-n]').onclick=close;el.querySelector('[data-y]').onclick=yes;
+ document.addEventListener('keydown',kd,true);document.body.appendChild(el);
+ const f=el.querySelector('#ctxi')||el.querySelector('[data-y]');f.focus();if(f.select)f.select()}
+const ctxLbl=(k,id)=>{const m=k=='m'?S.mesas[id]:S.cmds[id];return k=='m'?(m&&m.j?'Mesas '+m.j.join(' + '):'Mesa '+id):'Comanda '+id};
+function ctxOcupar(id){const m=S.mesas[id];if(!m||m.aberta||m.inv)return;m.aberta=true;m.hora=hm();render();toast('Mesa '+id+' ocupada')}
+function ctxG(k,id,gid){const m=k=='m'?S.mesas[id]:S.cmds[id];if(!m)return;m.g=gid||null;render();toast(gid?'Garçom definido':'Garçom removido')}
+function ctxNome(id){const m=S.cmds[id];if(!m)return;
+ cxModal({title:'Nome do cliente',msg:'Comanda '+id,input:{value:m.nome||'',ph:'Nome do cliente (opcional)'},ok:'Salvar',onOk:v=>{const c=S.cmds[id];if(!c)return;c.nome=(v||'').trim();render();toast('Nome atualizado')}})}
+function ctxLiberar(k,id){
+ const m=k=='m'?S.mesas[id]:S.cmds[id];if(!m)return;
+ const lab=ctxLbl(k,id),j=k=='m'&&m.j;
+ const run=()=>{const x=k=='m'?S.mesas[id]:S.cmds[id];if(!x)return;kFree(k,id,true);if(k=='m')freeM(id);else delete S.cmds[id];render();toast(k=='m'?(j?'Mesas liberadas':'Mesa liberada'):'Comanda cancelada')};
+ const itens=m.items||[];
+ if(k=='m'&&!itens.length){run();return}
+ const env=itens.some(i=>(i.env||0)>0);
+ cxModal({title:(k=='m'?'Liberar ':'Cancelar ')+lab+'?',msg:(itens.length?'O pedido de '+R(tot(m))+' será cancelado. ':'A comanda será removida. ')+(env?'Os itens já enviados à cozinha também serão cancelados.':''),ok:k=='m'?'Liberar':'Cancelar comanda',danger:true,onOk:run})}
+function ctxItems(k,id){
+ const m=k=='m'?S.mesas[id]:S.cmds[id];if(!m||m.ref)return null;
+ const garc=rst()&&S.garcons.length?{t:'Garçom',ic:'tag',sub:[{t:'Sem garçom',ck:!m.g,f:()=>ctxG(k,id,null)},...S.garcons.map(g=>({t:g.nome,ck:m.g==g.id,f:()=>ctxG(k,id,g.id)}))]}:null;
+ if(k=='c')return[
+  {head:'<b>Comanda '+id+'</b><small>'+(m.nome?esc(m.nome)+' · ':'')+R(tot(m))+'</small>'},
+  {t:'Abrir comanda',ic:'open',f:()=>open_('c',id)},
+  {t:'Nome do cliente…',ic:'edit',f:()=>ctxNome(id)},
+  garc,{sep:1},
+  {t:'Cancelar comanda',ic:'trash',danger:true,f:()=>ctxLiberar('c',id)}];
+ const st=m.j?'Juntas':m.aberta?'Ocupada':m.inv?'Inválida':'Livre';
+ const alvo=Object.entries(S.mesas).filter(([n,x])=>!x.ref&&dropOk(id,+n)).map(([n,x])=>({t:'Mesa '+n+(x.aberta?' · '+R(tot(x)):' · livre'),f:()=>{jn={a:id,b:+n};render()}}));
+ return[
+  {head:'<b>'+(m.j?'Mesas '+m.j.join(' + '):'Mesa '+id)+'</b><small>'+st+(m.aberta?' · '+R(tot(m))+' · desde '+m.hora:'')+'</small>'},
+  {t:m.aberta?'Abrir conta':'Atender mesa',ic:'open',d:m.inv,f:()=>open_('m',id)},
+  (!m.aberta&&!m.inv)?{t:'Ocupar mesa (sem pedido)',ic:'user',f:()=>ctxOcupar(id)}:null,
+  {sep:1},
+  m.inv?null:{t:'Juntar com…',ic:'link',sub:alvo},
+  m.j?{t:'Separar mesas',ic:'unlink',f:()=>sep(id)}:null,
+  garc,
+  {sep:1},
+  m.aberta?{t:m.j?'Liberar mesas':'Liberar mesa',ic:'trash',danger:true,f:()=>ctxLiberar('m',id)}:{t:m.inv?'Reativar mesa':'Marcar como inválida',ic:m.inv?'ok':'block',f:()=>inv(id)}]}
+function ctxBlank(){
+ if(mode=='m'){const u=S.mesas[S.nm];return[{head:'<b>Atendimento</b><small>Mesas</small>'},{t:'Adicionar mesa',ic:'plus',f:addMesa},{t:'Remover última mesa',ic:'minus',d:!u||u.aberta||!!u.ref,f:delMesa},{sep:1},{t:'Atualizar tela',ic:'refresh',f:()=>render()}]}
+ return[{head:'<b>Atendimento</b><small>Comandas</small>'},{t:'Nova comanda',ic:'plus',f:()=>{const i=$('#cnm');if(i){i.scrollIntoView({block:'center'});i.focus()}}},{sep:1},{t:'Atualizar tela',ic:'refresh',f:()=>render()}]}
+document.addEventListener('contextmenu',e=>{
+ if(e.pointerType==='touch'||(window.matchMedia&&matchMedia('(hover:none)').matches))return;
+ if(view!='mesas'||jn)return;
+ if(e.target.closest('input,textarea,select,.mod,.ctx'))return;
+ const c=e.target.closest('.mesa[data-k]');
+ if(c){const it=ctxItems(c.dataset.k,+c.dataset.id);if(it){e.preventDefault();cxShow(e.clientX,e.clientY,it)}return}
+ if(e.target.closest('#main')&&!e.target.closest('button,a')){e.preventDefault();cxShow(e.clientX,e.clientY,ctxBlank())}
+ else cxClose()});
+document.addEventListener('pointerdown',e=>{
+ if(!CX||e.target.closest('.ctx'))return;
+ cxClose();
+ if(e.button===0){const h=ev=>{ev.stopPropagation();ev.preventDefault()};document.addEventListener('click',h,true);setTimeout(()=>document.removeEventListener('click',h,true),350)}},true);
+document.addEventListener('keydown',e=>{
+ if(!CX)return;
+ if(e.key=='Escape'){e.preventDefault();cxClose();return}
+ if(e.key=='Tab'){cxClose();return}
+ const a=document.activeElement,list=(a&&a.closest&&a.closest('.ctx'))||CX;
+ const its=[...list.querySelectorAll(':scope>.ctx-i:not(.dis),:scope>.ctx-w>.ctx-i:not(.dis)')];
+ if(e.key=='ArrowDown'||e.key=='ArrowUp'){e.preventDefault();if(!its.length)return;let i=its.indexOf(a);i=e.key=='ArrowDown'?(i+1)%its.length:(i<=0?its.length-1:i-1);its[i].focus()}
+ else if(e.key=='ArrowRight'){const w=a&&a.parentNode&&a.parentNode.classList&&a.parentNode.classList.contains('ctx-w')?a.parentNode:null;if(w){e.preventDefault();cxOpenSub(w);const f=w.querySelector(':scope>.ctx-sub .ctx-i:not(.dis)');if(f)f.focus()}}
+ else if(e.key=='ArrowLeft'){const sub=a&&a.closest('.ctx-sub');if(sub){e.preventDefault();const w=sub.parentNode;w.classList.remove('open');w.querySelector(':scope>.ctx-i').focus()}}},true);
+['resize','blur'].forEach(t=>window.addEventListener(t,cxClose));
+window.addEventListener('scroll',cxClose,true);
+window.addEventListener('wheel',e=>{if(CX&&!e.target.closest('.ctx'))cxClose()},{passive:true});
 const IC2={
 link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
 card:'<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',
