@@ -1242,7 +1242,7 @@ function cxModal(o){
  el.addEventListener('click',e=>{if(e.target===el)close()});
  el.querySelector('[data-n]').onclick=close;el.querySelector('[data-y]').onclick=yes;
  document.addEventListener('keydown',kd,true);document.body.appendChild(el);
- const f=el.querySelector('#ctxi')||el.querySelector('[data-y]');f.focus();if(f.select)f.select()}
+ const f=el.querySelector('#ctxi')||el.querySelector(o.safe?'[data-n]':'[data-y]');f.focus();if(f.select)f.select()}
 const ctxLbl=(k,id)=>{const m=k=='m'?S.mesas[id]:S.cmds[id];return k=='m'?(m&&m.j?'Mesas '+m.j.join(' + '):'Mesa '+id):'Comanda '+id};
 function ctxOcupar(id){const m=S.mesas[id];if(!m||m.aberta||m.inv)return;m.aberta=true;m.hora=hm();render();toast('Mesa '+id+' ocupada')}
 function ctxG(k,id,gid){const m=k=='m'?S.mesas[id]:S.cmds[id];if(!m)return;m.g=gid||null;render();toast(gid?'Garçom definido':'Garçom removido')}
@@ -1480,8 +1480,13 @@ const trashFx=r=>{
  el.style.left=(r.left+r.width/2)+'px';el.style.top=(r.top+r.height/2)+'px';
  el.innerHTML='<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g class="trl"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></g><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></svg>';
  document.body.appendChild(el);setTimeout(()=>el.remove(),1100)};
-const delP=once(async function(id,btn){const used=[...Object.values(S.mesas),...Object.values(S.cmds),S.cart].some(o=>o.items.some(i=>i.id==id));if(used)return toast('Produto em uso em um atendimento aberto');
- const rect=btn&&btn.getBoundingClientRect(),tr=btn&&btn.closest('tr'),red=matchMedia('(prefers-reduced-motion:reduce)').matches;
+/* 1) confirma no modal do sistema  2) só então exclui, com a lixeira vermelha */
+function delP(id,btn){
+ const p=S.prods.find(x=>x.id==id);if(!p)return;
+ if([...Object.values(S.mesas),...Object.values(S.cmds),S.cart].some(o=>o&&o.items&&o.items.some(i=>i.id==id)))return toast('Produto em uso em um atendimento aberto');
+ cxModal({title:'Excluir produto?',msg:'"'+p.nome+'" será removido do cadastro. Essa ação não pode ser desfeita.',ok:'Excluir',danger:true,safe:true,onOk:()=>delPGo(id,btn)})}
+const delPGo=once(async function(id,btn){
+ const rect=btn&&btn.isConnected?btn.getBoundingClientRect():null,tr=btn&&btn.closest('tr'),red=matchMedia('(prefers-reduced-motion:reduce)').matches;
  try{await DBX(sb.from('produtos').delete().eq('id',id));S.prods=S.prods.filter(p=>p.id!=id);
   if(rect&&!red){trashFx(rect);if(tr&&tr.animate)await tr.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateX(24px)'}],{duration:220,easing:'ease-in',fill:'forwards'}).finished.catch(()=>{})}
   render()}catch(e){dbErr(e)}});
