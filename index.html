@@ -661,6 +661,26 @@ body.enter main{animation:inMain .9s .62s cubic-bezier(.22,1,.36,1) backwards}
 .pfm.col{flex-direction:column;align-items:stretch}
 .pfm.col .cfg-field,.pfm.col .cfg-field:nth-child(n){flex:none;min-width:0}
 td .btn+.btn{margin-left:6px}
+.pth{display:block;width:40px;height:40px;border-radius:10px;object-fit:cover;background:var(--bg)}
+.pth.ph{display:grid;place-items:center;color:var(--mu);border:1px dashed var(--bd)}
+.pth.ph svg{width:18px;height:18px}
+.pfm .cfg-field.ff{flex:0 0 64px;min-width:64px}
+.fbtn{display:grid;place-items:center;height:40px;border:1px dashed var(--bd);border-radius:10px;background:var(--bg);color:var(--mu);cursor:pointer;overflow:hidden}
+.fbtn:hover,.fbig:hover{border-color:var(--pr);color:var(--pr)}
+.fbtn:focus-visible,.fbig:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+.fprev{display:block;width:100%;height:100%;object-fit:cover}
+.fed{display:flex;align-items:center;gap:14px;margin:0 0 14px}
+.fbig{flex:none;display:grid;place-items:center;width:92px;height:92px;border:1px dashed var(--bd);border-radius:14px;background:var(--bg);color:var(--mu);cursor:pointer;overflow:hidden}
+.fbig svg{width:28px;height:28px}
+.fact{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0}
+.fact small{flex:1 1 100%;color:var(--mu)}
+.prod .pimg{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;margin:0 0 6px;background:var(--bg)}
+.cx-last .cx-img{flex:none;width:76px;height:76px;border-radius:12px;object-fit:cover}
+.cx-last .cx-img+div{flex:1;min-width:0}
+.cx-it .nm.wf{display:flex;align-items:center;gap:10px;min-width:0}
+.cx-it .nm.wf>div{min-width:0;flex:1}
+.cx-it .nm img,.cx-it .nm .ph{flex:none;width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--bg)}
+@media(max-width:760px){.cx-last .cx-img{width:56px;height:56px}.cx-it .nm img,.cx-it .nm .ph{width:32px;height:32px}.fbtn{height:56px}}
 .trfx{position:fixed;z-index:80;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:#dc2626;display:grid;place-items:center;box-shadow:0 8px 22px rgba(220,38,38,.45);pointer-events:none;animation:trPop 1s cubic-bezier(.22,1,.36,1) forwards}
 .trfx .trl{transform-box:fill-box;transform-origin:15% 100%;animation:trLid 1s ease-in-out forwards}
 @keyframes trPop{0%{opacity:0;transform:scale(.3)}18%{opacity:1;transform:scale(1.12)}30%{transform:scale(1)}78%{opacity:1;transform:translateY(-4px) scale(1)}100%{opacity:0;transform:translateY(-20px) scale(.9)}}
@@ -710,7 +730,7 @@ const cfg=patch=>DBX(sb.from('empresas').update(patch).eq('id',S.empId)).catch(d
 const loadSdk=()=>new Promise((ok,no)=>{if(window.supabase)return ok();const t=document.createElement('script');t.src=SB.sdk;t.onload=ok;t.onerror=()=>no(new Error('Não foi possível carregar o Supabase'));document.head.appendChild(t)});
 const dataHora=d=>{const x=new Date(d),h=x.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});return x.toDateString()==new Date().toDateString()?h:x.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+h};
 const isHoje=x=>new Date(x.at).toDateString()==new Date().toDateString();
-const mP=r=>({id:r.id,nome:r.nome,cat:r.categoria,preco:+r.preco,cod:r.codigo,est:r.estoque});
+const mP=r=>({id:r.id,nome:r.nome,cat:r.categoria,preco:+r.preco,cod:r.codigo,est:r.estoque,foto:r.foto||null});
 const mC=r=>({id:r.id,nome:r.nome,cpf:r.cpf,tel:r.telefone||'—',email:r.email,obs:r.obs});
 const mG=r=>({id:r.id,nome:r.nome,tel:r.telefone||'—'});
 const mM=r=>({id:r.id,t:dataHora(r.criado_em),at:r.criado_em,desc:r.descricao,tipo:r.tipo,val:+r.valor,forma:r.forma,cat:r.categoria,cpf:r.cpf,cid:r.cliente_id,gid:r.garcom_id,doc:r.documento||''});
@@ -988,7 +1008,7 @@ async function boot(){
  render();introEnd();
 }
 let docAsk=null,docTipo=null,docCol=true;
-let view='mesas',mode='m',cur=null,cat='Todos',pay=null,q='',help=false,cm=null,cv=null,cq='',ctab='prod',pEd=null;
+let view='mesas',mode='m',cur=null,cat='Todos',pay=null,q='',help=false,cm=null,cv=null,cq='',ctab='prod',pEd=null,fotoNew=null,fotoEd;
 const $=s=>document.querySelector(s);
 const R=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const hm=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
@@ -999,7 +1019,7 @@ const lbl=()=>cur.k=='m'?(G().j?'Mesas '+G().j.join(' + '):'Mesa '+cur.id):'Coma
 function toast(t,ms=2400){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',ms)}
 function setSeg(v){S.seg=v;try{go('mesas')}catch(e){console.error(e);toast('Erro ao abrir '+((SEG[v]&&SEG[v].nome)||v)+': '+e.message)}cfg({segmento:v})}
 function go(v){goSet(v);render()}
-function goSet(v){view=v;q='';try{history.replaceState(null,'',v=='coz'?'#cozinha':location.pathname+location.search)}catch(e){}if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;ob=null;pEd=null}
+function goSet(v){view=v;q='';try{history.replaceState(null,'',v=='coz'?'#cozinha':location.pathname+location.search)}catch(e){}if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;ob=null;pEd=null;fotoNew=null}
 /* clique no menu lateral: destaca na hora, deixa o quadro pintar e só então monta a tela com um fade curto */
 let goR=0;
 function goNav(v){
@@ -1431,8 +1451,8 @@ function vCad(){
  const cats=[...new Set(S.prods.map(p=>p.cat).filter(Boolean))].sort(),
   dl=`<datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>`,
   num='type="number" step="0.01" min="0" inputmode="decimal"';
- const body=`<div class="wrap"><table><tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th></th></tr>${S.prods.map(p=>`<tr><td><b>${esc(p.cod||'—')}</b></td><td>${esc(p.nome)}</td><td>${esc(p.cat)}</td><td>${R(p.preco)}</td><td>${p.est==null?'—':p.est<=5?`<span class="bd ${p.est?'':'z'}">${p.est}</span>`:p.est}</td><td style="text-align:right;white-space:nowrap"><button class="btn" onclick="pEd={id:${p.id}};render()">Editar</button><button class="btn" onclick="delP(${p.id},this)">Excluir</button></td></tr>`).join('')}</table></div>${S.prods.length?'':`<div class="emp">Nenhum produto ainda. Cadastre o primeiro abaixo.</div>`}`+
- `<div class="frm pfm" onkeydown="if(event.key=='Enter'&&event.target.tagName=='INPUT'){event.preventDefault();addProd()}">${dl}`+
+ const body=`<div class="wrap"><table><tr><th></th><th>Código</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th></th></tr>${S.prods.map(p=>{const fs=fSrc(p);return `<tr><td>${fs?`<img class="pth" src="${fs}" alt="" loading="lazy">`:`<span class="pth ph">${FOTO_IC}</span>`}</td><td><b>${esc(p.cod||'—')}</b></td><td>${esc(p.nome)}</td><td>${esc(p.cat)}</td><td>${R(p.preco)}</td><td>${p.est==null?'—':p.est<=5?`<span class="bd ${p.est?'':'z'}">${p.est}</span>`:p.est}</td><td style="text-align:right;white-space:nowrap"><button class="btn" onclick="pEd={id:${p.id}};fotoEd=undefined;render()">Editar</button><button class="btn" onclick="delP(${p.id},this)">Excluir</button></td></tr>`}).join('')}</table></div>${S.prods.length?'':`<div class="emp">Nenhum produto ainda. Cadastre o primeiro abaixo.</div>`}`+
+ dl+`<div class="frm pfm" onkeydown="if(event.key=='Enter'&&event.target.tagName=='INPUT'){event.preventDefault();addProd()}"><div class="cfg-field ff"><label for="fpk">Foto</label><label class="fbtn" id="fpv" for="fpk" title="Adicionar foto do produto" tabindex="0" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();this.click()}">${fotoNew?`<img class="fprev" src="${fotoNew}" alt="Foto do produto">`:FOTO_IC}</label><input type="file" id="fpk" accept="image/*" hidden onchange="fotoPick(this,'new')"></div>`+
  pf('Código','pk','Sugestão: '+proxCod(),'','autocomplete="off"')+pf('Produto','pn','Nome do produto','','autocomplete="off"')+pf('Categoria','pc','Ex.: Almoço','','list="cats" autocomplete="off"')+pf('Preço (R$)','pp','0,00','',num)+pf('Estoque (opcional)','pe','Sem controle','','type="number" min="0" inputmode="numeric"')+
  `<button class="btn p" onclick="addProd()">Adicionar</button></div>`;
  const gbody=(S.garcons.length?`<div class="wrap"><table><tr><th>Garçom</th><th>Telefone</th><th>Em atendimento</th><th>Vendas</th><th></th></tr>${S.garcons.map(g=>{const s=gStat(g.id);return `<tr><td><b>${esc(g.nome)}</b></td><td>${fone(g.tel)}</td><td>${s.ab||'—'}</td><td>${s.n?s.n+' · '+R(s.t):'<small style="color:var(--mu)">nenhuma</small>'}</td><td style="text-align:right"><button class="btn" onclick="delGar(${g.id})">Excluir</button></td></tr>`}).join('')}</table></div>`:`<div class="emp">Nenhum garçom cadastrado. Cadastre abaixo: eles aparecerão para escolha nas mesas e comandas.</div>`)+frm(`<input id="gn" placeholder="Nome do garçom" autocomplete="off"><input id="gt" inputmode="tel" placeholder="Telefone (opcional)" autocomplete="off">`,'addGar()','Adicionar');
@@ -1450,7 +1470,7 @@ const delGar=once(async function(id){if(gStat(id).ab)return toast('Garçom com a
 function setG(v){G().g=+v||null;estSalvar()}
 const addProd=once(async function(){const k=$('#pk').value.trim(),n=$('#pn').value.trim(),p=parseFloat($('#pp').value);
  if(!k)return toast('Informe o código do produto');if(!n||!p)return toast('Preencha nome e preço');if(codUsado(k))return toast('Código já usado em outro produto');
- try{const r=await DBX(sb.from('produtos').insert({nome:n,categoria:$('#pc').value.trim()||'Geral',preco:p,codigo:k,estoque:$('#pe').value===''?null:parseInt($('#pe').value)}).select().single());S.prods.push(mP(r));toast('Produto cadastrado');render();setTimeout(()=>{const e=$('#pk');e&&e.focus()})}catch(e){e&&e.code=='23505'?toast('Código já usado em outro produto'):dbErr(e)}});
+ try{const r=await DBX(sb.from('produtos').insert({nome:n,categoria:$('#pc').value.trim()||'Geral',preco:p,codigo:k,estoque:$('#pe').value===''?null:parseInt($('#pe').value),...(fotoNew?{foto:fotoNew}:{})}).select().single());S.prods.push(mP(r));fotoNew=null;toast('Produto cadastrado');render();setTimeout(()=>{const e=$('#pk');e&&e.focus()})}catch(e){prodErr(e)}});
 const setCod=once(async function(id,el){const v=el.value.trim(),p=P(id);if(v==(p.cod||''))return;
  if(!v){el.value=p.cod||'';return toast('O código não pode ficar vazio')}
  if(codUsado(v,id)){el.value=p.cod||'';return toast('Código já usado em outro produto')}
@@ -1478,11 +1498,28 @@ function vCli(){
  return head('Clientes','<button class="btn p" onclick="cm={id:null};render()">+ Novo cliente</button>')+kp([['Clientes cadastrados',n],['Já compraram',comp],['Sem compras',n-comp]])+
  `<div class="card"><input id="cqi" class="srch" placeholder="Buscar por nome, CPF ou telefone" value="${esc(cq)}" oninput="cq=this.value;$('#cl').innerHTML=cliRows()"><div id="cl">${cliRows()}</div></div>`
 }
+const FOTO_IC='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></svg>';
+/* foto do produto: miniatura quadrada 256px (JPEG) guardada na coluna produtos.foto; na tela usa blob: curto para não pesar o HTML */
+const fSrc=p=>{const f=p&&p.foto;if(!f||typeof f!='string')return'';if(/^https:\/\//.test(f))return f;if(!/^data:image\//.test(f))return'';
+ if(p._fs!==f){try{const h=f.split(','),t=(h[0].match(/:(.*?);/)||[])[1]||'image/jpeg',bin=atob(h[1]),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);if(p._fu)URL.revokeObjectURL(p._fu);p._fu=URL.createObjectURL(new Blob([a],{type:t}));p._fs=f}catch(e){return f}}return p._fu};
+const fotoComp=f=>new Promise((ok,no)=>{const u=URL.createObjectURL(f),im=new Image();
+ im.onload=()=>{try{const w=im.naturalWidth,h=im.naturalHeight,m=Math.min(w,h),N=256,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,N,N);x.drawImage(im,(w-m)/2,(h-m)/2,m,m,0,0,N,N);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',.8))}catch(e){no(e)}};
+ im.onerror=()=>{URL.revokeObjectURL(u);no(new Error('img'))};im.src=u});
+const fotoPrev=(w,d)=>{const el=$(w=='new'?'#fpv':'#fpv2');if(el)el.innerHTML=d?`<img class="fprev" src="${d}" alt="Foto do produto">`:FOTO_IC};
+async function fotoPick(inp,w){const f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+ if(!/^image\//.test(f.type))return toast('Escolha um arquivo de imagem');
+ try{const d=await fotoComp(f);if(w=='new')fotoNew=d;else fotoEd=d;fotoPrev(w,d)}catch(e){toast('Não foi possível ler essa imagem')}}
+function fotoRem(){fotoEd=null;fotoPrev('ed',null);const b=$('#fprm');if(b)b.style.display='none'}
+const prodErr=e=>{if(e&&e.code=='23505')return toast('Código já usado em outro produto');
+ if((fotoNew||fotoEd!==undefined)&&e&&/foto/i.test(String(e.message||e.details||'')))return toast('Falta criar a coluna da foto no Supabase. Rode no SQL Editor: alter table public.produtos add column foto text;',12000);
+ dbErr(e)};
 const pf=(l,id,ph,val,ex)=>`<div class="cfg-field"><label for="${id}">${l}</label><input id="${id}" placeholder="${esc(ph||'')}" value="${esc(val==null?'':val)}" ${ex||''}></div>`;
 function vProdForm(){
  const p=S.prods.find(x=>x.id==pEd.id);if(!p)return'';
  const num='type="number" step="0.01" min="0" inputmode="decimal"';
- return `<div class="mod" onclick="pEd=null;render()"><div class="card" onclick="event.stopPropagation()" role="dialog" aria-label="Editar produto"><h3>Editar produto</h3>
+ const fcur=fotoEd===undefined?fSrc(p):fotoEd,
+  fed=`<div class="fed"><label class="fbig" id="fpv2" for="fpe" title="Escolher foto" tabindex="0" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();this.click()}">${fcur?`<img class="fprev" src="${fcur}" alt="Foto do produto">`:FOTO_IC}</label><div class="fact"><label class="btn" for="fpe">${fcur?'Trocar foto':'Escolher foto'}</label><button class="btn" id="fprm" onclick="fotoRem()" ${fcur?'':'style="display:none"'}>Remover</button><small>Aparece no caixa do varejo.</small></div><input type="file" id="fpe" accept="image/*" hidden onchange="fotoPick(this,'ed')"></div>`;
+ return `<div class="mod" onclick="pEd=null;render()"><div class="card" onclick="event.stopPropagation()" role="dialog" aria-label="Editar produto"><h3>Editar produto</h3>${fed}
  <div class="frm pfm col" style="margin-top:0" onkeydown="if(event.key=='Enter'&&event.target.tagName=='INPUT'){event.preventDefault();saveProd()}">`+
  pf('Código','pek','Código',p.cod||'','autocomplete="off"')+pf('Produto','pen','Nome do produto',p.nome,'autocomplete="off"')+pf('Categoria','pec','Categoria',p.cat,'list="cats" autocomplete="off"')+pf('Preço (R$)','pep','0,00',p.preco,num)+pf('Estoque (opcional)','pee','Sem controle',p.est==null?'':p.est,'type="number" min="0" inputmode="numeric"')+
  `</div><button class="btn p g" onclick="saveProd()">Salvar alterações</button><button class="btn g" onclick="pEd=null;render()">Cancelar</button></div></div>`
@@ -1496,9 +1533,9 @@ const saveProd=once(async function(){
  if(es!==''&&!(parseInt(es)>=0))return toast('Estoque inválido');
  if(codUsado(k,p.id))return toast('Código já usado em outro produto');
  const est=es===''?null:parseInt(es);
- if(n==p.nome&&c==p.cat&&pr===p.preco&&k==(p.cod||'')&&est===(p.est==null?null:p.est)){pEd=null;return render()}
+ if(n==p.nome&&c==p.cat&&pr===p.preco&&k==(p.cod||'')&&est===(p.est==null?null:p.est)&&fotoEd===undefined){pEd=null;return render()}
  const emUso=pr!==p.preco&&[...Object.values(S.mesas),...Object.values(S.cmds),S.cart].some(o=>o&&o.items&&o.items.some(i=>i.id==p.id));
- const grava=async()=>{try{await DBX(sb.from('produtos').update({nome:n,categoria:c,preco:pr,codigo:k,estoque:est}).eq('id',p.id));Object.assign(p,{nome:n,cat:c,preco:pr,cod:k,est});pEd=null;toast('Produto atualizado');render()}catch(e){e&&e.code=='23505'?toast('Código já usado em outro produto'):dbErr(e)}};
+ const grava=async()=>{try{await DBX(sb.from('produtos').update({nome:n,categoria:c,preco:pr,codigo:k,estoque:est,...(fotoEd!==undefined?{foto:fotoEd}:{})}).eq('id',p.id));Object.assign(p,{nome:n,cat:c,preco:pr,cod:k,est},fotoEd!==undefined?{foto:fotoEd}:{});pEd=null;fotoEd=undefined;toast('Produto atualizado');render()}catch(e){prodErr(e)}};
  if(emUso)return cxModal({title:'Alterar o preço?',msg:'Este produto está em um atendimento aberto. O novo preço também vale para esses pedidos.',ok:'Alterar preço',onOk:grava});
  await grava();
 });
@@ -1555,16 +1592,17 @@ const codUsado=(k,id)=>S.prods.some(p=>p.id!=id&&p.cod&&norm(p.cod)==norm(k));
 const proxCod=()=>Math.max(100,...S.prods.map(p=>/^\d+$/.test(p.cod||'')?+p.cod:0))+1;
 const parseQ=raw=>{const t=raw.trim(),full=S.prods.some(p=>p.cod&&norm(p.cod)==norm(t)),m=!full&&t.match(/^(\d+)\s*\*\s*(.*)$/);return m?{n:Math.min(+m[1]||1,999),t:m[2].trim()}:{n:1,t}};
 function achar(t){const k=norm(t);if(!k)return[];const sc=p=>{const c=norm(p.cod),n=norm(p.nome);return c==k?0:c&&c.startsWith(k)?1:n.startsWith(k)?2:n.includes(k)?3:c&&c.includes(k)?4:9};return S.prods.map(p=>[sc(p),p]).filter(a=>a[0]<9).sort((a,b)=>a[0]-b[0]||a[1].nome.localeCompare(b[1].nome)).map(a=>a[1])}
-const pgrid=(fn='vAdd')=>{const t=parseQ(q).t,ps=t?achar(t):S.prods.filter(p=>cat=='Todos'||p.cat==cat);
- return ps.length?ps.map(p=>{const z=fn=='vAdd'&&p.est===0;return `<button class="prod ${z?'z':''}" onclick="${fn}(${p.id})">${p.cod?`<small class="cd">${esc(p.cod)}</small>`:''}<b>${esc(p.nome)}</b><span>${R(p.preco)}</span>${fn=='vAdd'&&p.est!=null?`<br><span class="bd ${z?'z':p.est<=5?'':'n'}">${z?'Sem estoque':p.est+' un.'}</span>`:''}</button>`}).join(''):'<div class="emp">Nenhum produto encontrado.</div>'};
+const pgrid=(fn='vAdd')=>{const rvv=view=='mesas'&&S.seg=='varejo',t=parseQ(q).t,ps=t?achar(t):S.prods.filter(p=>cat=='Todos'||p.cat==cat);
+ return ps.length?ps.map(p=>{const z=fn=='vAdd'&&p.est===0,fs=rvv?fSrc(p):'';return `<button class="prod ${z?'z':''}" onclick="${fn}(${p.id})">${fs?`<img class="pimg" src="${fs}" alt="" loading="lazy" decoding="async">`:''}${p.cod?`<small class="cd">${esc(p.cod)}</small>`:''}<b>${esc(p.nome)}</b><span>${R(p.preco)}</span>${fn=='vAdd'&&p.est!=null?`<br><span class="bd ${z?'z':p.est<=5?'':'n'}">${z?'Sem estoque':p.est+' un.'}</span>`:''}</button>`}).join(''):'<div class="emp">Nenhum produto encontrado.</div>'};
 function hintQ(){const e=$('#qh');if(!e)return;const {n,t}=parseQ(q);if(!t){e.innerHTML='Digite o código e tecle <b>Enter</b> · <b>3*101</b> lança 3 unidades';return}const r=achar(t),ex=r.filter(p=>p.cod&&norm(p.cod)==norm(t)),p=ex.length==1?ex[0]:r.length==1?r[0]:null;e.innerHTML=p?`<b>Enter</b> adiciona ${n>1?n+' × ':''}<b>${esc(p.nome)}</b> · ${R(p.preco)}`:r.length?`${r.length} produtos · digite o código completo`:'Nenhum produto com esse código ou nome'}
 function bqIn(fn){q=$('#bq').value;$('#pg').innerHTML=pgrid(fn);hintQ()}
 let lastV=null,pv=true;
 function vVenda(){
  const c=S.cart,sub=tot(c),d=dsc(sub),qtd=c.items.reduce((a,i)=>a+i.q,0),cats=['Todos',...new Set(S.prods.map(p=>p.cat))];
  const li=c.items.find(i=>i.id==lastV),lp=li?P(li.id):null;
- const last=li?`<div class="cx-last on"><div><small>Último item · ${esc(lp.cod||'sem código')}</small><b>${esc(lp.nome)}</b><span>${li.q} × ${R(lp.preco)}</span></div><strong>${R(lp.preco*li.q)}</strong></div>`:`<div class="cx-last"><div><small>Caixa livre</small><b>Aguardando o primeiro produto</b><span>Passe o código de barras ou toque em um produto</span></div></div>`;
- const tape=c.items.length?c.items.map((i,n)=>{const p=P(i.id);return `<div class="cx-it"><span class="n">${n+1}</span><div class="nm"><b>${esc(p.nome)}</b>${p.cod?`<small>${esc(p.cod)}</small>`:''}</div><div class="q"><button onclick="vChg(${i.id},-1)" aria-label="Diminuir">−</button>${i.q}<button onclick="vChg(${i.id},1)" aria-label="Aumentar">+</button></div><span class="u">${R(p.preco)}</span><b class="s">${R(p.preco*i.q)}</b><button class="x" onclick="vDel(${i.id})" aria-label="Remover item">×</button></div>`}).join(''):'<div class="cx-vz">Nenhum item na venda</div>';
+ const lfs=lp?fSrc(lp):'',anyF=c.items.some(i=>fSrc(P(i.id)));
+ const last=li?`<div class="cx-last on">${lfs?`<img class="cx-img" src="${lfs}" alt="">`:''}<div><small>Último item · ${esc(lp.cod||'sem código')}</small><b>${esc(lp.nome)}</b><span>${li.q} × ${R(lp.preco)}</span></div><strong>${R(lp.preco*li.q)}</strong></div>`:`<div class="cx-last"><div><small>Caixa livre</small><b>Aguardando o primeiro produto</b><span>Passe o código de barras ou toque em um produto</span></div></div>`;
+ const tape=c.items.length?c.items.map((i,n)=>{const p=P(i.id),fs=fSrc(p);return `<div class="cx-it"><span class="n">${n+1}</span><div class="nm${anyF?' wf':''}">${anyF?(fs?`<img src="${fs}" alt="">`:'<i class="ph"></i>'):''}<div><b>${esc(p.nome)}</b>${p.cod?`<small>${esc(p.cod)}</small>`:''}</div></div><div class="q"><button onclick="vChg(${i.id},-1)" aria-label="Diminuir">−</button>${i.q}<button onclick="vChg(${i.id},1)" aria-label="Aumentar">+</button></div><span class="u">${R(p.preco)}</span><b class="s">${R(p.preco*i.q)}</b><button class="x" onclick="vDel(${i.id})" aria-label="Remover item">×</button></div>`}).join(''):'<div class="cx-vz">Nenhum item na venda</div>';
  const prods=S.prods.length?`<div class="chips">${cats.map(x=>`<button class="chip ${x==cat?'on':''}" onclick="cat='${x}';render()">${x}</button>`).join('')}</div><div id="pgs" class="cx-pg"><div class="grid" id="pg">${pgrid()}</div></div>`:`<div class="emp">Nenhum produto cadastrado ainda.<br><br><button class="btn p" onclick="go('cad')">Ir para Cadastros</button></div>`;
  return head('Caixa')+`<div class="cx"><div class="cx-l">
  <div class="cx-scan"><div class="cx-sc"><input id="bq" class="cx-in" autocomplete="off" placeholder="Código de barras ou produto (F2)" value="${esc(q)}" oninput="cxIn()" onkeydown="if(event.key=='Enter')bar()"><button class="btn" onclick="pv=!pv;render()">${pv?'Ocultar':'Mostrar'} produtos <span class="kb">F8</span></button></div><div class="qh" id="qh"></div></div>
