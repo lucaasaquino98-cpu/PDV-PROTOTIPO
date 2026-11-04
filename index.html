@@ -652,6 +652,17 @@ body.enter main{animation:inMain .9s .62s cubic-bezier(.22,1,.36,1) backwards}
  body.enter nav,body.enter main{animation:none}
 }
 </style>
+<style>
+.pfm{align-items:flex-end}
+.pfm .cfg-field{flex:1 1 110px;min-width:110px}
+.pfm .cfg-field:nth-child(2){flex:0 1 130px}
+.pfm .cfg-field:nth-child(3){flex:2 1 200px}
+.pfm .cfg-field input{width:100%;min-width:0;flex:none}
+.pfm.col{flex-direction:column;align-items:stretch}
+.pfm.col .cfg-field,.pfm.col .cfg-field:nth-child(n){flex:none;min-width:0}
+td .btn+.btn{margin-left:6px}
+@media(max-width:760px){.pfm{align-items:stretch}.pfm .cfg-field,.pfm .cfg-field:nth-child(n){flex:1 1 100%}.pfm.col .cfg-field,.pfm.col .cfg-field:nth-child(n){flex:none}}
+</style>
 </head>
 <body>
 <div id="intro" aria-hidden="true"><div class="ic">
@@ -973,7 +984,7 @@ async function boot(){
  render();introEnd();
 }
 let docAsk=null,docTipo=null,docCol=true;
-let view='mesas',mode='m',cur=null,cat='Todos',pay=null,q='',help=false,cm=null,cv=null,cq='',ctab='prod';
+let view='mesas',mode='m',cur=null,cat='Todos',pay=null,q='',help=false,cm=null,cv=null,cq='',ctab='prod',pEd=null;
 const $=s=>document.querySelector(s);
 const R=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const hm=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
@@ -984,7 +995,7 @@ const lbl=()=>cur.k=='m'?(G().j?'Mesas '+G().j.join(' + '):'Mesa '+cur.id):'Coma
 function toast(t,ms=2400){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',ms)}
 function setSeg(v){S.seg=v;try{go('mesas')}catch(e){console.error(e);toast('Erro ao abrir '+((SEG[v]&&SEG[v].nome)||v)+': '+e.message)}cfg({segmento:v})}
 function go(v){goSet(v);render()}
-function goSet(v){view=v;q='';try{history.replaceState(null,'',v=='coz'?'#cozinha':location.pathname+location.search)}catch(e){}if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;ob=null}
+function goSet(v){view=v;q='';try{history.replaceState(null,'',v=='coz'?'#cozinha':location.pathname+location.search)}catch(e){}if(v!='cfg'){certPrev=null;certSub=false}cur=null;pay=null;cm=null;cv=null;ob=null;pEd=null}
 /* clique no menu lateral: destaca na hora, deixa o quadro pintar e só então monta a tela com um fade curto */
 let goR=0;
 function goNav(v){
@@ -1413,8 +1424,13 @@ function vCaixa(){
 const caixaAdd=once(async function(){const v=parseFloat($('#cv').value),t=$('#ct').value;if(!v||v<=0)return toast('Informe o valor');
  try{S.mov.push(await addMov({desc:$('#cd').value||(t=='out'?'Sangria':'Suprimento'),tipo:t,val:v,forma:'Dinheiro',cat:t=='out'?'Sangria':'Suprimento'}));render()}catch(e){dbErr(e)}});
 function vCad(){
- const body=`<div class="wrap"><table><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Código</th><th>Estoque</th><th></th></tr>${S.prods.map(p=>`<tr><td>${esc(p.nome)}</td><td>${esc(p.cat)}</td><td>${R(p.preco)}</td><td><input class="cin" value="${esc(p.cod||'')}" aria-label="Código de ${esc(p.nome)}" onchange="setCod(${p.id},this)" onkeydown="if(event.key=='Enter')this.blur()"></td><td>${p.est==null?'—':p.est<=5?`<span class="bd ${p.est?'':'z'}">${p.est}</span>`:p.est}</td><td><button class="btn" onclick="delP(${p.id})">Excluir</button></td></tr>`).join('')}</table></div>${S.prods.length?'':`<div class="emp">Nenhum produto ainda. Cadastre o primeiro abaixo.</div>`}`+
- frm(`<input id="pk" autocomplete="off" placeholder="Código (sugestão: ${proxCod()})"><input id="pn" placeholder="Nome do produto"><input id="pc" placeholder="Categoria"><input id="pp" type="number" step="0.01" placeholder="Preço"><input id="pe" type="number" min="0" placeholder="Estoque">`,'addProd()','Adicionar');
+ const cats=[...new Set(S.prods.map(p=>p.cat).filter(Boolean))].sort(),
+  dl=`<datalist id="cats">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist>`,
+  num='type="number" step="0.01" min="0" inputmode="decimal"';
+ const body=`<div class="wrap"><table><tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Preço</th><th>Estoque</th><th></th></tr>${S.prods.map(p=>`<tr><td><b>${esc(p.cod||'—')}</b></td><td>${esc(p.nome)}</td><td>${esc(p.cat)}</td><td>${R(p.preco)}</td><td>${p.est==null?'—':p.est<=5?`<span class="bd ${p.est?'':'z'}">${p.est}</span>`:p.est}</td><td style="text-align:right;white-space:nowrap"><button class="btn" onclick="pEd={id:${p.id}};render()">Editar</button><button class="btn" onclick="delP(${p.id})">Excluir</button></td></tr>`).join('')}</table></div>${S.prods.length?'':`<div class="emp">Nenhum produto ainda. Cadastre o primeiro abaixo.</div>`}`+
+ `<div class="frm pfm" onkeydown="if(event.key=='Enter'&&event.target.tagName=='INPUT'){event.preventDefault();addProd()}">${dl}`+
+ pf('Código','pk','Sugestão: '+proxCod(),'','autocomplete="off"')+pf('Produto','pn','Nome do produto','','autocomplete="off"')+pf('Categoria','pc','Ex.: Almoço','','list="cats" autocomplete="off"')+pf('Preço (R$)','pp','0,00','',num)+pf('Estoque (opcional)','pe','Sem controle','','type="number" min="0" inputmode="numeric"')+
+ `<button class="btn p" onclick="addProd()">Adicionar</button></div>`;
  const gbody=(S.garcons.length?`<div class="wrap"><table><tr><th>Garçom</th><th>Telefone</th><th>Em atendimento</th><th>Vendas</th><th></th></tr>${S.garcons.map(g=>{const s=gStat(g.id);return `<tr><td><b>${esc(g.nome)}</b></td><td>${fone(g.tel)}</td><td>${s.ab||'—'}</td><td>${s.n?s.n+' · '+R(s.t):'<small style="color:var(--mu)">nenhuma</small>'}</td><td style="text-align:right"><button class="btn" onclick="delGar(${g.id})">Excluir</button></td></tr>`}).join('')}</table></div>`:`<div class="emp">Nenhum garçom cadastrado. Cadastre abaixo: eles aparecerão para escolha nas mesas e comandas.</div>`)+frm(`<input id="gn" placeholder="Nome do garçom" autocomplete="off"><input id="gt" inputmode="tel" placeholder="Telefone (opcional)" autocomplete="off">`,'addGar()','Adicionar');
  const tb=rst()?ctab:'prod';
  return head('Cadastros')+`<div class="chips"><button class="chip ${tb=='prod'?'on':''}" onclick="ctab='prod';render()">Produtos (${S.prods.length})</button>${rst()?`<button class="chip ${tb=='gar'?'on':''}" onclick="ctab='gar';render()">Garçons (${S.garcons.length})</button>`:''}</div><div class="card">${tb=='gar'?gbody:body}</div>`
@@ -1450,6 +1466,30 @@ function vCli(){
  return head('Clientes','<button class="btn p" onclick="cm={id:null};render()">+ Novo cliente</button>')+kp([['Clientes cadastrados',n],['Já compraram',comp],['Sem compras',n-comp]])+
  `<div class="card"><input id="cqi" class="srch" placeholder="Buscar por nome, CPF ou telefone" value="${esc(cq)}" oninput="cq=this.value;$('#cl').innerHTML=cliRows()"><div id="cl">${cliRows()}</div></div>`
 }
+const pf=(l,id,ph,val,ex)=>`<div class="cfg-field"><label for="${id}">${l}</label><input id="${id}" placeholder="${esc(ph||'')}" value="${esc(val==null?'':val)}" ${ex||''}></div>`;
+function vProdForm(){
+ const p=S.prods.find(x=>x.id==pEd.id);if(!p)return'';
+ const num='type="number" step="0.01" min="0" inputmode="decimal"';
+ return `<div class="mod" onclick="pEd=null;render()"><div class="card" onclick="event.stopPropagation()" role="dialog" aria-label="Editar produto"><h3>Editar produto</h3>
+ <div class="frm pfm col" style="margin-top:0" onkeydown="if(event.key=='Enter'&&event.target.tagName=='INPUT'){event.preventDefault();saveProd()}">`+
+ pf('Código','pek','Código',p.cod||'','autocomplete="off"')+pf('Produto','pen','Nome do produto',p.nome,'autocomplete="off"')+pf('Categoria','pec','Categoria',p.cat,'list="cats" autocomplete="off"')+pf('Preço (R$)','pep','0,00',p.preco,num)+pf('Estoque (opcional)','pee','Sem controle',p.est==null?'':p.est,'type="number" min="0" inputmode="numeric"')+
+ `</div><button class="btn p g" onclick="saveProd()">Salvar alterações</button><button class="btn g" onclick="pEd=null;render()">Cancelar</button></div></div>`
+}
+const saveProd=once(async function(){
+ const p=pEd&&S.prods.find(x=>x.id==pEd.id);if(!p)return;
+ const k=$('#pek').value.trim(),n=$('#pen').value.trim(),c=$('#pec').value.trim()||'Geral',pr=parseFloat(String($('#pep').value).replace(',','.')),es=$('#pee').value.trim();
+ if(!k)return toast('Informe o código do produto');
+ if(!n)return toast('Informe o nome do produto');
+ if(!(pr>0))return toast('Informe um preço válido');
+ if(es!==''&&!(parseInt(es)>=0))return toast('Estoque inválido');
+ if(codUsado(k,p.id))return toast('Código já usado em outro produto');
+ const est=es===''?null:parseInt(es);
+ if(n==p.nome&&c==p.cat&&pr===p.preco&&k==(p.cod||'')&&est===(p.est==null?null:p.est)){pEd=null;return render()}
+ const emUso=pr!==p.preco&&[...Object.values(S.mesas),...Object.values(S.cmds),S.cart].some(o=>o&&o.items&&o.items.some(i=>i.id==p.id));
+ const grava=async()=>{try{await DBX(sb.from('produtos').update({nome:n,categoria:c,preco:pr,codigo:k,estoque:est}).eq('id',p.id));Object.assign(p,{nome:n,cat:c,preco:pr,cod:k,est});pEd=null;toast('Produto atualizado');render()}catch(e){e&&e.code=='23505'?toast('Código já usado em outro produto'):dbErr(e)}};
+ if(emUso)return cxModal({title:'Alterar o preço?',msg:'Este produto está em um atendimento aberto. O novo preço também vale para esses pedidos.',ok:'Alterar preço',onOk:grava});
+ await grava();
+});
 function vCliForm(){
  const c=cm.id?S.clientes.find(k=>k.id==cm.id):{nome:'',tel:'',cpf:'',email:'',obs:''};
  return `<div class="mod" onclick="cm=null;render()"><div class="card" onclick="event.stopPropagation()"><h3>${cm.id?'Editar cliente':'Novo cliente'}</h3>
@@ -1558,7 +1598,7 @@ function vHelp(){const L=[['F1','Mostrar ou fechar atalhos'],['F2','Buscar produ
 document.addEventListener('keydown',e=>{
  const k=e.key,t=e.target,typing=/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName),rv=view=='mesas'&&S.seg=='varejo',f=id=>{e.preventDefault();const x=$(id);x&&x.focus()};
  if(k=='F1'){e.preventDefault();help=!help;return render()}
- if(k=='Escape'){if(docAsk)docAsk=null;else if(jn)jn=null;else if(help)help=false;else if(pay)pay=null;else if(cm)cm=null;else if(cv)cv=null;else if(view=='pos')return go('mesas');else return;return render()}
+ if(k=='Escape'){if(docAsk)docAsk=null;else if(jn)jn=null;else if(help)help=false;else if(pay)pay=null;else if(pEd)pEd=null;else if(cm)cm=null;else if(cv)cv=null;else if(view=='pos')return go('mesas');else return;return render()}
  if(e.altKey&&e.code=='KeyK'){e.preventDefault();return go(view=='coz'?'mesas':'coz')}
  if(e.altKey&&['Digit1','Digit2','Digit3','Digit4','Digit5','Digit6'].includes(e.code)){e.preventDefault();return go(['mesas','caixa','cad','cli','fin','cfg'][+e.code.slice(5)-1])}
  if(docAsk){if(k=='Enter'){e.preventDefault();docGo()}else if(k=='1'||k=='2'){docSel(k=='1'?'nfce':'comprovante')}return}
@@ -1864,11 +1904,12 @@ function render(){
  document.documentElement.style.setProperty('--ph',-((Date.now()%1500)/1000)+'s');
  const localBanner=location.protocol==='file:'&&view!='coz'?document.getElementById('localPreviewBanner'):null;
  const localBannerHtml=localBanner?localBanner.outerHTML.replace('style="display: block;"','style="display:block"'):'';
- $('#main').innerHTML=localBannerHtml+(rv?vVenda()+(pay?vPayV():''):({mesas:vSalao,pos:vPos,caixa:vCaixa,cad:vCad,cli:vCli,fin:vFin,cfg:vCfg,coz:vCoz})[view]()+(pay&&cur?vPay():''))+(cm?vCliForm():'')+(cv?vCliVer():'')+(help?vHelp():'')+(jn?vJoin():'')+(ob?vObs():'')+(docAsk?vDoc():'');
+ $('#main').innerHTML=localBannerHtml+(rv?vVenda()+(pay?vPayV():''):({mesas:vSalao,pos:vPos,caixa:vCaixa,cad:vCad,cli:vCli,fin:vFin,cfg:vCfg,coz:vCoz})[view]()+(pay&&cur?vPay():''))+(cm?vCliForm():'')+(pEd?vProdForm():'')+(cv?vCliVer():'')+(help?vHelp():'')+(jn?vJoin():'')+(ob?vObs():'')+(docAsk?vDoc():'');
  if(hadMod)document.querySelectorAll('#main .mod,#main .mod .card').forEach(e=>{e.style.animation='none'});
  if(rv||view=='pos'){cpfSt();hintQ()}
  if(rv){const tp=$('#tape');if(tp)tp.scrollTop=tp.scrollHeight;const g=$('#pgs');if(g)g.scrollTop=psy}
  if(cm)setTimeout(()=>{const e=$('#kn');e&&e.focus()});
+ if(pEd)setTimeout(()=>{const e=$('#pen');e&&e.focus()});
  if(rv&&pay=='Dinheiro')setTimeout(()=>{const e=$('#rc');e&&e.focus()});
  if(ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$(obMg?(obEd?'#ace':'#acn'):'#obt');e&&e.focus()});
  if((rv||view=='pos')&&!pay&&!help&&!cm&&!cv&&!jn&&!ob&&!matchMedia('(pointer:coarse)').matches)setTimeout(()=>{const e=$('#bq');e&&e.focus()});
